@@ -1,0 +1,331 @@
+{% extends "layout_embedded.html" %}
+
+{% block title %}编辑配方 - {{ project.ProjectName }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <!-- 项目信息展示（只读） -->
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h5 class="mb-0">项目基本信息（只读）</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <strong>项目名称：</strong> {{ project.ProjectName }}
+                </div>
+                <div class="col-md-3">
+                    <strong>项目类型：</strong> {{ project.TypeName }}
+                </div>
+                <div class="col-md-3">
+                    <strong>配方设计师：</strong> {{ project.FormulatorName or '未设置' }}
+                </div>
+                <div class="col-md-3">
+                    <strong>配方代码：</strong> {{ project.FormulaCode }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 配方成分编辑 -->
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h4 class="mb-0">配方成分编辑</h4>
+            <div>
+                <a href="{{ url_for('formulas.formulas') }}" class="btn btn-secondary">返回配方列表</a>
+            </div>
+        </div>
+        <div class="card-body">
+            <!-- 添加成分按钮 -->
+            <div class="mb-3">
+                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addComponentModal">
+                    <i class="bi bi-plus-circle"></i> 添加成分
+                </button>
+            </div>
+
+            <!-- 总重量显示 -->
+            <div id="total-weight" class="alert alert-info">
+                当前总重：<strong>{{ "%.4f"|format(total_weight) }}</strong>%
+            </div>
+            <div id="weight-validation-alert" class="alert"></div>
+
+            <!-- 配方成分表格 -->
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>成分类型</th>
+                            <th>成分名称</th>
+                            <th>重量百分比 (%)</th>
+                            <th>掺入方法</th>
+                            <th>备注</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="composition-table-body">
+                        {% for item in composition %}
+                        <tr>
+                            <td>{{ '原料' if item.MaterialID_FK else '填料' }}</td>
+                            <td>{{ item.ComponentName }}</td>
+                            <td>{{ "%.4f"|format(item.WeightPercentage) }}</td>
+                            <td>{{ item.AdditionMethod or '' }}</td>
+                            <td>{{ item.Remarks or '' }}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteComponent({{ item.CompositionID }})">删除</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 添加成分模态框 -->
+<div class="modal fade" id="addComponentModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">添加配方成分</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="add-component-form">
+                    <div class="mb-3">
+                        <label for="modal_component_type" class="form-label">成分类型</label>
+                        <select class="form-select" id="modal_component_type" required>
+                            <option value="">请选择...</option>
+                            <option value="material">原料</option>
+                            <option value="filler">填料</option>
+                        </select>
+                    </div>
+
+                    <div id="material-select-div" class="mb-3 d-none">
+                        <label for="modal_material_id" class="form-label">选择原料</label>
+                        <select class="form-select" id="modal_material_id">
+                            <option value="">请选择...</option>
+                            {% for material in materials %}
+                            <option value="{{ material.MaterialID }}">{{ material.TradeName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div id="filler-select-div" class="mb-3 d-none">
+                        <label for="modal_filler_id" class="form-label">选择填料</label>
+                        <select class="form-select" id="modal_filler_id">
+                            <option value="">请选择...</option>
+                            {% for filler in fillers %}
+                            <option value="{{ filler.FillerID }}">{{ filler.TradeName }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modal_weight_percentage" class="form-label">重量百分比 (%)</label>
+                        <input type="number" step="0.0001" class="form-control" id="modal_weight_percentage" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modal_addition_method" class="form-label">掺入方法</label>
+                        <textarea class="form-control" id="modal_addition_method" rows="2"></textarea>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="modal_remarks" class="form-label">备注</label>
+                        <textarea class="form-control" id="modal_remarks" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="addComponent()">确认添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const projectId = {{ project.ProjectID }};
+
+// Toggle between material and filler dropdowns
+document.getElementById('modal_component_type').addEventListener('change', function() {
+    const materialDiv = document.getElementById('material-select-div');
+    const fillerDiv = document.getElementById('filler-select-div');
+    const materialSelect = document.getElementById('modal_material_id');
+    const fillerSelect = document.getElementById('modal_filler_id');
+    
+    if (this.value === 'material') {
+        materialDiv.classList.remove('d-none');
+        fillerDiv.classList.add('d-none');
+        materialSelect.disabled = false;
+        fillerSelect.disabled = true;
+    } else if (this.value === 'filler') {
+        materialDiv.classList.add('d-none');
+        fillerDiv.classList.remove('d-none');
+        materialSelect.disabled = true;
+        fillerSelect.disabled = false;
+    }
+});
+
+function updateTotalWeight(change) {
+    const totalWeightEl = document.getElementById('total-weight').querySelector('strong');
+    let currentTotal = parseFloat(totalWeightEl.textContent);
+    let newTotal = currentTotal + change;
+    totalWeightEl.textContent = newTotal.toFixed(4);
+    validateTotalWeight(newTotal);
+}
+
+function validateTotalWeight(total) {
+    const alertEl = document.getElementById('weight-validation-alert');
+    if (total < 99.5 || total > 100.5) {
+        alertEl.textContent = `警告：当前总重为 ${total.toFixed(4)}%，不在 100% ± 0.5% 的范围内。`;
+        alertEl.className = 'alert alert-warning';
+    } else {
+        alertEl.textContent = `当前总重为 ${total.toFixed(4)}%，符合要求。`;
+        alertEl.className = 'alert alert-success';
+    }
+}
+
+async function addComponent() {
+    const componentType = document.getElementById('modal_component_type').value;
+    const materialId = document.getElementById('modal_material_id').value;
+    const fillerId = document.getElementById('modal_filler_id').value;
+    const weightPercentage = document.getElementById('modal_weight_percentage').value;
+    const additionMethod = document.getElementById('modal_addition_method').value;
+    const remarks = document.getElementById('modal_remarks').value;
+
+    if (!componentType || !weightPercentage) {
+        alert('请填写必填项');
+        return;
+    }
+
+    if (componentType === 'material' && !materialId) {
+        alert('请选择原料');
+        return;
+    }
+
+    if (componentType === 'filler' && !fillerId) {
+        alert('请选择填料');
+        return;
+    }
+
+    try {
+        // 使用 FormData 而不是 JSON
+        const formData = new FormData();
+        formData.append('project_id', projectId);
+        formData.append('component_type', componentType);
+        formData.append('component_id', componentType === 'material' ? materialId : fillerId);
+        formData.append('weight', weightPercentage);
+        formData.append('addition_method', additionMethod);
+        formData.append('remarks', remarks);
+
+        console.log('发送数据:', {
+            project_id: projectId,
+            component_type: componentType,
+            component_id: componentType === 'material' ? materialId : fillerId,
+            weight: weightPercentage,
+            addition_method: additionMethod,
+            remarks: remarks
+        });
+
+        const response = await fetch('/composition/add', {
+            method: 'POST',
+            body: formData
+        });
+
+        console.log('响应状态:', response.status);
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('HTTP 错误:', response.status, errorText);
+            alert(`服务器错误 (${response.status}): ${errorText.substring(0, 100)}`);
+            return;
+        }
+
+        const data = await response.json();
+        console.log('响应数据:', data);
+
+        if (data.success) {
+            // 添加新行到表格
+            const tableBody = document.getElementById('composition-table-body');
+            const newRow = `
+                <tr>
+                    <td>${componentType === 'material' ? '原料' : '填料'}</td>
+                    <td>${data.component_name}</td>
+                    <td>${parseFloat(weightPercentage).toFixed(4)}</td>
+                    <td>${additionMethod || ''}</td>
+                    <td>${remarks || ''}</td>
+                    <td><button class="btn btn-danger btn-sm" onclick="deleteComponent(${data.composition_id})">删除</button></td>
+                </tr>
+            `;
+            tableBody.insertAdjacentHTML('beforeend', newRow);
+
+            // 更新总重量
+            updateTotalWeight(parseFloat(weightPercentage));
+
+            // 关闭模态框并重置表单
+            bootstrap.Modal.getInstance(document.getElementById('addComponentModal')).hide();
+            document.getElementById('add-component-form').reset();
+        } else {
+            alert(data.message || '添加失败');
+        }
+    } catch (error) {
+        console.error('捕获错误:', error);
+        alert('发生错误: ' + error.message);
+    }
+}
+
+async function deleteComponent(compositionId) {
+    if (!confirm('确定要删除这个成分吗？')) return;
+
+    try {
+        const response = await fetch(`/composition/delete/${compositionId}`, {
+            method: 'POST'
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            location.reload();
+        } else {
+            alert(data.message || '删除失败');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('发生错误');
+    }
+}
+
+// Initial validation check
+document.addEventListener('DOMContentLoaded', function() {
+    const totalWeightEl = document.getElementById('total-weight').querySelector('strong');
+    if (totalWeightEl) {
+        validateTotalWeight(parseFloat(totalWeightEl.textContent));
+    }
+});
+
+// 为"返回配方列表"按钮添加过渡动画
+document.addEventListener('DOMContentLoaded', function() {
+    const backButton = document.querySelector('a.btn-secondary[href*="formulas"]');
+    if (backButton) {
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetUrl = this.href;
+            
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'showLoading',
+                    url: targetUrl
+                }, '*');
+            } else {
+                window.location.href = targetUrl;
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
+

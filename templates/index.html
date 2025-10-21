@@ -1,0 +1,299 @@
+{% extends "layout.html" %}
+
+{% block title %} Advanced 配方数据管理系统 -- beta{% endblock %}
+
+{% block layout %}
+<div class="main-container">
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h1> Advanced </h1>
+            <div class="sidebar-subtitle">配方数据管理系统 -- beta</div>
+        </div>
+        
+        <!-- 用户信息卡片 -->
+        <div style="padding: 1rem 1.5rem; margin-bottom: 1rem;">
+            <div style="background: rgba(255,255,255,0.1); border-radius: 12px; padding: 1rem; backdrop-filter: blur(10px);">
+                <div style="display: flex; align-items: center; margin-bottom: 0.8rem;">
+                    <div style="width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; margin-right: 0.8rem;">
+                        <i class="bi bi-person-fill" style="font-size: 1.5rem; color: white;"></i>
+                    </div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="color: white; font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ session.real_name or session.username }}
+                        </div>
+                        <div style="color: rgba(255,255,255,0.7); font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                            {{ session.position or ('管理员' if session.user_role == 'admin' else '用户') }}
+                        </div>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 0.5rem;">
+                    <a href="javascript:void(0)" id="profile-link" data-url="{{ url_for('auth.profile') }}" class="nav-link profile-btn" style="flex: 1; padding: 0.5rem; text-align: center; background: rgba(255,255,255,0.15); border-radius: 8px; font-size: 0.85rem; white-space: nowrap; overflow: hidden;">
+                        <i class="bi bi-person-circle" style="font-size: 0.9rem; margin-right: 0.25rem;"></i>个人信息
+                    </a>
+                    <a href="{{ url_for('auth.logout') }}" id="logout-link" class="nav-link logout-btn" style="flex: 1; padding: 0.5rem; text-align: center; background: rgba(255,255,255,0.15); border-radius: 8px; font-size: 0.85rem; white-space: nowrap; overflow: hidden;">
+                        <i class="bi bi-box-arrow-right" style="font-size: 0.9rem; margin-right: 0.25rem;"></i>退出
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <nav class="nav-menu">
+            <div class="nav-item">
+                <a href="javascript:void(0)" data-url="{{ url_for('projects.project_list') }}" class="nav-link active" data-module="projects">
+                    <i class="bi bi-folder"></i>
+                    <span>项目基本信息表</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="javascript:void(0)" data-url="{{ url_for('materials.material_list') }}" class="nav-link" data-module="materials">
+                    <i class="bi bi-droplet"></i>
+                    <span>原料信息主表</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="javascript:void(0)" data-url="{{ url_for('fillers.filler_list') }}" class="nav-link" data-module="fillers">
+                    <i class="bi bi-box-seam"></i>
+                    <span>无机材料信息主表</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="javascript:void(0)" data-url="{{ url_for('formulas.formulas') }}" class="nav-link" data-module="formulas">
+                    <i class="bi bi-calculator"></i>
+                    <span>配方成分表</span>
+                </a>
+            </div>
+            <div class="nav-item">
+                <a href="javascript:void(0)" data-url="{{ url_for('projects.test_results_page') }}" class="nav-link" data-module="test_results">
+                    <i class="bi bi-clipboard-data"></i>
+                    <span>测试结果数据表</span>
+                </a>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            © 2025
+        </div>
+    </div>
+    
+    <!-- 右侧内容区域 - 使用 iframe -->
+    <div class="content-area" style="background: white; position: relative;">
+        <!-- 加载遮罩层 -->
+        <div id="loading-overlay" style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            backdrop-filter: blur(5px);
+        ">
+            <div style="text-align: center; color: #495057; animation: fadeIn 0.5s ease-out;">
+                <!-- 加载动画 -->
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem; border-width: 0.3em;">
+                    <span class="visually-hidden">加载中...</span>
+                </div>
+                <div style="margin-top: 20px; font-size: 1.1rem; font-weight: 500; color: #6c757d; animation: pulse 1.5s ease-in-out infinite;">
+                    页面加载中...
+                </div>
+            </div>
+        </div>
+        
+        <style>
+            @keyframes pulse {
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.6; }
+            }
+            
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                    transform: translateY(10px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        </style>
+        
+        <div class="content-body" style="padding: 0; overflow: hidden; background: white;">
+            <iframe id="content-frame" 
+                    src="{{ url_for('projects.project_list') }}" 
+                    style="width: 100%; height: 100%; border: none; display: block; background: white; transition: opacity 0.3s ease;">
+            </iframe>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+$(document).ready(function() {
+    const $loadingOverlay = $('#loading-overlay');
+    const $contentFrame = $('#content-frame');
+    let isInitialLoad = true;
+    
+    // 显示加载动画
+    function showLoading() {
+        // iframe 淡出
+        $contentFrame.css('opacity', '0');
+        
+        $loadingOverlay.css('display', 'flex');
+        // 强制重排以触发过渡
+        $loadingOverlay[0].offsetHeight;
+        $loadingOverlay.css('opacity', '1');
+    }
+    
+    // 隐藏加载动画
+    function hideLoading() {
+        $loadingOverlay.css('opacity', '0');
+        setTimeout(function() {
+            $loadingOverlay.css('display', 'none');
+            // iframe 淡入
+            $contentFrame.css('opacity', '1');
+        }, 300); // 与 CSS 过渡时间匹配
+    }
+    
+    // 专门处理个人信息按钮（多重防护）
+    const profileLink = document.getElementById('profile-link');
+    if (profileLink) {
+        // 移除所有可能的href，防止任何默认跳转
+        profileLink.removeAttribute('href');
+        
+        // 添加点击事件处理器
+        profileLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            e.stopImmediatePropagation();
+            
+            const url = this.getAttribute('data-url');
+            
+            // 显示加载动画
+            showLoading();
+            
+            // 加载到 iframe
+            setTimeout(function() {
+                $contentFrame.attr('src', url);
+            }, 100);
+            
+            return false;
+        }, true); // 使用捕获阶段
+        
+        // 双重保护：jQuery 事件
+        $('#profile-link').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
+        });
+    }
+    
+    // 导航点击事件：统一通过 data-url 加载到 iframe，彻底阻止默认跳转
+    $('.nav-link').not('#profile-link, #logout-link').on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 移除导航菜单中所有 active 类（不影响用户卡片）
+        $('.nav-menu .nav-link').removeClass('active');
+        
+        // 只给导航菜单中的链接添加 active（不影响用户卡片）
+        if ($(this).closest('.nav-menu').length > 0) {
+            $(this).addClass('active');
+        }
+        
+        // 添加点击动画效果
+        const $clickedLink = $(this);
+        $clickedLink.css('transform', 'scale(0.95)');
+        setTimeout(function() {
+            $clickedLink.css('transform', '');
+        }, 150);
+        
+        // 显示加载动画
+        showLoading();
+        
+        // 加载对应 URL 到 iframe
+        const url = $clickedLink.data('url');
+        
+        // 延迟一点再切换iframe，让淡出动画更明显
+        setTimeout(function() {
+            $contentFrame.attr('src', url);
+        }, 100);
+    });
+    
+    // 退出按钮单独处理（允许默认跳转）
+    $('#logout-link').on('click', function(e) {
+        // 不阻止默认行为，直接跳转到登出页面
+        return true;
+    });
+    
+    // 监听 iframe 加载事件
+    $contentFrame.on('load', function() {
+        try {
+            // 检查 iframe 是否跳转到登录页（Session 过期）
+            const iframeUrl = this.contentWindow.location.href;
+            if (iframeUrl.includes('/login')) {
+                alert('登录已过期，请重新登录');
+                window.location.href = '{{ url_for("auth.login") }}';
+                return;
+            }
+        } catch (e) {
+            // 跨域限制，无法访问 iframe URL（这是正常的）
+        }
+        
+        // 初次加载不显示动画
+        if (isInitialLoad) {
+            isInitialLoad = false;
+            hideLoading();
+        } else {
+            // 页面切换时，延迟一点隐藏加载动画，让用户看到完整的过渡效果
+            setTimeout(hideLoading, 400);
+        }
+    });
+    
+    // 处理 iframe 加载错误
+    $contentFrame.on('error', function() {
+        hideLoading();
+    });
+    
+    // Session 心跳检查（每3分钟检查一次）
+    setInterval(function() {
+        fetch('{{ url_for("check_session") }}', {
+            method: 'GET',
+            credentials: 'same-origin'
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.active) {
+                alert('登录已过期，请重新登录');
+                window.location.href = '{{ url_for("auth.login") }}';
+            }
+        })
+        .catch(error => {
+            // Session 检查失败，静默处理
+        });
+    }, 3 * 60 * 1000); // 每3分钟检查一次
+    
+    // 监听来自 iframe 的消息（用于编辑按钮等触发的加载遮罩）
+    window.addEventListener('message', function(event) {
+        // 安全检查：确保消息来自同源或可信源
+        if (event.data && event.data.type === 'showLoading') {
+            console.log('接收到加载请求:', event.data.url);
+            
+            // 显示加载动画
+            showLoading();
+            
+            // 延迟一点再切换 iframe，让淡出动画更明显
+            setTimeout(function() {
+                $contentFrame.attr('src', event.data.url);
+            }, 100);
+        }
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系统诊断</title>
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.1.3/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 30px;
+            background: #f5f5f5;
+        }
+        .diagnostic-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .status-ok {
+            color: #28a745;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .status-warning {
+            color: #ffc107;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="mb-4">系统资源加载诊断</h2>
+        
+        <div class="diagnostic-card">
+            <h5>1. jQuery 加载状态</h5>
+            <div id="jquery-status"></div>
+        </div>
+        
+        <div class="diagnostic-card">
+            <h5>2. Bootstrap 加载状态</h5>
+            <div id="bootstrap-status"></div>
+        </div>
+        
+        <div class="diagnostic-card">
+            <h5>3. 当前页面信息</h5>
+            <div id="page-info"></div>
+        </div>
+        
+        <div class="diagnostic-card">
+            <h5>4. 浏览器信息</h5>
+            <div id="browser-info"></div>
+        </div>
+        
+        <div class="diagnostic-card">
+            <h5>5. 控制台错误</h5>
+            <div id="console-errors">
+                <p class="text-muted">请按 F12 打开浏览器开发者工具，查看 Console 标签页中是否有红色错误信息</p>
+            </div>
+        </div>
+        
+        <div class="alert alert-info">
+            <strong>提示：</strong>
+            <ul class="mb-0">
+                <li>如果 jQuery 显示为"❌ 未加载"，说明 CDN 访问有问题</li>
+                <li>如果在 iframe 中显示"是"，说明当前是在子页面中</li>
+                <li>请截图此页面发送给技术支持</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 等待页面加载完成
+        window.addEventListener('load', function() {
+            // 1. 检查 jQuery
+            const jQueryStatus = document.getElementById('jquery-status');
+            if (typeof jQuery !== 'undefined') {
+                jQueryStatus.innerHTML = '<p class="status-ok">✅ jQuery 已正确加载 (版本: ' + jQuery.fn.jquery + ')</p>';
+            } else {
+                jQueryStatus.innerHTML = '<p class="status-error">❌ jQuery 未加载 - 请检查网络连接和 CDN 访问</p>';
+            }
+            
+            // 2. 检查 Bootstrap
+            const bootstrapStatus = document.getElementById('bootstrap-status');
+            if (typeof bootstrap !== 'undefined') {
+                bootstrapStatus.innerHTML = '<p class="status-ok">✅ Bootstrap 已正确加载</p>';
+            } else {
+                bootstrapStatus.innerHTML = '<p class="status-error">❌ Bootstrap 未加载</p>';
+            }
+            
+            // 3. 页面信息
+            const pageInfo = document.getElementById('page-info');
+            const isInIframe = window.self !== window.top;
+            pageInfo.innerHTML = `
+                <p><strong>当前 URL:</strong> ${window.location.href}</p>
+                <p><strong>在 iframe 中:</strong> ${isInIframe ? '<span class="status-warning">是</span>' : '<span class="status-ok">否</span>'}</p>
+                <p><strong>父页面 URL:</strong> ${isInIframe ? window.parent.location.href : '无（当前就是顶层页面）'}</p>
+            `;
+            
+            // 4. 浏览器信息
+            const browserInfo = document.getElementById('browser-info');
+            browserInfo.innerHTML = `
+                <p><strong>User Agent:</strong> ${navigator.userAgent}</p>
+                <p><strong>平台:</strong> ${navigator.platform}</p>
+                <p><strong>语言:</strong> ${navigator.language}</p>
+                <p><strong>在线状态:</strong> ${navigator.onLine ? '<span class="status-ok">在线</span>' : '<span class="status-error">离线</span>'}</p>
+            `;
+        });
+        
+        // 捕获错误
+        window.addEventListener('error', function(e) {
+            console.error('捕获到错误:', e);
+        });
+    </script>
+</body>
+</html>
+

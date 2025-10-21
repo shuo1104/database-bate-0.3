@@ -1,0 +1,252 @@
+{% extends "layout_embedded.html" %}
+
+{% block title %}个人信息管理{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <h2 class="mb-4">
+        <i class="bi bi-person-circle me-2"></i>个人信息管理
+    </h2>
+    
+    <ul class="nav nav-tabs mb-4" id="profileTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info" type="button" role="tab">
+                <i class="bi bi-person me-2"></i>个人信息
+            </button>
+        </li>
+        {% if session.user_role == 'admin' %}
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button" role="tab" 
+                    onclick="loadUserManagement()">
+                <i class="bi bi-people me-2"></i>用户管理
+            </button>
+        </li>
+        {% endif %}
+    </ul>
+    
+    <div class="tab-content" id="profileTabContent">
+        <!-- 个人信息标签页 -->
+        <div class="tab-pane fade show active" id="info" role="tabpanel">
+            <div class="row">
+                <div class="col-md-8">
+                    <!-- 基本信息卡片 -->
+                    <div class="card mb-4">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="bi bi-info-circle me-2"></i>基本信息</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('auth.update_profile') }}" id="updateProfileForm">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">用户名</label>
+                                        <input type="text" class="form-control" value="{{ user.Username }}" disabled>
+                                        <small class="text-muted">用户名不可修改</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">角色</label>
+                                        <input type="text" class="form-control" value="{{ '管理员' if user.Role == 'admin' else '普通用户' }}" disabled>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="real_name" class="form-label">真实姓名</label>
+                                        <input type="text" class="form-control" id="real_name" name="real_name" 
+                                               value="{{ user.RealName or '' }}">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="position" class="form-label">职位</label>
+                                        <input type="text" class="form-control" id="position" name="position" 
+                                               value="{{ user.Position or '' }}">
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label for="email" class="form-label">邮箱</label>
+                                        <input type="email" class="form-control" id="email" name="email" 
+                                               value="{{ user.Email or '' }}">
+                                    </div>
+                                </div>
+                                <hr class="my-4">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save me-2"></i>保存更改
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- 修改密码卡片 -->
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            <h5 class="mb-0"><i class="bi bi-key me-2"></i>修改密码</h5>
+                        </div>
+                        <div class="card-body">
+                            <form method="POST" action="{{ url_for('auth.change_password') }}" id="changePasswordForm">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <label for="old_password" class="form-label">当前密码 <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="old_password" name="old_password" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="new_password" class="form-label">新密码 <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="new_password" name="new_password" 
+                                               minlength="6" required>
+                                        <small class="text-muted">至少6位</small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="confirm_password" class="form-label">确认新密码 <span class="text-danger">*</span></label>
+                                        <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
+                                               minlength="6" required>
+                                    </div>
+                                </div>
+                                <hr class="my-4">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="bi bi-shield-lock me-2"></i>修改密码
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <!-- 账号信息卡片 -->
+                    <div class="card">
+                        <div class="card-header bg-info text-white">
+                            <h5 class="mb-0"><i class="bi bi-calendar me-2"></i>账号信息</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <small class="text-muted">创建时间</small>
+                                <p class="mb-0">{{ user.CreatedAt.strftime('%Y-%m-%d %H:%M') if user.CreatedAt else 'N/A' }}</p>
+                            </div>
+                            <div class="mb-3">
+                                <small class="text-muted">最后登录</small>
+                                <p class="mb-0">{{ user.LastLogin.strftime('%Y-%m-%d %H:%M') if user.LastLogin else '首次登录' }}</p>
+                            </div>
+                            <div class="mb-0">
+                                <small class="text-muted">账号状态</small>
+                                <p class="mb-0">
+                                    <span class="badge bg-success">正常使用</span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 用户管理标签页（仅管理员） -->
+        {% if session.user_role == 'admin' %}
+        <div class="tab-pane fade" id="users" role="tabpanel">
+            <div id="userManagementContent">
+                <p class="text-center"><i class="spinner-border spinner-border-sm me-2"></i>加载中...</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 密码确认验证
+const changePasswordForm = document.getElementById('changePasswordForm');
+if (changePasswordForm) {
+    // 为两个表单都添加提交事件监听
+    [updateProfileForm, changePasswordForm].forEach(form => {
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                // 在提交前通知父窗口显示加载遮罩
+                if (window.parent && window.parent !== window) {
+                    try {
+                        // 使用 postMessage 通知父页面显示加载动画
+                        window.parent.postMessage({ type: 'showLoading' }, '*');
+                    } catch (err) {
+                        console.error("postMessage to parent failed", err);
+                    }
+                }
+
+                // 对修改密码表单进行额外验证
+                if (form.id === 'changePasswordForm') {
+                    const newPassword = document.getElementById('new_password').value;
+                    const confirmPassword = document.getElementById('confirm_password').value;
+                    
+                    if (newPassword !== confirmPassword) {
+                        e.preventDefault(); 
+                        
+                        // 验证失败时，需要立即通知父窗口隐藏加载遮罩
+                        if (window.parent && window.parent !== window) {
+                            try {
+                                window.parent.postMessage({ type: 'hideLoading' }, '*');
+                            } catch (err) {
+                                 console.error("postMessage to parent failed", err);
+                            }
+                        }
+                        
+                        alert('两次输入的新密码不一致！');
+                        return false;
+                    }
+                }
+
+                // 添加提交动画
+                const submitBtn = this.querySelector('button[type="submit"]');
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>处理中...';
+                }
+            });
+        }
+    });
+}
+
+// 个人信息表单提交
+const updateProfileForms = document.querySelectorAll('form[action*="update_profile"]');
+updateProfileForms.forEach(form => {
+    form.addEventListener('submit', function(e) {
+        // 添加提交动画
+        const submitBtn = this.querySelector('button[type="submit"]');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>保存中...';
+        }
+    });
+});
+
+// 加载用户管理内容（iframe方式）
+function loadUserManagement() {
+    const content = document.getElementById('userManagementContent');
+    if (content && content.innerHTML.includes('spinner-border')) {
+        content.innerHTML = `
+            <iframe src="{{ url_for('auth.user_management') }}" 
+                    style="width: 100%; height: 600px; border: none; border-radius: 8px;">
+            </iframe>
+        `;
+    }
+}
+
+// 防止页面在 iframe 外层加载（添加调试信息后再修复）
+if (window.self === window.top) {
+    console.error('❌ 个人信息页面在 iframe 外加载！');
+    console.error('触发位置:', new Error().stack);
+    console.error('将在1秒后自动修复...');
+    
+    // 显示提示信息
+    document.body.innerHTML = `
+        <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #f5f5f5;">
+            <div style="text-align: center; padding: 40px; background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                <div style="font-size: 48px; margin-bottom: 20px;">⚠️</div>
+                <h2 style="color: #333; margin-bottom: 10px;">页面加载异常</h2>
+                <p style="color: #666; margin-bottom: 20px;">正在自动修复...</p>
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    setTimeout(function() {
+        window.location.href = '{{ url_for("index") }}';
+    }, 1000);
+}
+</script>
+{% endblock %}
+

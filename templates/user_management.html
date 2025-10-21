@@ -1,0 +1,446 @@
+{% extends "layout_embedded.html" %}
+
+{% block title %}用户管理{% endblock %}
+
+{% block extra_styles %}
+<style>
+    body, .card, .table tbody tr {
+        animation: none !important;
+        -webkit-animation: none !important;
+    }
+
+    .modal, .modal-backdrop {
+        animation: none !important;
+        -webkit-animation: none !important;
+        transition: none !important;
+        -webkit-transition: none !important;
+    }
+
+    .toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1090; /* 确保在模态框之上 */
+    }
+    .toast {
+        min-width: 250px;
+    }
+    .status-badge {
+        cursor: default;
+    }
+</style>
+{% endblock %}
+
+
+{% block content %}
+<style>
+    .toast-container {
+        position: fixed;
+        top: 1rem;
+        right: 1rem;
+        z-index: 1090; /* 确保在模态框之上 */
+    }
+    .toast {
+        min-width: 250px;
+    }
+    .status-badge {
+        cursor: default;
+    }
+</style>
+
+<div class="toast-container">
+    <!-- Toast elements will be injected here -->
+</div>
+
+<div class="container-fluid mt-4" id="main-content">
+    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+        <h2 class="mb-0">
+            <i class="bi bi-people-fill me-2"></i>用户管理
+        </h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="bi bi-person-plus me-2"></i>添加用户
+        </button>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>用户ID</th>
+                            <th>用户名</th>
+                            <th>真实姓名</th>
+                            <th>职位</th>
+                            <th>角色</th>
+                            <th>邮箱</th>
+                            <th>状态</th>
+                            <th>创建时间</th>
+                            <th>最后登录</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in users %}
+                        <tr>
+                            <td>{{ user.UserID }}</td>
+                            <td>
+                                <i class="bi bi-person-badge me-1"></i>{{ user.Username }}
+                            </td>
+                            <td>{{ user.RealName or '-' }}</td>
+                            <td>{{ user.Position or '-' }}</td>
+                            <td>
+                                {% if user.Role == 'admin' %}
+                                <span class="badge bg-danger">管理员</span>
+                                {% else %}
+                                <span class="badge bg-primary">普通用户</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.Email or '-' }}</td>
+                            <td>
+                                {% if user.IsActive %}
+                                <span class="badge bg-success">正常</span>
+                                {% else %}
+                                <span class="badge bg-secondary">已禁用</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ user.CreatedAt.strftime('%Y-%m-%d') if user.CreatedAt else '-' }}</td>
+                            <td>{{ user.LastLogin.strftime('%Y-%m-%d %H:%M') if user.LastLogin else '未登录' }}</td>
+                            <td>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if user.UserID != session.user_id %}
+                                    <form method="POST" action="{{ url_for('auth.delete_user', user_id=user.UserID) }}" 
+                                          class="delete-user-form" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                                title="删除用户">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                    <button type="button" class="btn btn-sm btn-outline-primary" 
+                                            data-bs-toggle="modal" data-bs-target="#resetPasswordModal-{{ user.UserID }}"
+                                            title="重置密码">
+                                        <i class="bi bi-key"></i>
+                                    </button>
+                                    {% else %}
+                                    <span class="badge bg-info">当前用户</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <!-- 重置密码模态框已移至页面底部，避免嵌套在表格行内导致的定位与渲染抖动 -->
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+{# 将所有重置密码模态框统一渲染到页面底部，脱离表格及其 transform/hover 上下文，避免闪动 #}
+{% for user in users %}
+<div class="modal" id="resetPasswordModal-{{ user.UserID }}" tabindex="-1" aria-labelledby="resetPasswordModalLabel-{{ user.UserID }}" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="resetPasswordModalLabel-{{ user.UserID }}">重置用户密码: {{ user.Username }}</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="reset-form-container">
+                    <form method="POST" action="{{ url_for('auth.reset_user_password', user_id=user.UserID) }}" class="reset-password-form">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <div class="mb-3">
+                            <label for="new_password-{{ user.UserID }}" class="form-label">新密码</label>
+                            <input type="password" class="form-control" name="new_password" id="new_password-{{ user.UserID }}" placeholder="建议留空以生成安全密码">
+                        </div>
+                        <div class="modal-footer px-0 pb-0">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-warning">确认重置</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="reset-success-container" style="display: none;">
+                    <div class="text-center py-3">
+                        <i class="bi bi-check-circle-fill text-success" style="font-size: 3rem;"></i>
+                        <h4 class="mt-3">密码重置成功!</h4>
+                        <p class="text-muted">新密码: <strong class="new-password-display"></strong></p>
+                        <p>此窗口将在 <span class="countdown">3</span> 秒后自动关闭。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endfor %}
+
+<!-- 添加用户模态框 -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title">
+                    <i class="bi bi-person-plus me-2"></i>添加新用户
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('auth.add_user') }}" id="addUserForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="username" class="form-label">用户名 <span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="username" name="username" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="password" class="form-label">初始密码 <span class="text-danger">*</span></label>
+                            <input type="password" class="form-control" id="password" name="password" minlength="6" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="real_name" class="form-label">真实姓名</label>
+                            <input type="text" class="form-control" id="real_name" name="real_name">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="position" class="form-label">职位</label>
+                            <input type="text" class="form-control" id="position" name="position">
+                        </div>
+                        <div class="col-md-6">
+                            <label for="role" class="form-label">角色 <span class="text-danger">*</span></label>
+                            <select class="form-select" id="role" name="role" required>
+                                <option value="user">普通用户</option>
+                                <option value="admin">管理员</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">邮箱</label>
+                            <input type="email" class="form-control" id="email" name="email">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-save me-2"></i>创建用户
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 添加用户表单提交
+    const addUserForm = document.getElementById('addUserForm');
+    if (addUserForm) {
+        addUserForm.addEventListener('submit', function() {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>创建中...';
+        });
+    }
+    
+    // 自定义 Toast 通知函数
+    function showToast(message, type = 'info') {
+        const toastContainer = document.querySelector('.toast-container');
+        if (!toastContainer) return;
+
+        // 颜色映射
+        const bgClass = type === 'success' ? 'bg-success' : (type === 'error' ? 'bg-danger' : 'bg-info');
+        const iconClass = type === 'success' ? 'bi-check-circle-fill' : (type === 'error' ? 'bi-x-circle-fill' : 'bi-info-circle-fill');
+
+        const toastEl = document.createElement('div');
+        toastEl.className = `toast text-white ${bgClass} border-0`;
+        toastEl.setAttribute('role', 'alert');
+        toastEl.setAttribute('aria-live', 'assertive');
+        toastEl.setAttribute('aria-atomic', 'true');
+
+        const flex = document.createElement('div');
+        flex.className = 'd-flex align-items-center';
+
+        const body = document.createElement('div');
+        body.className = 'toast-body';
+        body.innerHTML = `<i class="bi ${iconClass} me-2"></i>${message}`;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.type = 'button';
+        closeBtn.className = 'btn-close btn-close-white me-2 m-auto';
+        closeBtn.setAttribute('data-bs-dismiss', 'toast');
+        closeBtn.setAttribute('aria-label', 'Close');
+
+        flex.appendChild(body);
+        flex.appendChild(closeBtn);
+        toastEl.appendChild(flex);
+        toastContainer.appendChild(toastEl);
+
+        const toast = new bootstrap.Toast(toastEl, { delay: 3000, autohide: true });
+        toast.show();
+    }
+    
+    // 2. 重置密码表单AJAX提交
+    document.querySelectorAll('.reset-password-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // 彻底阻止表单的默认提交行为
+            e.stopPropagation();
+
+            const currentForm = e.target;
+            const formData = new FormData(currentForm);
+            const url = currentForm.action;
+            const submitBtn = currentForm.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            const modal = currentForm.closest('.modal');
+
+            // 禁用按钮并显示加载状态
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 重置中...`;
+
+            fetch(url, {
+                method: 'POST',
+                body: formData,
+                credentials: 'same-origin',
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
+            .then(async (response) => {
+                const contentType = response.headers.get('content-type') || '';
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                if (contentType.includes('application/json')) {
+                    return response.json();
+                }
+                // 处理登录过期或返回HTML的情况
+                const text = await response.text();
+                if (text && text.toLowerCase().includes('login')) {
+                    showToast('登录已过期，请重新登录', 'error');
+                } else {
+                    showToast('服务器返回异常响应', 'error');
+                }
+                throw new Error('Non-JSON response');
+            })
+            .then(data => {
+                if (data.success) {
+                    const modalBody = currentForm.closest('.modal-body');
+                    
+                    // 切换到成功视图
+                    modalBody.querySelector('.reset-form-container').style.display = 'none';
+                    const successContainer = modalBody.querySelector('.reset-success-container');
+                    successContainer.querySelector('.new-password-display').textContent = data.new_password;
+                    successContainer.style.display = 'block';
+                    
+                    // 倒计时关闭模态框
+                    let countdown = 3;
+                    const countdownElement = successContainer.querySelector('.countdown');
+                    countdownElement.textContent = countdown;
+                    
+                    const interval = setInterval(() => {
+                        countdown--;
+                        countdownElement.textContent = countdown;
+                        if (countdown <= 0) {
+                            clearInterval(interval);
+                            const modalInstance = bootstrap.Modal.getInstance(modal);
+                            if (modalInstance) {
+                                modalInstance.hide();
+                            }
+                        }
+                    }, 1000);
+
+                } else {
+                    showToast('错误: ' + (data.message || '未知错误'), 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('请求失败，请检查网络连接。', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnHtml;
+            });
+        });
+    });
+
+    // 3. 模态框关闭时，重置其内部状态
+    document.querySelectorAll('.modal[id*="resetPasswordModal"]').forEach(modalEl => {
+        modalEl.addEventListener('hidden.bs.modal', function(event) {
+            const modalBody = this.querySelector('.modal-body');
+            const form = this.querySelector('.reset-password-form');
+            const submitBtn = form.querySelector('button[type="submit"]');
+
+            // 隐藏成功信息，显示表单
+            modalBody.querySelector('.reset-success-container').style.display = 'none';
+            modalBody.querySelector('.reset-form-container').style.display = 'block';
+
+            // 重置表单内容
+            form.reset(); 
+
+            // 恢复提交按钮
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = '确认重置';
+        });
+    });
+
+    // 删除用户（AJAX，无刷新移除表格行）
+    document.querySelectorAll('form.delete-user-form').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault(); // 阻止默认表单提交
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const actionUrl = this.action;
+            const userRow = submitBtn.closest('tr');
+            
+            if (!confirm('确定要删除该用户吗？此操作不可撤销。')) {
+                return;
+            }
+
+            // 显示加载状态
+            submitBtn.disabled = true;
+            const originalHtml = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+            
+            // 使用 fetch 提交
+            fetch(actionUrl, {
+                method: 'POST',
+                credentials: 'same-origin',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                return response.json();
+            })
+            .then(data => {
+                if (!data.success) throw new Error(data.message || '删除失败');
+                // 成功删除：移除表格行
+                userRow.parentNode.removeChild(userRow);
+                showToast('用户已删除', 'success');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToast('删除失败：' + (error.message || '请重试'), 'error');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHtml;
+            });
+        });
+    });
+    
+    // 检查是否有 flash 消息（从后端传来的）
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          showToast("{{ message }}", "{{ category }}");
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+});
+</script>
+{% endblock %}
+

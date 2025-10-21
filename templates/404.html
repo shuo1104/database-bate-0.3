@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+
+{% block title %}页面未找到 - 404{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center">
+            <h1 class="display-1">404</h1>
+            <h2>页面未找到</h2>
+            <p class="lead">抱歉，您访问的页面不存在。</p>
+            <div class="mt-4">
+                <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+                <a href="javascript:history.back()" class="btn btn-secondary">返回上一页</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

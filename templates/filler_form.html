@@ -1,0 +1,110 @@
+{% extends "layout_embedded.html" %}
+
+{% block title %}
+{% if action == 'add' %}新建无机材料{% else %}编辑无机材料{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>{{ '编辑无机材料' if action == 'edit' else '创建新无机材料' }}</h2>
+    <form method="POST" action="{{ url_for('fillers.edit_filler', filler_id=filler.FillerID) if action == 'edit' else url_for('fillers.add_filler') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                <label for="TradeName" class="form-label">商品名称 <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="TradeName" name="TradeName" value="{{ filler.TradeName or '' }}" required>
+            </div>
+            <div class="col-md-6">
+                <label for="FillerType_FK" class="form-label">类型</label>
+                <select class="form-select" id="FillerType_FK" name="FillerType_FK">
+                    <option value="">请选择...</option>
+                    {% for type in filler_types %}
+                    <option value="{{ type.FillerTypeID }}" {% if filler.FillerType_FK == type.FillerTypeID %}selected{% endif %}>
+                        {{ type.FillerTypeName }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="Supplier" class="form-label">供应商</label>
+                <input type="text" class="form-control" id="Supplier" name="Supplier" value="{{ filler.Supplier or '' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="ParticleSize" class="form-label">粒径 (含范围及D50)</label>
+                <input type="text" class="form-control" id="ParticleSize" name="ParticleSize" value="{{ filler.ParticleSize or '' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="CouplingAgent" class="form-label">所用偶联剂</label>
+                <input type="text" class="form-control" id="CouplingAgent" name="CouplingAgent" value="{{ filler.CouplingAgent or '' }}">
+            </div>
+            <div class="col-md-6">
+                <label for="SurfaceArea" class="form-label">比表面积 (m²/g)</label>
+                <input type="number" step="0.0001" class="form-control" id="SurfaceArea" name="SurfaceArea" value="{{ filler.SurfaceArea or '' }}">
+            </div>
+            <div class="col-12">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="IsSilanized" name="IsSilanized" {% if filler.IsSilanized %}checked{% endif %}>
+                    <label class="form-check-label" for="IsSilanized">
+                        是否硅烷化
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-4">
+
+        <div class="mt-3">
+            <a href="{{ url_for('fillers.filler_list') }}" class="btn btn-secondary">返回列表</a>
+            <button type="submit" class="btn btn-primary">{{ '更新' if action == 'edit' else '创建' }}</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// 为所有导航和操作按钮添加过渡动画
+document.addEventListener('DOMContentLoaded', function() {
+    // 为"返回列表"按钮添加过渡动画
+    const backButton = document.querySelector('a.btn.btn-secondary');
+    if (backButton) {
+        backButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetUrl = this.href;
+            
+            // 通知父窗口显示加载遮罩
+            if (window.parent && window.parent !== window) {
+                window.parent.postMessage({
+                    type: 'showLoading',
+                    url: targetUrl
+                }, '*');
+            } else {
+                window.location.href = targetUrl;
+            }
+        });
+    }
+    
+    // 为表单提交添加过渡动画
+    const form = document.querySelector('form[method="POST"]');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+            const submitBtn = this.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                const originalText = submitBtn.textContent;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>保存中...';
+                
+                // 如果表单验证失败，恢复按钮状态
+                setTimeout(function() {
+                    if (!form.checkValidity()) {
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = originalText;
+                    }
+                }, 100);
+            }
+        });
+    }
+});
+</script>
+{% endblock %}
