@@ -139,26 +139,24 @@ $(document).ready(function() {
     const $loadingOverlay = $('#loading-overlay');
     const $contentFrame = $('#content-frame');
     let isInitialLoad = true;
+    let currentUrl = '{{ url_for("projects.project_list") }}'; // 记录当前URL，避免重复加载
     
     // 显示加载动画
     function showLoading() {
-        // iframe 淡出
-        $contentFrame.css('opacity', '0');
-        
-        $loadingOverlay.css('display', 'flex');
-        // 强制重排以触发过渡
-        $loadingOverlay[0].offsetHeight;
-        $loadingOverlay.css('opacity', '1');
+        $loadingOverlay.css({
+            'display': 'flex',
+            'opacity': '1'
+        });
+        $contentFrame.css('opacity', '0.3');
     }
     
-    // 隐藏加载动画
+    // 隐藏加载动画（立即隐藏，无延迟）
     function hideLoading() {
-        $loadingOverlay.css('opacity', '0');
-        setTimeout(function() {
-            $loadingOverlay.css('display', 'none');
-            // iframe 淡入
-            $contentFrame.css('opacity', '1');
-        }, 300); // 与 CSS 过渡时间匹配
+        $loadingOverlay.css({
+            'display': 'none',
+            'opacity': '0'
+        });
+        $contentFrame.css('opacity', '1');
     }
     
     // 专门处理个人信息按钮（多重防护）
@@ -175,13 +173,20 @@ $(document).ready(function() {
             
             const url = this.getAttribute('data-url');
             
+            // 优化：避免重复加载
+            if (url === currentUrl) {
+                console.log('已在当前页面，跳过加载');
+                return false;
+            }
+            
             // 显示加载动画
             showLoading();
             
-            // 加载到 iframe
-            setTimeout(function() {
-                $contentFrame.attr('src', url);
-            }, 100);
+            // 更新当前URL
+            currentUrl = url;
+            
+            // 立即加载到 iframe
+            $contentFrame.attr('src', url);
             
             return false;
         }, true); // 使用捕获阶段
@@ -199,6 +204,15 @@ $(document).ready(function() {
         e.preventDefault();
         e.stopPropagation();
         
+        // 加载对应 URL 到 iframe
+        const url = $(this).data('url');
+        
+        // 优化：如果点击的是当前页面，直接返回，避免重复加载
+        if (url === currentUrl) {
+            console.log('已在当前页面，跳过加载');
+            return;
+        }
+        
         // 移除导航菜单中所有 active 类（不影响用户卡片）
         $('.nav-menu .nav-link').removeClass('active');
         
@@ -207,23 +221,14 @@ $(document).ready(function() {
             $(this).addClass('active');
         }
         
-        // 添加点击动画效果
-        const $clickedLink = $(this);
-        $clickedLink.css('transform', 'scale(0.95)');
-        setTimeout(function() {
-            $clickedLink.css('transform', '');
-        }, 150);
-        
         // 显示加载动画
         showLoading();
         
-        // 加载对应 URL 到 iframe
-        const url = $clickedLink.data('url');
+        // 更新当前URL
+        currentUrl = url;
         
-        // 延迟一点再切换iframe，让淡出动画更明显
-        setTimeout(function() {
-            $contentFrame.attr('src', url);
-        }, 100);
+        // 立即切换iframe，提升响应速度
+        $contentFrame.attr('src', url);
     });
     
     // 退出按钮单独处理（允许默认跳转）
@@ -234,6 +239,7 @@ $(document).ready(function() {
     
     // 监听 iframe 加载事件
     $contentFrame.on('load', function() {
+        console.log('iframe loaded');
         try {
             // 检查 iframe 是否跳转到登录页（Session 过期）
             const iframeUrl = this.contentWindow.location.href;
@@ -244,16 +250,12 @@ $(document).ready(function() {
             }
         } catch (e) {
             // 跨域限制，无法访问 iframe URL（这是正常的）
+            console.log('Cross-origin restriction (normal)');
         }
         
-        // 初次加载不显示动画
-        if (isInitialLoad) {
-            isInitialLoad = false;
-            hideLoading();
-        } else {
-            // 页面切换时，延迟一点隐藏加载动画，让用户看到完整的过渡效果
-            setTimeout(hideLoading, 400);
-        }
+        // 立即隐藏加载动画（无延迟）
+        isInitialLoad = false;
+        hideLoading();
     });
     
     // 处理 iframe 加载错误
@@ -283,15 +285,23 @@ $(document).ready(function() {
     window.addEventListener('message', function(event) {
         // 安全检查：确保消息来自同源或可信源
         if (event.data && event.data.type === 'showLoading') {
-            console.log('接收到加载请求:', event.data.url);
+            const url = event.data.url;
+            console.log('接收到加载请求:', url);
+            
+            // 优化：避免重复加载
+            if (url === currentUrl) {
+                console.log('已在当前页面，跳过加载');
+                return;
+            }
             
             // 显示加载动画
             showLoading();
             
-            // 延迟一点再切换 iframe，让淡出动画更明显
-            setTimeout(function() {
-                $contentFrame.attr('src', event.data.url);
-            }, 100);
+            // 更新当前URL
+            currentUrl = url;
+            
+            // 立即切换 iframe，提升响应速度
+            $contentFrame.attr('src', url);
         }
     });
 });

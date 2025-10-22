@@ -1,0 +1,212 @@
+[2025-10-21 15:15:11,701] INFO in app: CSRF 保护已启用
+[2025-10-21 15:15:11,701] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:15:11,702] INFO in app: 请求频率限制已启用
+[2025-10-21 15:15:11,714] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:15:11,716] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:15:25,747] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-21 15:15:32,057] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-21 15:19:39,575] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-21 15:21:34,234] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-21 15:23:36,243] INFO in app: CSRF 保护已启用
+[2025-10-21 15:23:36,243] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:23:36,244] INFO in app: 请求频率限制已启用
+[2025-10-21 15:23:36,257] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:23:36,259] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:23:47,191] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:23:51,457] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:23:56,519] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:25:09,401] INFO in app: 404错误: http://localhost:5000/favicon.ico from 127.0.0.1
+[2025-10-21 15:32:14,344] INFO in app: CSRF 保护已启用
+[2025-10-21 15:32:14,344] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:32:14,345] INFO in app: 请求频率限制已启用
+[2025-10-21 15:32:14,358] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:32:14,359] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:32:18,532] INFO in app: 404错误: http://127.0.0.1:5000/favicon.ico from 127.0.0.1
+[2025-10-21 15:32:25,097] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:32:44,351] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:32:46,953] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:33:26,573] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:35:20,365] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:38:56,444] INFO in app: CSRF 保护已启用
+[2025-10-21 15:38:56,445] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:38:56,445] INFO in app: 请求频率限制已启用
+[2025-10-21 15:38:56,467] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:38:56,469] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:47:19,060] INFO in app: CSRF 保护已启用
+[2025-10-21 15:47:19,060] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:47:19,060] INFO in app: 请求频率限制已启用
+[2025-10-21 15:47:19,073] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:47:19,074] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:47:30,221] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:47:40,724] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:48:58,165] INFO in app: CSRF 保护已启用
+[2025-10-21 15:48:58,165] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:48:58,166] INFO in app: 请求频率限制已启用
+[2025-10-21 15:48:58,178] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:48:58,179] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:49:02,356] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:49:13,842] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:49:16,568] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:49:20,307] INFO in app: CSRF 保护已启用
+[2025-10-21 15:49:20,307] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:49:20,307] INFO in app: 请求频率限制已启用
+[2025-10-21 15:49:20,319] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:49:20,321] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:50:00,339] INFO in app: CSRF 保护已启用
+[2025-10-21 15:50:00,339] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:50:00,340] INFO in app: 请求频率限制已启用
+[2025-10-21 15:50:00,352] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:50:00,353] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:50:07,948] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:50:17,971] INFO in app: CSRF 保护已启用
+[2025-10-21 15:50:17,971] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:50:17,971] INFO in app: 请求频率限制已启用
+[2025-10-21 15:50:17,983] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:50:17,985] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:51:10,340] INFO in app: CSRF 保护已启用
+[2025-10-21 15:51:10,341] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:51:10,341] INFO in app: 请求频率限制已启用
+[2025-10-21 15:51:10,354] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:51:10,355] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 15:51:19,090] WARNING in app: CSRF验证失败: The CSRF session token is missing.
+[2025-10-21 15:53:17,750] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-21 15:53:17,752] INFO in app: CSRF 保护已启用
+[2025-10-21 15:53:17,752] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 15:53:17,752] INFO in app: 请求频率限制已启用
+[2025-10-21 15:53:17,765] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 15:53:17,766] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 16:24:48,130] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-21 16:24:48,132] INFO in app: CSRF 保护已启用
+[2025-10-21 16:24:48,132] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 16:24:48,132] INFO in app: 请求频率限制已启用
+[2025-10-21 16:24:48,146] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 16:24:48,147] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 16:36:47,058] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-21 16:36:47,060] INFO in app: CSRF 保护已启用
+[2025-10-21 16:36:47,060] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 16:36:47,060] INFO in app: 请求频率限制已启用
+[2025-10-21 16:36:47,089] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 16:36:47,092] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-21 16:47:06,476] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-21 16:47:06,478] INFO in app: CSRF 保护已启用
+[2025-10-21 16:47:06,478] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-21 16:47:06,478] INFO in app: 请求频率限制已启用
+[2025-10-21 16:47:06,490] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-21 16:47:06,492] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 10:35:34,530] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 10:35:34,532] INFO in app: CSRF 保护已启用
+[2025-10-22 10:35:34,532] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-22 10:35:34,532] INFO in app: 请求频率限制已启用
+[2025-10-22 10:35:34,544] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-22 10:35:34,546] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 10:35:38,882] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 10:35:38,884] INFO in app: CSRF 保护已启用
+[2025-10-22 10:35:38,884] INFO in app: CORS 已启用 - 允许的源: ['http://localhost:3000', 'http://localhost:8080']
+[2025-10-22 10:35:38,884] INFO in app: 请求频率限制已启用
+[2025-10-22 10:35:38,898] INFO in app: 所有 Blueprints 已注册（包括 API v1）
+[2025-10-22 10:35:38,900] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 10:35:43,631] INFO in app: 404错误: http://127.0.0.1:5000/favicon.ico from 127.0.0.1
+[2025-10-22 10:49:11,504] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 10:49:11,505] INFO in app: CSRF 保护已启用
+[2025-10-22 10:49:11,506] INFO in app: 请求频率限制已启用
+[2025-10-22 10:49:11,515] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 10:49:11,516] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 10:58:23,777] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 10:58:23,779] INFO in app: CSRF 保护已启用
+[2025-10-22 10:58:23,779] INFO in app: 请求频率限制已启用
+[2025-10-22 10:58:23,790] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 10:58:23,791] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 12:34:33,107] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 12:34:33,109] INFO in app: CSRF 保护已启用
+[2025-10-22 12:34:33,109] INFO in app: 请求频率限制已启用
+[2025-10-22 12:34:33,118] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 12:34:33,119] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 12:34:45,465] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 12:36:19,147] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 12:36:19,148] INFO in app: CSRF 保护已启用
+[2025-10-22 12:36:19,148] INFO in app: 请求频率限制已启用
+[2025-10-22 12:36:19,161] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 12:36:19,162] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 12:36:25,475] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 13:44:24,831] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 13:44:24,832] INFO in app: CSRF 保护已启用
+[2025-10-22 13:44:24,832] INFO in app: 请求频率限制已启用
+[2025-10-22 13:44:24,841] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 13:44:24,842] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 13:46:49,245] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 13:46:49,248] INFO in app: CSRF 保护已启用
+[2025-10-22 13:46:49,248] INFO in app: 请求频率限制已启用
+[2025-10-22 13:46:49,258] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 13:46:49,260] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 13:47:31,426] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 13:47:31,428] INFO in app: CSRF 保护已启用
+[2025-10-22 13:47:31,428] INFO in app: 请求频率限制已启用
+[2025-10-22 13:47:31,441] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 13:47:31,443] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 13:47:43,481] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 13:47:47,616] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 13:49:21,254] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 13:51:18,200] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 13:51:18,201] INFO in app: CSRF 保护已启用
+[2025-10-22 13:51:18,201] INFO in app: 请求频率限制已启用
+[2025-10-22 13:51:18,216] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 13:51:18,217] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 13:51:23,739] INFO in app: 404错误: http://192.168.110.88:5000/favicon.ico from 192.168.110.88
+[2025-10-22 14:07:59,690] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 14:07:59,692] INFO in app: CSRF 保护已启用
+[2025-10-22 14:07:59,692] INFO in app: 请求频率限制已启用
+[2025-10-22 14:07:59,702] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 14:07:59,703] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 14:09:59,618] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 14:14:37,740] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 14:14:37,741] INFO in app: CSRF 保护已启用
+[2025-10-22 14:14:37,742] INFO in app: 请求频率限制已启用
+[2025-10-22 14:14:37,756] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 14:14:37,757] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 14:15:11,253] INFO in app: 404错误: http://127.0.0.1:5000/favicon.ico from 127.0.0.1
+[2025-10-22 14:15:12,841] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 14:18:08,451] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 14:18:08,452] INFO in app: CSRF 保护已启用
+[2025-10-22 14:18:08,452] INFO in app: 请求频率限制已启用
+[2025-10-22 14:18:08,463] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 14:18:08,465] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False

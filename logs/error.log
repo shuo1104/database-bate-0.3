@@ -1,0 +1,45 @@
+[2025-10-21 15:32:25,097] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:32:44,351] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:32:46,953] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:33:26,573] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'
+[2025-10-21 15:35:20,365] ERROR in app: 未捕获的异常: 'set' object has no attribute 'limit'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\auth.py", line 97, in login
+    @limiter.limit("5 per minute; 20 per hour")
+AttributeError: 'set' object has no attribute 'limit'

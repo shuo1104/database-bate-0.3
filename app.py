@@ -21,10 +21,6 @@ from blueprints.materials import materials_bp
 from blueprints.fillers import fillers_bp
 from blueprints.formulas import formulas_bp
 from blueprints.auth import auth_bp, login_required
-from blueprints.api import api_bp  # API Blueprint
-
-# Import API docs
-from api.docs import get_api_docs
 
 app = Flask(__name__)
 # 配置日志系统
@@ -48,13 +44,9 @@ else:
     logger.info(f"✓ SECRET_KEY已加载（长度: {len(config.SECRET_KEY)}）")
 
 # 初始化所有扩展
-cors_config = init_extensions(app)
+init_extensions(app)
 logger.info("CSRF 保护已启用")
-logger.info(f"CORS 已启用 - 允许的源: {cors_config['origins']}")
 logger.info("请求频率限制已启用")
-
-# API路由豁免CSRF检查（API使用JWT认证）
-csrf.exempt(api_bp)
 
 # Register Blueprints
 app.register_blueprint(auth_bp)
@@ -62,8 +54,7 @@ app.register_blueprint(projects_bp)
 app.register_blueprint(materials_bp)
 app.register_blueprint(fillers_bp)
 app.register_blueprint(formulas_bp)
-app.register_blueprint(api_bp)  # API Blueprint
-logger.info("所有 Blueprints 已注册（包括 API v1）")
+logger.info("所有 Blueprints 已注册")
 
 @app.after_request
 def set_security_headers(response):
@@ -77,16 +68,24 @@ def set_security_headers(response):
     # 内容安全策略 (CSP) - 允许CDN资源加载
     response.headers['Content-Security-Policy'] = (
         "default-src 'self'; "
-        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.bootcdn.net https://cdn.jsdelivr.net https://unpkg.com; "
-        "style-src 'self' 'unsafe-inline' https://cdn.bootcdn.net https://cdn.jsdelivr.net https://unpkg.com https://fonts.googleapis.com; "
-        "font-src 'self' data: https://cdn.bootcdn.net https://cdn.jsdelivr.net https://fonts.gstatic.com; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.bootcdn.net; "
+        "style-src 'self' 'unsafe-inline' https://cdn.bootcdn.net; "
+        "font-src 'self' data: https://cdn.bootcdn.net; "
         "img-src 'self' data: https:; "
-        "connect-src 'self';"
+        "connect-src 'self' https://cdn.bootcdn.net;"
     )
     # 引用来源策略
     response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
     # 权限策略
     response.headers['Permissions-Policy'] = 'geolocation=(), microphone=(), camera=()'
+    
+    # 静态资源缓存策略 - 加速后续加载
+    if request.path.startswith('/static/'):
+        # 静态文件缓存1年
+        response.headers['Cache-Control'] = 'public, max-age=31536000, immutable'
+    elif request.endpoint and 'api' not in request.endpoint:
+        # HTML页面缓存10分钟
+        response.headers['Cache-Control'] = 'public, max-age=600'
     
     return response
 
@@ -112,18 +111,6 @@ def check_session():
         })
     else:
         return jsonify({'active': False})
-
-
-@app.route('/api/docs')
-def api_docs():
-    """API文档（OpenAPI规范）"""
-    return jsonify(get_api_docs())
-
-
-@app.route('/api/docs/swagger')
-def api_docs_swagger():
-    """Swagger UI页面"""
-    return render_template('swagger_ui.html')
 
 @app.errorhandler(CSRFError)
 def handle_csrf_error(e):

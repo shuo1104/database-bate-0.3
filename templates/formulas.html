@@ -58,11 +58,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }, '*');
         } else {
             // 如果不在 iframe 中，使用原来的淡出效果
-            document.body.style.transition = 'opacity 0.3s ease-out';
-            document.body.style.opacity = '0';
-            setTimeout(function() {
-                window.location.href = targetUrl;
-            }, 300);
+            // 立即跳转，无延迟
+            window.location.href = targetUrl;
         }
     });
 

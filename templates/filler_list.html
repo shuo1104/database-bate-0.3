@@ -184,19 +184,16 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             const targetUrl = this.href;
             
-            // 通知父窗口显示加载遮罩
-            if (window.parent && window.parent !== window) {
-                window.parent.postMessage({
-                    type: 'showLoading',
-                    url: targetUrl
-                }, '*');
-            } else {
-                document.body.style.transition = 'opacity 0.3s ease-out';
-                document.body.style.opacity = '0';
-                setTimeout(function() {
+                // 通知父窗口显示加载遮罩
+                if (window.parent && window.parent !== window) {
+                    window.parent.postMessage({
+                        type: 'showLoading',
+                        url: targetUrl
+                    }, '*');
+                } else {
+                    // 立即跳转，无延迟
                     window.location.href = targetUrl;
-                }, 300);
-            }
+                }
         });
     }
     
@@ -213,12 +210,8 @@ document.addEventListener('DOMContentLoaded', function() {
                         url: targetUrl
                     }, '*');
                 } else {
-                    // 如果不在 iframe 中，使用原来的淡出效果
-                    document.body.style.transition = 'opacity 0.3s ease-out';
-                    document.body.style.opacity = '0';
-                    setTimeout(function() {
-                        window.location = targetUrl;
-                    }, 300);
+                    // 立即跳转，无延迟
+                    window.location = targetUrl;
                 }
             }
         });
