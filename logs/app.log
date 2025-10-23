@@ -210,3 +210,14 @@ AttributeError: 'set' object has no attribute 'limit'
 [2025-10-22 14:18:08,452] INFO in app: 请求频率限制已启用
 [2025-10-22 14:18:08,463] INFO in app: 所有 Blueprints 已注册
 [2025-10-22 14:18:08,465] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 15:05:29,295] INFO in app: 404错误: http://127.0.0.1:5000/.well-known/appspecific/com.chrome.devtools.json from 127.0.0.1
+[2025-10-22 15:48:01,459] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 15:48:01,460] INFO in app: CSRF 保护已启用
+[2025-10-22 15:48:01,461] INFO in app: 请求频率限制已启用
+[2025-10-22 15:48:01,469] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 15:48:01,470] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-22 16:03:55,689] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-22 16:03:55,690] INFO in app: CSRF 保护已启用
+[2025-10-22 16:03:55,690] INFO in app: 请求频率限制已启用
+[2025-10-22 16:03:55,700] INFO in app: 所有 Blueprints 已注册
+[2025-10-22 16:03:55,701] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False

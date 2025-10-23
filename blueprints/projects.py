@@ -29,6 +29,13 @@ def project_list():
     # 获取分页参数
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)  # 默认每页20条
+
+    # 获取筛选参数（统一服务端筛选）
+    filter_type = (request.args.get('type') or '').strip()
+    filter_formulator = (request.args.get('formulator') or '').strip()
+    filter_date_start = (request.args.get('date_start') or '').strip()
+    filter_date_end = (request.args.get('date_end') or '').strip()
+    filter_q = (request.args.get('q') or '').strip()
     
     # 验证分页参数
     if page < 1:
@@ -45,9 +52,36 @@ def project_list():
         return render_template('project_list.html', projects=[], page=1, total_pages=0, total=0, per_page=per_page)
     
     cursor = cnx.cursor(dictionary=True)
-    
-    # 查询总记录数
-    cursor.execute("SELECT COUNT(*) as total FROM tbl_ProjectInfo")
+
+    # 预备 WHERE 子句
+    where_clauses = []
+    params = []
+    if filter_type:
+        where_clauses.append("pt.TypeName = %s")
+        params.append(filter_type)
+    if filter_formulator:
+        where_clauses.append("p.FormulatorName = %s")
+        params.append(filter_formulator)
+    if filter_date_start:
+        where_clauses.append("p.FormulationDate >= %s")
+        params.append(filter_date_start)
+    if filter_date_end:
+        where_clauses.append("p.FormulationDate <= %s")
+        params.append(filter_date_end)
+    if filter_q:
+        where_clauses.append("(p.ProjectName LIKE %s OR p.FormulaCode LIKE %s)")
+        like_val = f"%{filter_q}%"
+        params.extend([like_val, like_val])
+
+    where_sql = (" WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+
+    # 查询总记录数（包含筛选）
+    count_sql = (
+        "SELECT COUNT(*) as total FROM tbl_ProjectInfo p "
+        "LEFT JOIN tbl_Config_ProjectTypes pt ON p.ProjectType_FK = pt.TypeID"
+        + where_sql
+    )
+    cursor.execute(count_sql, tuple(params))
     total = cursor.fetchone()['total']
     
     # 计算总页数
@@ -58,16 +92,22 @@ def project_list():
         page = total_pages
         offset = (page - 1) * per_page
     
-    # 查询当前页数据
-    query = """
-        SELECT p.*, pt.TypeName 
-        FROM tbl_ProjectInfo p
-        LEFT JOIN tbl_Config_ProjectTypes pt ON p.ProjectType_FK = pt.TypeID
-        ORDER BY p.ProjectID DESC
-        LIMIT %s OFFSET %s
-    """
-    cursor.execute(query, (per_page, offset))
+    # 查询当前页数据（包含筛选）
+    query = (
+        "SELECT p.*, pt.TypeName "
+        "FROM tbl_ProjectInfo p "
+        "LEFT JOIN tbl_Config_ProjectTypes pt ON p.ProjectType_FK = pt.TypeID "
+        + where_sql +
+        " ORDER BY p.ProjectID DESC LIMIT %s OFFSET %s"
+    )
+    cursor.execute(query, tuple(params + [per_page, offset]))
     projects = cursor.fetchall()
+
+    # 供下拉使用的选项（全量，不受当前分页限制）
+    cursor.execute("SELECT TypeName FROM tbl_Config_ProjectTypes ORDER BY TypeName")
+    types = [r['TypeName'] for r in cursor.fetchall()]
+    cursor.execute("SELECT DISTINCT FormulatorName FROM tbl_ProjectInfo WHERE COALESCE(FormulatorName,'') <> '' ORDER BY FormulatorName")
+    formulators = [r['FormulatorName'] for r in cursor.fetchall()]
     cursor.close()
     cnx.close()
     
@@ -76,7 +116,14 @@ def project_list():
                          page=page,
                          per_page=per_page,
                          total=total,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         types=types,
+                         formulators=formulators,
+                         filter_type=filter_type,
+                         filter_formulator=filter_formulator,
+                         filter_date_start=filter_date_start,
+                         filter_date_end=filter_date_end,
+                         filter_q=filter_q)
 
 @projects_bp.route('/project/add', methods=['GET', 'POST'])
 def add_project():

@@ -16,6 +16,11 @@ def material_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     
+    # 获取筛选参数
+    filter_category = (request.args.get('category') or '').strip()
+    filter_supplier = (request.args.get('supplier') or '').strip()
+    filter_q = (request.args.get('q') or '').strip()
+    
     # 验证分页参数
     if page < 1:
         page = 1
@@ -32,8 +37,27 @@ def material_list():
     
     cursor = cnx.cursor(dictionary=True)
     
-    # 查询总记录数
-    cursor.execute("SELECT COUNT(*) as total FROM tbl_RawMaterials")
+    where_clauses = []
+    params = []
+    if filter_category:
+        where_clauses.append("mc.CategoryName = %s")
+        params.append(filter_category)
+    if filter_supplier:
+        where_clauses.append("m.Supplier = %s")
+        params.append(filter_supplier)
+    if filter_q:
+        where_clauses.append("(m.TradeName LIKE %s OR m.CAS_Number LIKE %s)")
+        like_val = f"%{filter_q}%"
+        params.extend([like_val, like_val])
+    where_sql = (" WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+    
+    # 查询总记录数（含筛选）
+    count_sql = (
+        "SELECT COUNT(*) as total FROM tbl_RawMaterials m "
+        "LEFT JOIN tbl_Config_MaterialCategories mc ON m.Category_FK = mc.CategoryID"
+        + where_sql
+    )
+    cursor.execute(count_sql, tuple(params))
     total = cursor.fetchone()['total']
     
     # 计算总页数
@@ -44,16 +68,22 @@ def material_list():
         page = total_pages
         offset = (page - 1) * per_page
     
-    # 查询当前页数据
-    query = """
-        SELECT m.*, mc.CategoryName 
-        FROM tbl_RawMaterials m
-        LEFT JOIN tbl_Config_MaterialCategories mc ON m.Category_FK = mc.CategoryID
-        ORDER BY m.MaterialID DESC
-        LIMIT %s OFFSET %s
-    """
-    cursor.execute(query, (per_page, offset))
+    # 查询当前页数据（含筛选）
+    query = (
+        "SELECT m.*, mc.CategoryName "
+        "FROM tbl_RawMaterials m "
+        "LEFT JOIN tbl_Config_MaterialCategories mc ON m.Category_FK = mc.CategoryID "
+        + where_sql +
+        " ORDER BY m.MaterialID DESC LIMIT %s OFFSET %s"
+    )
+    cursor.execute(query, tuple(params + [per_page, offset]))
     materials = cursor.fetchall()
+    
+    # 提供筛选下拉可选项（全量）
+    cursor.execute("SELECT CategoryName FROM tbl_Config_MaterialCategories ORDER BY CategoryName")
+    categories = [r['CategoryName'] for r in cursor.fetchall()]
+    cursor.execute("SELECT DISTINCT Supplier FROM tbl_RawMaterials WHERE COALESCE(Supplier,'') <> '' ORDER BY Supplier")
+    suppliers = [r['Supplier'] for r in cursor.fetchall()]
     cursor.close()
     cnx.close()
     
@@ -62,7 +92,12 @@ def material_list():
                          page=page,
                          per_page=per_page,
                          total=total,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         categories=categories,
+                         suppliers=suppliers,
+                         filter_category=filter_category,
+                         filter_supplier=filter_supplier,
+                         filter_q=filter_q)
 
 @materials_bp.route('/material/add', methods=['GET', 'POST'])
 def add_material():

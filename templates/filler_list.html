@@ -27,12 +27,18 @@
                     <label class="form-label small mb-1">类型</label>
                     <select id="filter-type" class="form-select form-select-sm">
                         <option value="">全部类型</option>
+                        {% for t in types %}
+                        <option value="{{ t }}" {% if filter_type==t %}selected{% endif %}>{{ t }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-3">
                     <label class="form-label small mb-1">供应商</label>
                     <select id="filter-supplier" class="form-select form-select-sm">
                         <option value="">全部供应商</option>
+                        {% for s in suppliers %}
+                        <option value="{{ s }}" {% if filter_supplier==s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="col-md-6 d-flex align-items-center">
@@ -105,7 +111,7 @@
                 <ul class="pagination justify-content-center mb-3">
                     <!-- 上一页 -->
                     <li class="page-item {% if page <= 1 %}disabled{% endif %}">
-                        <a class="page-link" href="{% if page > 1 %}{{ url_for('fillers.filler_list', page=page-1, per_page=per_page) }}{% else %}#{% endif %}" aria-label="上一页">
+                        <a class="page-link" href="{% if page > 1 %}{{ url_for('fillers.filler_list', page=page-1, per_page=per_page, type=filter_type, supplier=filter_supplier, q=filter_q) }}{% else %}#{% endif %}" aria-label="上一页">
                             <i class="bi bi-chevron-left"></i> 上一页
                         </a>
                     </li>
@@ -113,7 +119,7 @@
                     <!-- 首页 -->
                     {% if page > 3 %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=1, per_page=per_page) }}">1</a>
+                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=1, per_page=per_page, type=filter_type, supplier=filter_supplier, q=filter_q) }}">1</a>
                     </li>
                     {% if page > 4 %}
                     <li class="page-item disabled">
@@ -128,7 +134,7 @@
                         {% if p == page %}
                         <span class="page-link">{{ p }}</span>
                         {% else %}
-                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=p, per_page=per_page) }}">{{ p }}</a>
+                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=p, per_page=per_page, type=filter_type, supplier=filter_supplier, q=filter_q) }}">{{ p }}</a>
                         {% endif %}
                     </li>
                     {% endfor %}
@@ -141,13 +147,13 @@
                     </li>
                     {% endif %}
                     <li class="page-item">
-                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=total_pages, per_page=per_page) }}">{{ total_pages }}</a>
+                        <a class="page-link" href="{{ url_for('fillers.filler_list', page=total_pages, per_page=per_page, type=filter_type, supplier=filter_supplier, q=filter_q) }}">{{ total_pages }}</a>
                     </li>
                     {% endif %}
                     
                     <!-- 下一页 -->
                     <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
-                        <a class="page-link" href="{% if page < total_pages %}{{ url_for('fillers.filler_list', page=page+1, per_page=per_page) }}{% else %}#{% endif %}" aria-label="下一页">
+                        <a class="page-link" href="{% if page < total_pages %}{{ url_for('fillers.filler_list', page=page+1, per_page=per_page, type=filter_type, supplier=filter_supplier, q=filter_q) }}{% else %}#{% endif %}" aria-label="下一页">
                             下一页 <i class="bi bi-chevron-right"></i>
                         </a>
                     </li>
@@ -158,13 +164,13 @@
             <div class="text-center">
                 <div class="btn-group btn-group-sm" role="group" aria-label="每页显示数量">
                     <span class="btn btn-sm btn-outline-secondary disabled">每页显示：</span>
-                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=10) }}" 
+                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=10, type=filter_type, supplier=filter_supplier, q=filter_q) }}" 
                        class="btn btn-sm btn-outline-primary {% if per_page == 10 %}active{% endif %}">10</a>
-                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=20) }}" 
+                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=20, type=filter_type, supplier=filter_supplier, q=filter_q) }}" 
                        class="btn btn-sm btn-outline-primary {% if per_page == 20 %}active{% endif %}">20</a>
-                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=50) }}" 
+                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=50, type=filter_type, supplier=filter_supplier, q=filter_q) }}" 
                        class="btn btn-sm btn-outline-primary {% if per_page == 50 %}active{% endif %}">50</a>
-                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=100) }}" 
+                    <a href="{{ url_for('fillers.filler_list', page=1, per_page=100, type=filter_type, supplier=filter_supplier, q=filter_q) }}" 
                        class="btn btn-sm btn-outline-primary {% if per_page == 100 %}active{% endif %}">100</a>
                 </div>
             </div>
@@ -217,96 +223,33 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // 筛选功能
+    // 筛选功能（通过URL参数提交给服务端）
     const filterType = document.getElementById('filter-type');
     const filterSupplier = document.getElementById('filter-supplier');
     const applyFilterBtn = document.getElementById('apply-filter');
     const resetFilterBtn = document.getElementById('reset-filter');
     const filterCount = document.getElementById('filter-count');
     
-    // 去重并填充下拉选项
-    function populateFilterOptions() {
-        const types = new Set();
-        const suppliers = new Set();
-        
-        document.querySelectorAll('.filler-row').forEach(row => {
-            const type = row.dataset.type;
-            const supplier = row.dataset.supplier;
-            if (type) types.add(type);
-            if (supplier) suppliers.add(supplier);
-        });
-        
-        // 清空并重新填充类型选项
-        filterType.innerHTML = '<option value="">全部类型</option>';
-        Array.from(types).sort().forEach(type => {
-            filterType.innerHTML += `<option value="${type}">${type}</option>`;
-        });
-        
-        // 清空并重新填充供应商选项
-        filterSupplier.innerHTML = '<option value="">全部供应商</option>';
-        Array.from(suppliers).sort().forEach(supplier => {
-            filterSupplier.innerHTML += `<option value="${supplier}">${supplier}</option>`;
-        });
-    }
-    
-    populateFilterOptions();
-    
-    // 应用筛选
     function applyFilter() {
-        const typeValue = filterType.value.toLowerCase();
-        const supplierValue = filterSupplier.value.toLowerCase();
-        
-        let visibleCount = 0;
-        let totalCount = 0;
-        
-        document.querySelectorAll('.filler-row').forEach(row => {
-            totalCount++;
-            const rowType = (row.dataset.type || '').toLowerCase();
-            const rowSupplier = (row.dataset.supplier || '').toLowerCase();
-            
-            let show = true;
-            
-            // 类型筛选
-            if (typeValue && rowType !== typeValue) {
-                show = false;
-            }
-            
-            // 供应商筛选
-            if (supplierValue && rowSupplier !== supplierValue) {
-                show = false;
-            }
-            
-            // 显示或隐藏行
-            if (show) {
-                row.style.display = '';
-                visibleCount++;
-            } else {
-                row.style.display = 'none';
-            }
-        });
-        
-        // 更新筛选计数
-        if (visibleCount < totalCount) {
-            filterCount.textContent = `显示 ${visibleCount} / ${totalCount} 条记录`;
-        } else {
-            filterCount.textContent = '';
-        }
-        
-        // 更新全选功能
-        updateSelectAll();
+        const params = new URLSearchParams(window.location.search);
+        params.set('page', '1');
+        params.set('per_page', '{{ per_page }}');
+        const typeVal = filterType.value || '';
+        const supplierVal = filterSupplier.value || '';
+        if (typeVal) params.set('type', typeVal); else params.delete('type');
+        if (supplierVal) params.set('supplier', supplierVal); else params.delete('supplier');
+        const url = '{{ url_for('fillers.filler_list') }}' + '?' + params.toString();
+        window.location.href = url;
     }
-    
-    // 重置筛选
+
     function resetFilter() {
-        filterType.value = '';
-        filterSupplier.value = '';
-        
-        document.querySelectorAll('.filler-row').forEach(row => {
-            row.style.display = '';
-        });
-        
-        filterCount.textContent = '';
-        updateSelectAll();
+        const params = new URLSearchParams(window.location.search);
+        params.delete('type');
+        params.delete('supplier');
+        params.set('page', '1');
+        params.set('per_page', '{{ per_page }}');
+        const url = '{{ url_for('fillers.filler_list') }}' + '?' + params.toString();
+        window.location.href = url;
     }
     
     // 绑定事件

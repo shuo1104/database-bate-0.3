@@ -16,6 +16,11 @@ def filler_list():
     page = request.args.get('page', 1, type=int)
     per_page = request.args.get('per_page', 20, type=int)
     
+    # 获取筛选参数
+    filter_type = (request.args.get('type') or '').strip()
+    filter_supplier = (request.args.get('supplier') or '').strip()
+    filter_q = (request.args.get('q') or '').strip()
+    
     # 验证分页参数
     if page < 1:
         page = 1
@@ -31,9 +36,28 @@ def filler_list():
         return render_template('filler_list.html', fillers=[], page=1, total_pages=0, total=0, per_page=per_page)
     
     cursor = cnx.cursor(dictionary=True)
-    
-    # 查询总记录数
-    cursor.execute("SELECT COUNT(*) as total FROM tbl_InorganicFillers")
+
+    where_clauses = []
+    params = []
+    if filter_type:
+        where_clauses.append("ft.FillerTypeName = %s")
+        params.append(filter_type)
+    if filter_supplier:
+        where_clauses.append("f.Supplier = %s")
+        params.append(filter_supplier)
+    if filter_q:
+        where_clauses.append("(f.TradeName LIKE %s OR f.ParticleSize LIKE %s)")
+        like_val = f"%{filter_q}%"
+        params.extend([like_val, like_val])
+    where_sql = (" WHERE " + " AND ".join(where_clauses)) if where_clauses else ""
+
+    # 查询总记录数（含筛选）
+    count_sql = (
+        "SELECT COUNT(*) as total FROM tbl_InorganicFillers f "
+        "LEFT JOIN tbl_Config_FillerTypes ft ON f.FillerType_FK = ft.FillerTypeID"
+        + where_sql
+    )
+    cursor.execute(count_sql, tuple(params))
     total = cursor.fetchone()['total']
     
     # 计算总页数
@@ -44,16 +68,22 @@ def filler_list():
         page = total_pages
         offset = (page - 1) * per_page
     
-    # 查询当前页数据
-    query = """
-        SELECT f.*, ft.FillerTypeName
-        FROM tbl_InorganicFillers f
-        LEFT JOIN tbl_Config_FillerTypes ft ON f.FillerType_FK = ft.FillerTypeID
-        ORDER BY f.FillerID DESC
-        LIMIT %s OFFSET %s
-    """
-    cursor.execute(query, (per_page, offset))
+    # 查询当前页数据（含筛选）
+    query = (
+        "SELECT f.*, ft.FillerTypeName "
+        "FROM tbl_InorganicFillers f "
+        "LEFT JOIN tbl_Config_FillerTypes ft ON f.FillerType_FK = ft.FillerTypeID "
+        + where_sql +
+        " ORDER BY f.FillerID DESC LIMIT %s OFFSET %s"
+    )
+    cursor.execute(query, tuple(params + [per_page, offset]))
     fillers = cursor.fetchall()
+    
+    # 提供筛选下拉可选项（全量）
+    cursor.execute("SELECT FillerTypeName FROM tbl_Config_FillerTypes ORDER BY FillerTypeName")
+    types = [r['FillerTypeName'] for r in cursor.fetchall()]
+    cursor.execute("SELECT DISTINCT Supplier FROM tbl_InorganicFillers WHERE COALESCE(Supplier,'') <> '' ORDER BY Supplier")
+    suppliers = [r['Supplier'] for r in cursor.fetchall()]
     cursor.close()
     cnx.close()
     
@@ -62,7 +92,12 @@ def filler_list():
                          page=page,
                          per_page=per_page,
                          total=total,
-                         total_pages=total_pages)
+                         total_pages=total_pages,
+                         types=types,
+                         suppliers=suppliers,
+                         filter_type=filter_type,
+                         filter_supplier=filter_supplier,
+                         filter_q=filter_q)
 
 @fillers_bp.route('/filler/add', methods=['GET', 'POST'])
 def add_filler():
