@@ -221,3 +221,39 @@ AttributeError: 'set' object has no attribute 'limit'
 [2025-10-22 16:03:55,690] INFO in app: 请求频率限制已启用
 [2025-10-22 16:03:55,700] INFO in app: 所有 Blueprints 已注册
 [2025-10-22 16:03:55,701] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-23 10:16:40,560] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-23 10:16:40,562] INFO in app: CSRF 保护已启用
+[2025-10-23 10:16:40,562] INFO in app: 请求频率限制已启用
+[2025-10-23 10:16:40,571] INFO in app: 所有 Blueprints 已注册
+[2025-10-23 10:16:40,572] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-23 10:18:27,481] INFO in app: 404错误: http://127.0.0.1:5000/favicon.ico from 127.0.0.1
+[2025-10-23 10:47:36,598] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-23 10:47:39,157] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-23 10:47:41,293] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-23 10:47:43,324] WARNING in app: CSRF验证失败: The CSRF token is missing.
+[2025-10-23 10:48:01,751] ERROR in app: 未捕获的异常: 1054 (42S22): Unknown column 'csrf_token' in 'field list'
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\mysql\connector\connection_cext.py", line 611, in cmd_query
+    self._cmysql.query(
+_mysql_connector.MySQLInterfaceError: Unknown column 'csrf_token' in 'field list'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\flask\app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "D:\WorkSpace\workspace\data_base\blueprints\projects.py", line 340, in save_test_results
+    cursor.execute(sql, tuple(values))
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\mysql\connector\cursor_cext.py", line 330, in execute
+    result = self._cnx.cmd_query(
+  File "D:\software\Anaconda3\envs\database\lib\site-packages\mysql\connector\connection_cext.py", line 619, in cmd_query
+    raise get_mysql_exception(
+mysql.connector.errors.ProgrammingError: 1054 (42S22): Unknown column 'csrf_token' in 'field list'
+[2025-10-24 15:03:36,021] INFO in app: ✓ SECRET_KEY已加载（长度: 48）
+[2025-10-24 15:03:36,023] INFO in app: CSRF 保护已启用
+[2025-10-24 15:03:36,023] INFO in app: 请求频率限制已启用
+[2025-10-24 15:03:36,036] INFO in app: 所有 Blueprints 已注册
+[2025-10-24 15:03:36,037] INFO in app: 启动应用服务器 - Host: 0.0.0.0, Port: 5000, Debug: False
+[2025-10-24 15:03:40,425] INFO in app: 404错误: http://192.168.110.88:5000/favicon.ico from 192.168.110.88

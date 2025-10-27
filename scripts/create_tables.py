@@ -185,6 +185,56 @@ TABLES['tbl_Users'] = (
     "  UNIQUE KEY (`Username`)"
     ") ENGINE=InnoDB COMMENT='用户账号管理表'")
 
+# 系统信息表
+TABLES['tbl_SystemInfo'] = (
+    "CREATE TABLE `tbl_SystemInfo` ("
+    "  `InfoID` int(11) NOT NULL AUTO_INCREMENT COMMENT '信息ID',"
+    "  `FirstStartTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '系统首次启动时间',"
+    "  `Version` varchar(50) COMMENT '系统版本',"
+    "  `LastUpdateTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间',"
+    "  PRIMARY KEY (`InfoID`)"
+    ") ENGINE=InnoDB COMMENT='系统信息表'")
+
+# 用户登录日志表
+TABLES['tbl_UserLoginLogs'] = (
+    "CREATE TABLE `tbl_UserLoginLogs` ("
+    "  `LogID` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',"
+    "  `UserID` int(11) NOT NULL COMMENT '用户ID',"
+    "  `Username` varchar(50) NOT NULL COMMENT '用户名',"
+    "  `LoginTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '登录时间',"
+    "  `LogoutTime` datetime COMMENT '登出时间',"
+    "  `Duration` int(11) COMMENT '使用时长（秒）',"
+    "  `IPAddress` varchar(50) COMMENT '登录IP地址',"
+    "  `UserAgent` text COMMENT '用户代理信息',"
+    "  `IsOnline` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否在线（1:是，0:否）',"
+    "  `LastHeartbeat` datetime COMMENT '最后心跳时间',"
+    "  PRIMARY KEY (`LogID`),"
+    "  INDEX `idx_login_user_id` (`UserID`),"
+    "  INDEX `idx_login_username` (`Username`),"
+    "  INDEX `idx_login_time` (`LoginTime`),"
+    "  INDEX `idx_login_is_online` (`IsOnline`),"
+    "  FOREIGN KEY (`UserID`) REFERENCES `tbl_Users` (`UserID`) ON DELETE CASCADE"
+    ") ENGINE=InnoDB COMMENT='用户登录日志表'")
+
+# 用户注册日志表
+TABLES['tbl_UserRegistrationLogs'] = (
+    "CREATE TABLE `tbl_UserRegistrationLogs` ("
+    "  `LogID` int(11) NOT NULL AUTO_INCREMENT COMMENT '日志ID',"
+    "  `UserID` int(11) NOT NULL COMMENT '用户ID',"
+    "  `Username` varchar(50) NOT NULL COMMENT '用户名',"
+    "  `RegistrationTime` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '注册时间',"
+    "  `RealName` varchar(50) COMMENT '真实姓名',"
+    "  `Position` varchar(100) COMMENT '职位',"
+    "  `Email` varchar(100) COMMENT '邮箱',"
+    "  `Role` varchar(20) NOT NULL DEFAULT 'user' COMMENT '角色',"
+    "  `IPAddress` varchar(50) COMMENT '注册IP地址',"
+    "  PRIMARY KEY (`LogID`),"
+    "  INDEX `idx_reg_user_id` (`UserID`),"
+    "  INDEX `idx_reg_username` (`Username`),"
+    "  INDEX `idx_reg_time` (`RegistrationTime`),"
+    "  FOREIGN KEY (`UserID`) REFERENCES `tbl_Users` (`UserID`) ON DELETE CASCADE"
+    ") ENGINE=InnoDB COMMENT='用户注册日志表'")
+
 # 测试结果表 - 复合材料
 TABLES['tbl_TestResults_Composite'] = (
     "CREATE TABLE `tbl_TestResults_Composite` ("
@@ -269,6 +319,20 @@ INDEXES = {
     'tbl_TestResults_Composite': [
         "CREATE INDEX IF NOT EXISTS idx_test_composite_project_fk ON tbl_TestResults_Composite(ProjectID_FK)",
         "CREATE INDEX IF NOT EXISTS idx_test_composite_date ON tbl_TestResults_Composite(TestDate)"
+    ],
+    
+    # 登录日志表索引
+    'tbl_UserLoginLogs': [
+        "CREATE INDEX IF NOT EXISTS idx_login_user_time ON tbl_UserLoginLogs(UserID, LoginTime)",
+        "CREATE INDEX IF NOT EXISTS idx_login_duration ON tbl_UserLoginLogs(Duration)",
+        "CREATE INDEX IF NOT EXISTS idx_login_heartbeat ON tbl_UserLoginLogs(LastHeartbeat)",
+        "CREATE INDEX IF NOT EXISTS idx_login_online_heartbeat ON tbl_UserLoginLogs(IsOnline, LastHeartbeat)"
+    ],
+    
+    # 注册日志表索引
+    'tbl_UserRegistrationLogs': [
+        "CREATE INDEX IF NOT EXISTS idx_reg_user_time ON tbl_UserRegistrationLogs(UserID, RegistrationTime)",
+        "CREATE INDEX IF NOT EXISTS idx_reg_role ON tbl_UserRegistrationLogs(Role)"
     ]
 }
 
