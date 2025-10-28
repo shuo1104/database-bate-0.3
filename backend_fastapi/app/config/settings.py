@@ -23,8 +23,8 @@ class Settings(BaseSettings):
     # Banner
     BANNER: ClassVar[str] = """
     ╔═══════════════════════════════════════════════════════════╗
-    ║   光创化物 R&D 配方数据库管理系统 - FastAPI版本        ║
-    ║   Chemical Formula Database Management System            ║
+    ║   Advanced - PhotoPolymer Formulation Management DB     ║
+    ║   高级光敏聚合物配方管理数据库 - FastAPI版本             ║
     ║   Version: 2.0.0                                         ║
     ╚═══════════════════════════════════════════════════════════╝
     """
@@ -42,9 +42,9 @@ class Settings(BaseSettings):
     WORKERS: int = 1  # 生产环境建议 4
     
     # ==================== API文档配置 ====================
-    TITLE: str = "光创化物 R&D 配方数据库 API"
+    TITLE: str = "Advanced - PhotoPolymer Formulation Management API"
     VERSION: str = "2.0.0"
-    DESCRIPTION: str = "化学配方数据管理系统 RESTful API"
+    DESCRIPTION: str = "高级光敏聚合物配方管理数据库 RESTful API"
     SUMMARY: str = "基于 FastAPI 的现代化配方管理系统"
     DOCS_URL: str = "/docs"  # Swagger UI
     REDOC_URL: str = "/redoc"  # ReDoc
@@ -64,7 +64,7 @@ class Settings(BaseSettings):
     ALLOW_CREDENTIALS: bool = True
     
     # ==================== JWT认证配置 ====================
-    SECRET_KEY: str = "your-secret-key-change-in-production-光创化物"
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "dev-secret-key-only-for-development-DO-NOT-USE-IN-PRODUCTION")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 1天
     REFRESH_TOKEN_EXPIRE_MINUTES: int = 60 * 24 * 7  # 7天
@@ -81,13 +81,12 @@ class Settings(BaseSettings):
     ]
     
     # ==================== 数据库配置 ====================
-    # 数据库基础配置
-    DB_HOST: str = "localhost"
-    DB_PORT: int = 3306
-    DB_USER: str = "root"
-    DB_PASSWORD: str = "root"
-    DB_DATABASE: str = "test_base"
-    DB_CHARSET: str = "utf8mb4"
+    # 数据库基础配置（优先使用环境变量）
+    DB_HOST: str = os.getenv("DB_HOST", "localhost")
+    DB_PORT: int = int(os.getenv("DB_PORT", "5432"))  # PostgreSQL 默认端口
+    DB_USER: str = os.getenv("DB_USER", "postgres")
+    DB_PASSWORD: str = os.getenv("DB_PASSWORD", "root")
+    DB_DATABASE: str = os.getenv("DB_DATABASE", "photopolymer_formulation_db")
     
     # 数据库引擎配置
     DATABASE_ECHO: bool | Literal['debug'] = False  # SQL日志
@@ -123,20 +122,18 @@ class Settings(BaseSettings):
     # ==================== 动态属性 ====================
     @property
     def DB_URI(self) -> str:
-        """同步数据库连接URI"""
+        """同步数据库连接URI (PostgreSQL)"""
         return (
-            f"mysql+pymysql://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"postgresql+psycopg2://{self.DB_USER}:{self.DB_PASSWORD}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_DATABASE}"
-            f"?charset={self.DB_CHARSET}"
         )
     
     @property
     def ASYNC_DB_URI(self) -> str:
-        """异步数据库连接URI"""
+        """异步数据库连接URI (PostgreSQL)"""
         return (
-            f"mysql+asyncmy://{self.DB_USER}:{self.DB_PASSWORD}"
+            f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASSWORD}"
             f"@{self.DB_HOST}:{self.DB_PORT}/{self.DB_DATABASE}"
-            f"?charset={self.DB_CHARSET}"
         )
     
     @property

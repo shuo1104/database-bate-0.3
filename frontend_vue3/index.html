@@ -4,7 +4,65 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>光创化物 R&D 配方管理系统</title>
+    <title>Advanced - PhotoPolymer Formulation Management DB</title>
+    <style>
+      /* 初始加载时的背景色 - 根据主题自动适配 */
+      html {
+        background-color: #ffffff;
+      }
+      
+      body {
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      
+      #app {
+        background-color: #ffffff;
+      }
+      
+      /* 暗黑主题加载背景 */
+      html.dark {
+        background-color: #141414 !important;
+      }
+      
+      html.dark body {
+        background-color: #141414 !important;
+      }
+      
+      html.dark #app {
+        background-color: #141414 !important;
+      }
+      
+      /* 加载动画（可选） */
+      #app:empty::before {
+        content: '';
+        display: block;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 40px;
+        height: 40px;
+        border: 3px solid #409eff;
+        border-top-color: transparent;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+      }
+      
+      @keyframes spin {
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+      }
+    </style>
+    <script>
+      // 在页面加载前立即应用主题，避免白屏
+      (function() {
+        const theme = localStorage.getItem('app-theme') || 'light';
+        if (theme === 'dark') {
+          document.documentElement.classList.add('dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="app"></div>

@@ -33,7 +33,7 @@ class IDSchema(BaseSchema):
 class PaginationParams(BaseSchema):
     """分页参数"""
     page: int = Field(default=1, description="页码", ge=1)
-    page_size: int = Field(default=20, description="每页数量", ge=1, le=100)
+    page_size: int = Field(default=20, description="每页数量", ge=1, le=5000)
     
     @property
     def offset(self) -> int:

@@ -1,21 +1,21 @@
 /**
- * axios 请求封装
+ * Axios Request Wrapper
  */
 import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getToken, removeToken } from './auth'
 import storage from './storage'
 
-// 创建 axios 实例
+// Create axios instance
 const service: AxiosInstance = axios.create({
-  baseURL: '', // 不使用 baseURL，API 路径已包含完整路径
+  baseURL: '', // No baseURL, API paths already include full path
   timeout: 50000,
   headers: {
     'Content-Type': 'application/json;charset=utf-8',
   },
 })
 
-// 请求拦截器
+// Request interceptor
 service.interceptors.request.use(
   (config) => {
     const token = getToken()
@@ -25,41 +25,41 @@ service.interceptors.request.use(
     return config
   },
   (error: AxiosError) => {
-    console.error('请求错误:', error)
+    console.error('Request error:', error)
     return Promise.reject(error)
   }
 )
 
-// 响应拦截器
+// Response interceptor
 service.interceptors.response.use(
   (response: AxiosResponse) => {
     const { code, msg, data } = response.data
 
-    // 二进制数据直接返回
+    // Return binary data directly
     if (response.config.responseType === 'blob') {
       return response.data
     }
 
-    // 成功响应
+    // Successful response
     if (code === 200 || code === 0) {
       return data
     }
 
-    // 错误响应
-    ElMessage.error(msg || '系统错误')
-    return Promise.reject(new Error(msg || '系统错误'))
+    // Error response
+    ElMessage.error(msg || 'System error')
+    return Promise.reject(new Error(msg || 'System error'))
   },
   (error: AxiosError) => {
-    // 处理HTTP错误
+    // Handle HTTP errors
     if (error.response) {
       const { status, data } = error.response
       
       switch (status) {
         case 401:
-          // 未授权，清除token并跳转到登录页
-          ElMessageBox.confirm('登录状态已过期，请重新登录', '系统提示', {
-            confirmButtonText: '重新登录',
-            cancelButtonText: '取消',
+          // Unauthorized, clear token and redirect to login page
+          ElMessageBox.confirm('Login session expired, please login again', 'System Notification', {
+            confirmButtonText: 'Re-login',
+            cancelButtonText: 'Cancel',
             type: 'warning',
           }).then(() => {
             removeToken()
@@ -68,27 +68,27 @@ service.interceptors.response.use(
           })
           break
         case 403:
-          ElMessage.error('没有权限访问该资源')
+          ElMessage.error('No permission to access this resource')
           break
         case 404:
-          ElMessage.error('请求的资源不存在')
+          ElMessage.error('Requested resource does not exist')
           break
         case 500:
-          ElMessage.error((data as any)?.msg || '服务器错误')
+          ElMessage.error((data as any)?.msg || 'Server error')
           break
         default:
-          ElMessage.error((data as any)?.msg || `连接错误 ${status}`)
+          ElMessage.error((data as any)?.msg || `Connection error ${status}`)
       }
     } else if (error.request) {
-      ElMessage.error('网络请求失败，请检查网络连接')
+      ElMessage.error('Network request failed, please check network connection')
     } else {
-      ElMessage.error('请求配置错误')
+      ElMessage.error('Request configuration error')
     }
 
     return Promise.reject(error)
   }
 )
 
-// 导出 axios 实例
+// Export axios instance
 export default service
 

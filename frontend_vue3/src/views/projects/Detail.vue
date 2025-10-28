@@ -4,86 +4,85 @@
       <div class="header-actions">
         <el-button @click="handleBack">
           <el-icon><ArrowLeft /></el-icon>
-          返回
+          Back
         </el-button>
         <div>
           <el-button type="success" @click="handleExportImage" :loading="exportLoading">
             <el-icon><Picture /></el-icon>
-            导出图片报告
+            Export Image Report
           </el-button>
-          <el-button type="primary" @click="handleEdit">编辑项目</el-button>
-          <el-button type="danger" @click="handleDelete">删除项目</el-button>
+          <el-button type="primary" @click="handleEdit">Edit Project</el-button>
+          <el-button type="danger" @click="handleDelete">Delete Project</el-button>
         </div>
       </div>
     </el-card>
 
-    <!-- 项目基本信息 -->
+    <!-- Project Basic Information -->
     <el-card shadow="never" class="info-card">
       <template #header>
         <div class="card-header">
-          <span>项目基本信息</span>
+          <span>Project Basic Information</span>
         </div>
       </template>
       <el-descriptions :column="2" border>
-        <el-descriptions-item label="项目名称">{{ projectInfo.ProjectName }}</el-descriptions-item>
-        <el-descriptions-item label="配方编号">{{ projectInfo.FormulaCode }}</el-descriptions-item>
-        <el-descriptions-item label="项目类型">{{ projectInfo.TypeName }}</el-descriptions-item>
-        <el-descriptions-item label="配方设计师">{{ projectInfo.FormulatorName }}</el-descriptions-item>
-        <el-descriptions-item label="配方日期">{{ projectInfo.FormulationDate }}</el-descriptions-item>
-        <el-descriptions-item label="目标基材">{{ projectInfo.SubstrateApplication || '-' }}</el-descriptions-item>
-        <el-descriptions-item label="创建时间" :span="2">{{ formatDateTime(projectInfo.CreatedAt) }}</el-descriptions-item>
+        <el-descriptions-item label="Project Name">{{ projectInfo.ProjectName }}</el-descriptions-item>
+        <el-descriptions-item label="Formula Code">{{ projectInfo.FormulaCode }}</el-descriptions-item>
+        <el-descriptions-item label="Project Type">{{ projectInfo.TypeName }}</el-descriptions-item>
+        <el-descriptions-item label="Formulator">{{ projectInfo.FormulatorName }}</el-descriptions-item>
+        <el-descriptions-item label="Formulation Date">{{ projectInfo.FormulationDate }}</el-descriptions-item>
+        <el-descriptions-item label="Substrate/Application">{{ projectInfo.SubstrateApplication || '-' }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
 
-    <!-- 配方成分 -->
+    <!-- Formula Composition -->
     <el-card shadow="never" class="composition-card">
       <template #header>
         <div class="card-header">
-          <span>配方成分</span>
-          <el-button type="primary" size="small" @click="handleAddComposition">添加成分</el-button>
+          <span>Formula Composition</span>
+          <el-button type="primary" size="small" @click="handleAddComposition">Add Component</el-button>
         </div>
       </template>
       
       <el-table :data="compositions" border stripe style="width: 100%">
         <el-table-column prop="CompositionID" label="ID" width="80" />
-        <el-table-column label="成分类型" width="100">
+        <el-table-column label="Component Type" width="140">
           <template #default="{ row }">
-            <el-tag v-if="row.MaterialID_FK" type="success">原料</el-tag>
-            <el-tag v-else-if="row.FillerID_FK" type="warning">填料</el-tag>
+            <el-tag v-if="row.MaterialID_FK" type="success">Material</el-tag>
+            <el-tag v-else-if="row.FillerID_FK" type="warning">Filler</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="成分名称" min-width="150">
+        <el-table-column label="Component Name" min-width="150">
           <template #default="{ row }">
             {{ row.MaterialName || row.FillerName || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="WeightPercentage" label="重量百分比 (%)" width="140" />
-        <el-table-column prop="AdditionMethod" label="掺入方法" min-width="150" show-overflow-tooltip />
-        <el-table-column prop="Remarks" label="备注" min-width="150" show-overflow-tooltip />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column prop="WeightPercentage" label="Weight (%)" width="120" />
+        <el-table-column prop="AdditionMethod" label="Addition Method" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="Remarks" label="Remarks" min-width="150" show-overflow-tooltip />
+        <el-table-column label="Actions" width="150" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleEditComposition(row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDeleteComposition(row)">删除</el-button>
+            <el-button type="primary" size="small" @click="handleEditComposition(row)">Edit</el-button>
+            <el-button type="danger" size="small" @click="handleDeleteComposition(row)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
 
       <div class="composition-summary">
         <el-tag type="info" size="large">
-          总重量百分比: {{ totalWeightPercentage.toFixed(2) }}%
+          Total Weight Percentage: {{ totalWeightPercentage.toFixed(2) }}%
         </el-tag>
         <el-tag :type="totalWeightPercentage <= 100 ? 'success' : 'danger'" size="large">
-          {{ totalWeightPercentage <= 100 ? '✓ 配比正常' : '⚠ 超过100%' }}
+          {{ totalWeightPercentage <= 100 ? '✓ Normal' : '⚠ Exceeds 100%' }}
         </el-tag>
       </div>
     </el-card>
 
-    <!-- 测试结果 -->
+    <!-- Test Results -->
     <el-card shadow="never" class="test-result-card">
       <template #header>
         <div class="card-header">
-          <span>测试结果</span>
-          <el-button type="primary" size="small" @click="handleEditTestResult">编辑测试结果</el-button>
+          <span>Test Results</span>
+          <el-button type="primary" size="small" @click="handleEditTestResult">Edit Test Results</el-button>
         </div>
       </template>
       
@@ -96,25 +95,33 @@
           </template>
         </el-descriptions>
       </div>
-      <el-empty v-else description="暂无测试结果，点击上方按钮添加" />
+      <el-empty v-else description="No test results yet. Click the button above to add." />
     </el-card>
 
-    <!-- 添加/编辑配方成分对话框 -->
+    <!-- Add/Edit Composition Dialog -->
     <el-dialog
       v-model="compositionDialogVisible"
       :title="compositionDialogTitle"
       width="600px"
       @close="handleCompositionDialogClose"
     >
-      <el-form ref="compositionFormRef" :model="compositionFormData" :rules="compositionFormRules" label-width="120px">
-        <el-form-item label="成分类型" prop="componentType">
+      <el-form ref="compositionFormRef" :model="compositionFormData" :rules="compositionFormRules" label-width="150px">
+        <el-form-item label="Component Type" prop="componentType">
           <el-radio-group v-model="compositionFormData.componentType">
-            <el-radio label="material">原料</el-radio>
-            <el-radio label="filler">填料</el-radio>
+            <el-radio label="material">Material</el-radio>
+            <el-radio label="filler">Filler</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item v-if="compositionFormData.componentType === 'material'" label="选择原料" prop="MaterialID_FK">
-          <el-select v-model="compositionFormData.MaterialID_FK" placeholder="请选择原料" style="width: 100%" filterable>
+        <el-form-item v-if="compositionFormData.componentType === 'material'" label="Select Material" prop="MaterialID_FK">
+          <el-select 
+            v-model="compositionFormData.MaterialID_FK" 
+            placeholder="Type to search material" 
+            style="width: 100%" 
+            filterable
+            remote
+            :remote-method="searchMaterials"
+            :loading="materialsLoading"
+          >
             <el-option
               v-for="material in materials"
               :key="material.MaterialID"
@@ -123,8 +130,16 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item v-if="compositionFormData.componentType === 'filler'" label="选择填料" prop="FillerID_FK">
-          <el-select v-model="compositionFormData.FillerID_FK" placeholder="请选择填料" style="width: 100%" filterable>
+        <el-form-item v-if="compositionFormData.componentType === 'filler'" label="Select Filler" prop="FillerID_FK">
+          <el-select 
+            v-model="compositionFormData.FillerID_FK" 
+            placeholder="Type to search filler" 
+            style="width: 100%" 
+            filterable
+            remote
+            :remote-method="searchFillers"
+            :loading="fillersLoading"
+          >
             <el-option
               v-for="filler in fillers"
               :key="filler.FillerID"
@@ -133,33 +148,33 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="重量百分比" prop="WeightPercentage">
-          <el-input v-model.number="compositionFormData.WeightPercentage" placeholder="请输入重量百分比" type="number" step="0.01">
+        <el-form-item label="Weight Percentage" prop="WeightPercentage">
+          <el-input v-model.number="compositionFormData.WeightPercentage" placeholder="Enter weight percentage" type="number" step="0.01">
             <template #append>%</template>
           </el-input>
         </el-form-item>
-        <el-form-item label="掺入方法">
-          <el-input v-model="compositionFormData.AdditionMethod" placeholder="请输入掺入方法" />
+        <el-form-item label="Addition Method">
+          <el-input v-model="compositionFormData.AdditionMethod" placeholder="Enter addition method" />
         </el-form-item>
-        <el-form-item label="备注">
+        <el-form-item label="Remarks">
           <el-input
             v-model="compositionFormData.Remarks"
             type="textarea"
             :rows="3"
-            placeholder="请输入备注"
+            placeholder="Enter remarks"
           />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="compositionDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="compositionSubmitLoading" @click="handleSubmitComposition">确定</el-button>
+        <el-button @click="compositionDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="compositionSubmitLoading" @click="handleSubmitComposition">Confirm</el-button>
       </template>
     </el-dialog>
 
-    <!-- 测试结果编辑对话框 -->
+    <!-- Test Results Edit Dialog -->
     <el-dialog
       v-model="testResultDialogVisible"
-      title="编辑测试结果"
+      title="Edit Test Results"
       width="800px"
       @close="handleTestResultDialogClose"
     >
@@ -170,8 +185,56 @@
         @saved="handleTestResultSaved"
       />
       <template #footer>
-        <el-button @click="testResultDialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="testResultSubmitLoading" @click="handleSaveTestResult">保存</el-button>
+        <el-button @click="testResultDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="testResultSubmitLoading" @click="handleSaveTestResult">Save</el-button>
+      </template>
+    </el-dialog>
+
+    <!-- Edit Project Dialog -->
+    <el-dialog
+      v-model="projectDialogVisible"
+      title="Edit Project Information"
+      width="600px"
+      @close="handleProjectDialogClose"
+    >
+      <el-form ref="projectFormRef" :model="projectFormData" :rules="projectFormRules" label-width="160px">
+        <el-form-item label="Project Name" prop="project_name">
+          <el-input v-model="projectFormData.project_name" placeholder="Enter project name" />
+        </el-form-item>
+        <el-form-item label="Project Type" prop="project_type_fk">
+          <el-select v-model="projectFormData.project_type_fk" placeholder="Select project type" style="width: 100%">
+            <el-option
+              v-for="type in projectTypes"
+              :key="type.TypeID"
+              :label="type.TypeName"
+              :value="type.TypeID"
+            />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="Formulator" prop="formulator_name">
+          <el-input v-model="projectFormData.formulator_name" placeholder="Enter formulator name" />
+        </el-form-item>
+        <el-form-item label="Formulation Date" prop="formulation_date">
+          <el-date-picker
+            v-model="projectFormData.formulation_date"
+            type="date"
+            placeholder="Select formulation date"
+            style="width: 100%"
+            value-format="YYYY-MM-DD"
+          />
+        </el-form-item>
+        <el-form-item label="Substrate/Application">
+          <el-input
+            v-model="projectFormData.substrate_application"
+            type="textarea"
+            :rows="3"
+            placeholder="Enter substrate or application"
+          />
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <el-button @click="projectDialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="projectSubmitLoading" @click="handleSubmitProject">Save</el-button>
       </template>
     </el-dialog>
   </div>
@@ -185,7 +248,9 @@ import { ArrowLeft, Picture } from '@element-plus/icons-vue'
 import {
   getProjectDetailApi,
   deleteProjectApi,
+  updateProjectApi,
   exportProjectImageApi,
+  getProjectTypesApi,
   type ProjectInfo
 } from '@/api/projects'
 import {
@@ -211,6 +276,8 @@ const testResult = ref<any>(null)
 const materials = ref<MaterialInfo[]>([])
 const fillers = ref<FillerInfo[]>([])
 const exportLoading = ref(false)
+const materialsLoading = ref(false)
+const fillersLoading = ref(false)
 
 // 计算总重量百分比
 const totalWeightPercentage = computed(() => {
@@ -220,9 +287,9 @@ const totalWeightPercentage = computed(() => {
   }, 0)
 })
 
-// 配方成分对话框
+// Composition dialog
 const compositionDialogVisible = ref(false)
-const compositionDialogTitle = ref('添加成分')
+const compositionDialogTitle = ref('Add Component')
 const compositionFormRef = ref<FormInstance>()
 const compositionSubmitLoading = ref(false)
 
@@ -244,12 +311,12 @@ const compositionFormData = reactive<CompositionFormData>({
 })
 
 const compositionFormRules = {
-  componentType: [{ required: true, message: '请选择成分类型', trigger: 'change' }],
-  MaterialID_FK: [{ required: true, message: '请选择原料', trigger: 'change' }],
-  FillerID_FK: [{ required: true, message: '请选择填料', trigger: 'change' }],
+  componentType: [{ required: true, message: 'Please select component type', trigger: 'change' }],
+  MaterialID_FK: [{ required: true, message: 'Please select material', trigger: 'change' }],
+  FillerID_FK: [{ required: true, message: 'Please select filler', trigger: 'change' }],
   WeightPercentage: [
-    { required: true, message: '请输入重量百分比', trigger: 'blur' },
-    { type: 'number', min: 0, max: 100, message: '重量百分比应在0-100之间', trigger: 'blur' }
+    { required: true, message: 'Please enter weight percentage', trigger: 'blur' },
+    { type: 'number', min: 0, max: 100, message: 'Weight percentage should be between 0-100', trigger: 'blur' }
   ],
 }
 
@@ -258,38 +325,129 @@ const testResultDialogVisible = ref(false)
 const testResultSubmitLoading = ref(false)
 const testResultFormRef = ref<InstanceType<typeof TestResultForm>>()
 
-// 获取项目详情
+// 项目编辑相关
+const projectDialogVisible = ref(false)
+const projectFormRef = ref<FormInstance>()
+const projectSubmitLoading = ref(false)
+const projectTypes = ref<any[]>([])
+
+const projectFormData = reactive({
+  project_name: '',
+  project_type_fk: undefined as number | undefined,
+  formulator_name: '',
+  formulation_date: '',
+  substrate_application: '',
+})
+
+const projectFormRules = {
+  project_name: [{ required: true, message: 'Please enter project name', trigger: 'blur' }],
+  project_type_fk: [{ required: true, message: 'Please select project type', trigger: 'change' }],
+  formulator_name: [{ required: true, message: 'Please enter formulator name', trigger: 'blur' }],
+  formulation_date: [{ required: true, message: 'Please select formulation date', trigger: 'change' }],
+}
+
+// Get project details
 async function getProjectDetail() {
   try {
     projectInfo.value = await getProjectDetailApi(projectId.value)
   } catch (error) {
-    ElMessage.error('获取项目详情失败')
+    ElMessage.error('Failed to get project details')
     console.error(error)
   }
 }
 
-// 获取配方成分列表
+// Get composition list
 async function getCompositions() {
   try {
+    console.log('Loading compositions for project:', projectId.value)
     const res = await getCompositionListApi(projectId.value)
+    console.log('Composition response:', res)
     compositions.value = Array.isArray(res) ? res : []
+    console.log('Compositions set to:', compositions.value)
   } catch (error) {
-    ElMessage.error('获取配方成分失败')
-    console.error(error)
+    ElMessage.error('Failed to get composition list')
+    console.error('Failed to load compositions:', error)
   }
 }
 
-// 获取原料和填料列表
+// Get materials and fillers list (initial load)
 async function getMaterialsAndFillers() {
   try {
+    console.log('Loading initial materials and fillers...')
     const [materialsRes, fillersRes] = await Promise.all([
       getMaterialListApi({ page: 1, page_size: 100 }),
       getFillerListApi({ page: 1, page_size: 100 })
     ])
+    console.log('Materials response:', materialsRes)
+    console.log('Fillers response:', fillersRes)
     materials.value = materialsRes.list || materialsRes.items || []
     fillers.value = fillersRes.list || fillersRes.items || []
+    console.log('Materials count:', materials.value.length)
+    console.log('Fillers count:', fillers.value.length)
   } catch (error) {
-    console.error('获取原料/填料列表失败:', error)
+    console.error('Failed to get materials/fillers list:', error)
+  }
+}
+
+// Search materials by keyword (remote search)
+async function searchMaterials(query: string) {
+  if (!query || query.trim() === '') {
+    // If empty, load first 100 as default
+    materialsLoading.value = true
+    try {
+      const res = await getMaterialListApi({ page: 1, page_size: 100 })
+      materials.value = res.list || res.items || []
+    } catch (error) {
+      console.error('Failed to load materials:', error)
+    } finally {
+      materialsLoading.value = false
+    }
+    return
+  }
+  
+  materialsLoading.value = true
+  try {
+    const res = await getMaterialListApi({ 
+      page: 1, 
+      page_size: 50,
+      keyword: query 
+    })
+    materials.value = res.list || res.items || []
+  } catch (error) {
+    console.error('Failed to search materials:', error)
+  } finally {
+    materialsLoading.value = false
+  }
+}
+
+// Search fillers by keyword (remote search)
+async function searchFillers(query: string) {
+  if (!query || query.trim() === '') {
+    // If empty, load first 100 as default
+    fillersLoading.value = true
+    try {
+      const res = await getFillerListApi({ page: 1, page_size: 100 })
+      fillers.value = res.list || res.items || []
+    } catch (error) {
+      console.error('Failed to load fillers:', error)
+    } finally {
+      fillersLoading.value = false
+    }
+    return
+  }
+  
+  fillersLoading.value = true
+  try {
+    const res = await getFillerListApi({ 
+      page: 1, 
+      page_size: 50,
+      keyword: query 
+    })
+    fillers.value = res.list || res.items || []
+  } catch (error) {
+    console.error('Failed to search fillers:', error)
+  } finally {
+    fillersLoading.value = false
   }
 }
 
@@ -300,65 +458,72 @@ function handleBack() {
 
 // 编辑项目
 function handleEdit() {
-  ElMessage.info('编辑功能开发中...')
+  // 填充表单数据
+  projectFormData.project_name = projectInfo.value.ProjectName || ''
+  projectFormData.project_type_fk = projectInfo.value.ProjectType_FK
+  projectFormData.formulator_name = projectInfo.value.FormulatorName || ''
+  projectFormData.formulation_date = projectInfo.value.FormulationDate || ''
+  projectFormData.substrate_application = projectInfo.value.SubstrateApplication || ''
+  
+  projectDialogVisible.value = true
 }
 
-// 删除项目
+// Delete project
 function handleDelete() {
-  ElMessageBox.confirm('确定要删除该项目吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Are you sure you want to delete this project?', 'Confirmation', {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
     type: 'warning',
   }).then(async () => {
     try {
       await deleteProjectApi(projectId.value)
-      ElMessage.success('删除成功')
+      ElMessage.success('Deleted successfully')
       router.push('/projects')
     } catch (error) {
-      ElMessage.error('删除失败')
+      ElMessage.error('Delete failed')
     }
   })
 }
 
-// 添加成分
+// Add component
 function handleAddComposition() {
-  compositionDialogTitle.value = '添加成分'
+  compositionDialogTitle.value = 'Add Component'
   compositionDialogVisible.value = true
 }
 
-// 编辑成分
+// Edit component
 function handleEditComposition(row: FormulaComposition) {
-  compositionDialogTitle.value = '编辑成分'
+  compositionDialogTitle.value = 'Edit Component'
   Object.assign(compositionFormData, {
     CompositionID: row.CompositionID,
     componentType: row.MaterialID_FK ? 'material' : 'filler',
     MaterialID_FK: row.MaterialID_FK,
     FillerID_FK: row.FillerID_FK,
-    WeightPercentage: row.WeightPercentage,
+    WeightPercentage: row.WeightPercentage ? Number(row.WeightPercentage) : undefined,
     AdditionMethod: row.AdditionMethod,
     Remarks: row.Remarks,
   })
   compositionDialogVisible.value = true
 }
 
-// 删除成分
+// Delete component
 function handleDeleteComposition(row: FormulaComposition) {
-  ElMessageBox.confirm('确定要删除该成分吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Are you sure you want to delete this component?', 'Confirmation', {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
     type: 'warning',
   }).then(async () => {
     try {
       await deleteCompositionApi(row.CompositionID)
-      ElMessage.success('删除成功')
+      ElMessage.success('Deleted successfully')
       getCompositions()
     } catch (error) {
-      ElMessage.error('删除失败')
+      ElMessage.error('Delete failed')
     }
   })
 }
 
-// 提交配方成分
+// Submit composition
 async function handleSubmitComposition() {
   if (!compositionFormRef.value) return
 
@@ -381,15 +546,15 @@ async function handleSubmitComposition() {
 
         if (compositionFormData.CompositionID) {
           await updateCompositionApi(compositionFormData.CompositionID, data)
-          ElMessage.success('更新成功')
+          ElMessage.success('Updated successfully')
         } else {
           await createCompositionApi(data)
-          ElMessage.success('添加成功')
+          ElMessage.success('Added successfully')
         }
         compositionDialogVisible.value = false
         getCompositions()
       } catch (error) {
-        ElMessage.error(compositionFormData.CompositionID ? '更新失败' : '添加失败')
+        ElMessage.error(compositionFormData.CompositionID ? 'Update failed' : 'Add failed')
       } finally {
         compositionSubmitLoading.value = false
       }
@@ -408,13 +573,13 @@ function handleCompositionDialogClose() {
   })
 }
 
-// 导出图片报告
+// Export image report
 async function handleExportImage() {
   exportLoading.value = true
   try {
     const blob = await exportProjectImageApi(projectId.value)
     
-    // 创建下载链接
+    // Create download link
     const url = window.URL.createObjectURL(new Blob([blob]))
     const link = document.createElement('a')
     link.href = url
@@ -425,10 +590,10 @@ async function handleExportImage() {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success('图片报告导出成功')
+    ElMessage.success('Image report exported successfully')
   } catch (error: any) {
-    console.error('导出图片报告失败:', error)
-    ElMessage.error('导出图片报告失败: ' + (error.response?.data?.detail || error.message || '未知错误'))
+    console.error('Export image report failed:', error)
+    ElMessage.error('Export image report failed: ' + (error.response?.data?.detail || error.message || 'Unknown error'))
   } finally {
     exportLoading.value = false
   }
@@ -455,8 +620,10 @@ async function handleSaveTestResult() {
 
 // 测试结果保存成功回调
 async function handleTestResultSaved() {
+  console.log('Test result saved callback triggered')
   testResultDialogVisible.value = false
   await loadTestResults()
+  console.log('Test results reloaded after save')
 }
 
 // 关闭测试结果对话框
@@ -464,22 +631,70 @@ function handleTestResultDialogClose() {
   // 清理逻辑
 }
 
-// 加载测试结果
+// Load test results
 async function loadTestResults() {
   try {
+    console.log('Loading test results for project:', projectId.value)
     const res = await getTestResultApi(projectId.value)
+    console.log('Test result response:', res)
     testResult.value = res || null
+    console.log('Test result set to:', testResult.value)
   } catch (error) {
-    console.error('加载测试结果失败:', error)
+    console.error('Load test results failed:', error)
     testResult.value = null
   }
 }
 
-// 获取测试结果组件（根据项目类型）
+// Get test result component (based on project type)
 function getTestResultComponent() {
-  // 这里可以根据项目类型返回不同的测试结果展示组件
-  // 暂时返回一个简单的显示
-  return () => h('div', { class: 'simple-test-result' }, '测试结果组件开发中...')
+  // Can return different test result display components based on project type
+  // Temporarily returns a simple display
+  return () => h('div', { class: 'simple-test-result' }, 'Test result component under development...')
+}
+
+// Get project types list
+async function getProjectTypes() {
+  try {
+    const types = await getProjectTypesApi()
+    projectTypes.value = types || []
+  } catch (error) {
+    console.error('Failed to get project types:', error)
+  }
+}
+
+// Submit project edit
+async function handleSubmitProject() {
+  if (!projectFormRef.value) return
+
+  await projectFormRef.value.validate(async (valid) => {
+    if (valid) {
+      projectSubmitLoading.value = true
+      try {
+        await updateProjectApi(projectId.value, projectFormData)
+        ElMessage.success('Project updated successfully')
+        projectDialogVisible.value = false
+        // Reload project details
+        await getProjectDetail()
+      } catch (error) {
+        console.error('Update project failed:', error)
+        ElMessage.error('Project update failed')
+      } finally {
+        projectSubmitLoading.value = false
+      }
+    }
+  })
+}
+
+// Project dialog close
+function handleProjectDialogClose() {
+  projectFormRef.value?.resetFields()
+  Object.assign(projectFormData, {
+    project_name: '',
+    project_type_fk: undefined,
+    formulator_name: '',
+    formulation_date: '',
+    substrate_application: '',
+  })
 }
 
 onMounted(() => {
@@ -487,6 +702,7 @@ onMounted(() => {
   getCompositions()
   getMaterialsAndFillers()
   loadTestResults()
+  getProjectTypes()
 })
 </script>
 

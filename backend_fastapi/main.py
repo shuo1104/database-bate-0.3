@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-光创化物 R&D 数据库管理系统 - FastAPI版本
+Advanced - PhotoPolymer Formulation Management Database
+高级光敏聚合物配方管理数据库 - FastAPI版本
 主启动文件
 """
 
@@ -102,3 +103,6 @@ if __name__ == '__main__':
     # python main.py run --env=dev
     shell_app()
 
+
+# 为 uvicorn 直接启动创建 app 实例
+app = create_app()

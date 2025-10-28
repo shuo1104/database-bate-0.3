@@ -1,21 +1,26 @@
 @import './variables.scss';
 
 // 全局样式
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+html {
+  --el-color-primary: #409eff;
+  --el-color-primary-light-9: #ecf5ff;
+  --el-text-color-primary: #303133;
+  --el-text-color-regular: #606266;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
 }
 
-html,
-body,
+body {
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+  margin: 0;
+  padding: 0;
+}
+
 #app {
-  width: 100%;
-  height: 100%;
-  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', '微软雅黑', Arial,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  transition: background-color 0.3s ease;
+  min-height: 100vh;
 }
 
 // 滚动条样式
@@ -33,6 +38,12 @@ body,
   background-color: rgba(144, 147, 153, 0.5);
 }
 
+// 页面容器 - 一体化无边距
+.app-container {
+  padding: 20px;
+  min-height: 100vh;
+}
+
 // Element Plus 样式覆盖
 .el-button + .el-button {
   margin-left: 10px;
@@ -42,4 +53,157 @@ body,
   margin-top: 20px;
   text-align: right;
 }
+
+// Element Plus 组件纯白色主题覆盖 - 一体化
+.el-card {
+  border: none;
+  box-shadow: none;
+}
+
+.el-table {
+  border: none;
+  
+  th.el-table__cell {
+    background-color: transparent; // 改为透明
+    border: none;
+  }
+  
+  td.el-table__cell {
+    border: none;
+  }
+  
+  tr {
+    background-color: transparent; // 改为透明
+    
+    &:hover > td {
+      background-color: #f5f7fa; // 保留一个浅色的hover效果给白天模式
+    }
+  }
+  
+  .el-table__body tr.hover-row > td {
+    background-color: #f5f7fa; // 保留一个浅色的hover效果给白天模式
+  }
+  
+  &::before {
+    height: 0;
+  }
+  
+  &::after {
+    width: 0;
+  }
+}
+
+// 表格斑马纹在白天模式下生效
+html:not(.dark) .el-table--striped .el-table__body tr.el-table__row--striped td {
+  background-color: #fafafa !important;
+}
+
+// 表格普通行在白天模式下是白色
+html:not(.dark) .el-table__body tr:not(.el-table__row--striped) td {
+  background-color: #ffffff !important;
+}
+
+html:not(.dark) .el-table tr {
+  background-color: #ffffff !important;
+}
+
+// 表单和输入框
+.el-input__wrapper {
+  box-shadow: none;
+  border: 1px solid #dcdfe6;
+}
+
+.el-select-dropdown {
+  border: 1px solid #dcdfe6;
+  box-shadow: none;
+}
+
+// 对话框
+.el-dialog {
+  border: none;
+  box-shadow: none;
+}
+
+// 下拉菜单
+.el-dropdown-menu {
+  border: 1px solid #dcdfe6;
+  box-shadow: none;
+}
+
+.el-dropdown-menu__item:hover {
+  background-color: #ecf5ff; // 保留白天模式的hover效果
+}
+
+// 移除所有分页器边框
+.el-pagination {
+  .el-pager li {
+    background-color: transparent; // 改为透明
+    border: none;
+  }
+}
+
+// 移除表单边框
+.el-form-item {
+  border: none;
+}
+
+// 移除描述列表边框
+.el-descriptions {
+  border: none;
+  
+  .el-descriptions__cell {
+    border: none;
+  }
+}
+
+// 布局容器（不强制白色，允许主题控制）
+.main-container,
+.content-container,
+.sidebar-container,
+.app-wrapper,
+.page-container {
+  // background-color 由主题控制
+}
+
+// 移除所有空状态的灰色背景
+.el-empty {
+  background-color: transparent; // 改为透明
+}
+
+// 表格空状态
+.el-table__empty-block {
+  background-color: transparent; // 改为透明
+}
+
+// footer (不强制白色，允许主题控制)
+footer,
+.footer,
+.page-footer,
+.el-footer {
+  // background-color 由主题控制
+}
+
+// 强制 Tooltip 文字颜色
+.el-popper.is-dark {
+  background: #303133 !important;
+  color: #ffffff !important;
+
+  .el-popper__content {
+    background: #303133 !important;
+    color: #ffffff !important;
+  }
+}
+
+.el-popper.is-light {
+  background: #ffffff !important;
+  color: #303133 !important;
+
+  .el-popper__content {
+    background: #ffffff !important;
+    color: #303133 !important;
+  }
+}
+
+// 引入暗黑模式样式
+@import './dark.scss';
 

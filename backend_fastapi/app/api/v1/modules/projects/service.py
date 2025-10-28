@@ -21,6 +21,7 @@ from app.api.v1.modules.projects.schema import (
     ProjectDetailResponse,
     ProjectTypeResponse,
     CompositionCreateRequest,
+    CompositionUpdateRequest,
     CompositionResponse,
     BatchDeleteRequest
 )
@@ -406,6 +407,56 @@ class CompositionService:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"创建配方成分失败: {str(e)}"
+            )
+    
+    @staticmethod
+    async def update_composition(
+        db: AsyncSession,
+        composition_id: int,
+        composition_data: CompositionUpdateRequest
+    ) -> CompositionResponse:
+        """
+        更新配方成分
+        
+        Args:
+            db: 数据库会话
+            composition_id: 成分ID
+            composition_data: 更新数据
+        
+        Returns:
+            更新后的成分信息
+        """
+        try:
+            composition = await CompositionCRUD.update_composition(
+                db=db,
+                composition_id=composition_id,
+                material_id=composition_data.material_id,
+                filler_id=composition_data.filler_id,
+                weight_percentage=float(composition_data.weight_percentage) if composition_data.weight_percentage else None,
+                addition_method=composition_data.addition_method,
+                remarks=composition_data.remarks
+            )
+            
+            if not composition:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"配方成分ID {composition_id} 不存在"
+                )
+            
+            await db.commit()
+            await db.refresh(composition)
+            logger.info(f"配方成分更新成功: ID {composition_id}")
+            
+            return CompositionResponse.model_validate(composition)
+            
+        except HTTPException:
+            raise
+        except Exception as e:
+            await db.rollback()
+            logger.error(f"更新配方成分失败: {e}")
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"更新配方成分失败: {str(e)}"
             )
     
     @staticmethod

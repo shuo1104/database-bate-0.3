@@ -1,21 +1,21 @@
 <template>
   <div class="projects-container">
     <el-card shadow="never">
-      <!-- 搜索栏 -->
+      <!-- Search Bar -->
       <el-form :model="queryParams" inline>
-        <el-form-item label="关键词">
+        <el-form-item label="Keyword">
           <el-input
             v-model="queryParams.keyword"
-            placeholder="请输入项目名称或配方编号"
+            placeholder="Enter project name or formula code"
             clearable
             style="width: 200px"
             @clear="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="项目类型">
+        <el-form-item label="Project Type">
           <el-select
             v-model="queryParams.project_type"
-            placeholder="请选择项目类型"
+            placeholder="Select project type"
             clearable
             style="width: 150px"
             @change="handleQuery"
@@ -29,10 +29,10 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="配方师">
+        <el-form-item label="Formulator">
           <el-select
             v-model="queryParams.formulator"
-            placeholder="请选择配方师"
+            placeholder="Select formulator"
             clearable
             filterable
             style="width: 150px"
@@ -48,37 +48,37 @@
           </el-select>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
-          <el-button type="success" @click="handleCreate">新增</el-button>
+          <el-button type="primary" @click="handleQuery">Search</el-button>
+          <el-button @click="handleReset">Reset</el-button>
+          <el-button type="success" @click="handleCreate">Create</el-button>
           <el-dropdown @command="handleExport" style="margin-left: 10px">
             <el-button type="warning">
-              导出全部<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              Export All<el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="csv">导出为 CSV</el-dropdown-item>
-                <el-dropdown-item command="txt">导出为 TXT</el-dropdown-item>
-                <el-dropdown-item command="image" divided>导出图片报告</el-dropdown-item>
+                <el-dropdown-item command="csv">Export as CSV</el-dropdown-item>
+                <el-dropdown-item command="txt">Export as TXT</el-dropdown-item>
+                <el-dropdown-item command="image" divided>Export Image Report</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
           <el-dropdown @command="handleExportSelected" style="margin-left: 10px" :disabled="selectedRows.length === 0">
             <el-button type="info" :disabled="selectedRows.length === 0">
-              导出选中({{ selectedRows.length }})<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              Export Selected ({{ selectedRows.length }})<el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="csv">导出为 CSV</el-dropdown-item>
-                <el-dropdown-item command="txt">导出为 TXT</el-dropdown-item>
-                <el-dropdown-item command="image" divided>导出图片报告</el-dropdown-item>
+                <el-dropdown-item command="csv">Export as CSV</el-dropdown-item>
+                <el-dropdown-item command="txt">Export as TXT</el-dropdown-item>
+                <el-dropdown-item command="image" divided>Export Image Report</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </el-form-item>
       </el-form>
 
-      <!-- 表格 -->
+      <!-- Table -->
       <el-table 
         v-loading="loading" 
         :data="tableData" 
@@ -89,22 +89,22 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="ProjectID" label="ID" width="80" />
-        <el-table-column prop="ProjectName" label="项目名称" min-width="150" />
-        <el-table-column prop="FormulaCode" label="配方编号" min-width="180" />
-        <el-table-column prop="TypeName" label="项目类型" width="120" />
-        <el-table-column prop="FormulatorName" label="配方师" width="120" />
-        <el-table-column prop="SubstrateApplication" label="基材应用" min-width="150" />
-        <el-table-column prop="FormulationDate" label="配方日期" width="120" />
-        <el-table-column label="操作" width="260" fixed="right">
+        <el-table-column prop="ProjectName" label="Project Name" min-width="150" />
+        <el-table-column prop="FormulaCode" label="Formula Code" min-width="180" />
+        <el-table-column prop="TypeName" label="Project Type" width="120" />
+        <el-table-column prop="FormulatorName" label="Formulator" width="120" />
+        <el-table-column prop="SubstrateApplication" label="Substrate Application" min-width="150" />
+        <el-table-column prop="FormulationDate" label="Formulation Date" width="120" />
+        <el-table-column label="Actions" width="260" fixed="right">
           <template #default="{ row }">
-            <el-button type="info" size="small" @click="handleViewDetail(row)">详情</el-button>
-            <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
+            <el-button type="info" size="small" @click="handleViewDetail(row)">Detail</el-button>
+            <el-button type="primary" size="small" @click="handleEdit(row)">Edit</el-button>
+            <el-button type="danger" size="small" @click="handleDelete(row)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
+      <!-- Pagination -->
       <Pagination
         v-show="total > 0"
         :total="total"
@@ -114,19 +114,19 @@
       />
     </el-card>
 
-    <!-- 新增/编辑对话框 -->
+    <!-- Create/Edit Dialog -->
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
       width="600px"
       @close="handleDialogClose"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px">
-        <el-form-item label="项目名称" prop="ProjectName">
-          <el-input v-model="formData.ProjectName" placeholder="请输入项目名称" />
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="160px">
+        <el-form-item label="Project Name" prop="ProjectName">
+          <el-input v-model="formData.ProjectName" placeholder="Enter project name" />
         </el-form-item>
-        <el-form-item label="项目类型" prop="ProjectType_FK">
-          <el-select v-model="formData.ProjectType_FK" placeholder="请选择项目类型" style="width: 100%">
+        <el-form-item label="Project Type" prop="ProjectType_FK">
+          <el-select v-model="formData.ProjectType_FK" placeholder="Select project type" style="width: 100%">
             <el-option
               v-for="type in projectTypes"
               :key="type.TypeID"
@@ -135,25 +135,25 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="配方设计师" prop="FormulatorName">
-          <el-input v-model="formData.FormulatorName" placeholder="请输入配方设计师姓名" />
+        <el-form-item label="Formulator" prop="FormulatorName">
+          <el-input v-model="formData.FormulatorName" placeholder="Enter formulator name" />
         </el-form-item>
-        <el-form-item label="配方日期" prop="FormulationDate">
+        <el-form-item label="Formulation Date" prop="FormulationDate">
           <el-date-picker
             v-model="formData.FormulationDate"
             type="date"
-            placeholder="选择配方设计日期"
+            placeholder="Select formulation date"
             style="width: 100%"
             value-format="YYYY-MM-DD"
           />
         </el-form-item>
-        <el-form-item label="目标基材">
-          <el-input v-model="formData.SubstrateApplication" placeholder="请输入目标基材或应用领域" />
+        <el-form-item label="Substrate/Application" prop="SubstrateApplication">
+          <el-input v-model="formData.SubstrateApplication" placeholder="Enter substrate or application" />
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">Confirm</el-button>
       </template>
     </el-dialog>
   </div>
@@ -186,7 +186,7 @@ const queryParams = reactive({
 })
 
 const dialogVisible = ref(false)
-const dialogTitle = ref('新增项目')
+const dialogTitle = ref('Create Project')
 const formRef = ref<FormInstance>()
 const formData = reactive<Partial<ProjectInfo>>({
   ProjectName: '',
@@ -197,40 +197,39 @@ const formData = reactive<Partial<ProjectInfo>>({
 })
 
 const formRules = {
-  ProjectName: [{ required: true, message: '请输入项目名称', trigger: 'blur' }],
-  ProjectType_FK: [{ required: true, message: '请选择项目类型', trigger: 'change' }],
-  FormulatorName: [{ required: true, message: '请输入配方设计师', trigger: 'blur' }],
-  FormulationDate: [{ required: true, message: '请选择配方日期', trigger: 'change' }],
+  ProjectName: [{ required: true, message: 'Please enter project name', trigger: 'blur' }],
+  ProjectType_FK: [{ required: true, message: 'Please select project type', trigger: 'change' }],
+  FormulatorName: [{ required: true, message: 'Please enter formulator name', trigger: 'blur' }],
+  FormulationDate: [{ required: true, message: 'Please select formulation date', trigger: 'change' }],
 }
 
-// 项目类型列表和配方师列表
+// Project types and formulators lists
 const projectTypes = ref<any[]>([])
 const formulators = ref<string[]>([])
 
-// 获取列表
+// Get list
 async function getList() {
   loading.value = true
   try {
     const res = await getProjectListApi(queryParams)
-    // 后端返回的是 list 而不是 items
+    // Backend returns 'list' instead of 'items'
     tableData.value = res.list || res.items || []
     total.value = res.total || 0
   } catch (error) {
-    console.error('获取列表错误:', error)
-    ElMessage.error('获取列表失败')
+    console.error('Get list error:', error)
+    ElMessage.error('Failed to get list')
   } finally {
     loading.value = false
   }
 }
 
-// 查询
+// Query
 function handleQuery() {
-  console.log('查询被调用，参数:', queryParams)
   queryParams.page = 1
   getList()
 }
 
-// 重置
+// Reset
 function handleReset() {
   queryParams.page = 1
   queryParams.keyword = ''
@@ -239,48 +238,48 @@ function handleReset() {
   getList()
 }
 
-// 查看详情
+// View detail
 function handleViewDetail(row: ProjectInfo) {
   router.push(`/projects/${row.ProjectID}`)
 }
 
-// 新增
+// Create
 function handleCreate() {
-  dialogTitle.value = '新增项目'
+  dialogTitle.value = 'Create Project'
   dialogVisible.value = true
 }
 
-// 编辑
+// Edit
 function handleEdit(row: ProjectInfo) {
-  dialogTitle.value = '编辑项目'
+  dialogTitle.value = 'Edit Project'
   Object.assign(formData, row)
   dialogVisible.value = true
 }
 
-// 删除
+// Delete
 function handleDelete(row: ProjectInfo) {
-  ElMessageBox.confirm('确定要删除该项目吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Are you sure you want to delete this project?', 'Confirm', {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
     type: 'warning',
   }).then(async () => {
     try {
       await deleteProjectApi(row.ProjectID)
-      ElMessage.success('删除成功')
+      ElMessage.success('Deleted successfully')
       getList()
     } catch (error) {
-      ElMessage.error('删除失败')
+      ElMessage.error('Failed to delete')
     }
   })
 }
 
-// 导出图片报告
+// Export image report
 async function handleExportImage(row: any) {
   row.exportLoading = true
   try {
     const blob = await exportProjectImageApi(row.ProjectID)
     
-    // 创建下载链接
+    // Create download link
     const url = window.URL.createObjectURL(new Blob([blob]))
     const link = document.createElement('a')
     link.href = url
@@ -291,16 +290,16 @@ async function handleExportImage(row: any) {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success(`项目 ${row.ProjectName} 的图片报告导出成功`)
+    ElMessage.success(`Image report for project ${row.ProjectName} exported successfully`)
   } catch (error: any) {
-    console.error('导出图片报告失败:', error)
-    ElMessage.error(`项目 ${row.ProjectName} 的图片报告导出失败`)
+    console.error('Export image report failed:', error)
+    ElMessage.error(`Failed to export image report for project ${row.ProjectName}`)
   } finally {
     row.exportLoading = false
   }
 }
 
-// 提交
+// Submit
 async function handleSubmit() {
   if (!formRef.value) return
 
@@ -308,7 +307,7 @@ async function handleSubmit() {
     if (valid) {
       submitLoading.value = true
       try {
-        // 转换字段名为后端要求的格式
+        // Convert field names to backend format
         const requestData: any = {
           project_name: formData.ProjectName,
           project_type_fk: formData.ProjectType_FK,
@@ -319,15 +318,15 @@ async function handleSubmit() {
 
         if (formData.ProjectID) {
           await updateProjectApi(formData.ProjectID, requestData)
-          ElMessage.success('更新成功')
+          ElMessage.success('Updated successfully')
         } else {
           await createProjectApi(requestData)
-          ElMessage.success('创建成功')
+          ElMessage.success('Created successfully')
         }
         dialogVisible.value = false
         getList()
       } catch (error) {
-        ElMessage.error(formData.ProjectID ? '更新失败' : '创建失败')
+        ElMessage.error(formData.ProjectID ? 'Failed to update' : 'Failed to create')
       } finally {
         submitLoading.value = false
       }
@@ -335,30 +334,31 @@ async function handleSubmit() {
   })
 }
 
-// 获取项目类型列表
+// Get project types list
 async function getProjectTypes() {
   try {
     const types = await getProjectTypesApi()
     projectTypes.value = types || []
   } catch (error) {
-    console.error('获取项目类型失败:', error)
+    console.error('Failed to get project types:', error)
   }
 }
 
-// 获取配方师列表
+// Get formulators list
 async function getFormulators() {
   try {
     const res = await getFormulatorsApi()
     formulators.value = res || []
   } catch (error) {
-    console.error('获取配方师列表失败:', error)
+    console.error('Failed to get formulators list:', error)
   }
 }
 
-// 关闭对话框
+// Close dialog
 function handleDialogClose() {
   formRef.value?.resetFields()
   Object.assign(formData, {
+    ProjectID: undefined,  // 清除ProjectID，确保下次创建时不会误用
     ProjectName: '',
     ProjectType_FK: undefined,
     FormulatorName: '',
@@ -367,15 +367,15 @@ function handleDialogClose() {
   })
 }
 
-// 处理选择变化
+// Handle selection change
 function handleSelectionChange(selection: ProjectInfo[]) {
   selectedRows.value = selection
 }
 
-// 导出全部数据
+// Export all data
 async function handleExport(format: string) {
   if (format === 'image') {
-    ElMessage.warning('图片报告仅支持单个项目导出，请在详情页或操作列中导出')
+    ElMessage.warning('Image reports only support single project export, please export from detail page or actions column')
     return
   }
   try {
@@ -390,7 +390,7 @@ async function handleExport(format: string) {
       responseType: 'blob'
     })
     
-    // 创建下载链接
+    // Create download link
     const url = window.URL.createObjectURL(new Blob([response]))
     const link = document.createElement('a')
     link.href = url
@@ -400,31 +400,31 @@ async function handleExport(format: string) {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success('导出成功')
+    ElMessage.success('Exported successfully')
   } catch (error) {
-    ElMessage.error('导出失败')
-    console.error('导出失败:', error)
+    ElMessage.error('Failed to export')
+    console.error('Export failed:', error)
   }
 }
 
-// 导出选中数据
+// Export selected data
 async function handleExportSelected(format: string) {
   if (selectedRows.value.length === 0 && format !== 'image') {
-    ElMessage.warning('请先选择要导出的数据')
+    ElMessage.warning('Please select data to export first')
     return
   }
 
   if (format === 'image') {
     if (selectedRows.value.length === 0) {
-      ElMessage.warning('请选择要导出图片报告的项目')
+      ElMessage.warning('Please select projects to export image reports')
       return
     }
     if (selectedRows.value.length > 5) {
-      ElMessage.warning('一次最多只能导出5个项目的图片报告')
+      ElMessage.warning('Maximum 5 projects can be exported at once')
       return
     }
     
-    // 挨个导出图片
+    // Export images one by one
     for (const row of selectedRows.value) {
       await handleExportImage(row)
     }
@@ -432,15 +432,15 @@ async function handleExportSelected(format: string) {
   }
 
   try {
-    // 准备CSV/TXT内容
-    const columns = ['项目ID', '项目名称', '项目类型', '配方编号', '配方设计师', '配方日期', '目标基材', '创建时间']
+    // Prepare CSV/TXT content
+    const columns = ['Project ID', 'Project Name', 'Project Type', 'Formula Code', 'Formulator', 'Formulation Date', 'Substrate', 'Created Time']
     let content = ''
     const separator = format === 'csv' ? ',' : '\t'
     
-    // 添加表头
+    // Add header
     content = columns.join(separator) + '\n'
     
-    // 添加数据行
+    // Add data rows
     selectedRows.value.forEach(row => {
       const values = [
         row.ProjectID,
@@ -455,7 +455,7 @@ async function handleExportSelected(format: string) {
       content += values.join(separator) + '\n'
     })
     
-    // 创建Blob并下载
+    // Create Blob and download
     const blob = new Blob(['\ufeff' + content], { type: format === 'csv' ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -466,10 +466,10 @@ async function handleExportSelected(format: string) {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success(`已导出 ${selectedRows.value.length} 条数据`)
+    ElMessage.success(`Exported ${selectedRows.value.length} records`)
   } catch (error) {
-    ElMessage.error('导出失败')
-    console.error('导出失败:', error)
+    ElMessage.error('Failed to export')
+    console.error('Export failed:', error)
   }
 }
 

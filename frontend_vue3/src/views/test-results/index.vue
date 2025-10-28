@@ -3,45 +3,45 @@
     <el-card shadow="never">
       <template #header>
         <div class="card-header">
-          <span>测试结果管理</span>
+          <span>Test Results Management</span>
         </div>
       </template>
 
-      <!-- 搜索区域 -->
+      <!-- Search Area -->
       <el-form :inline="true" :model="queryParams" class="search-form">
-        <el-form-item label="项目筛选">
+        <el-form-item label="Project">
           <el-select
             v-model="queryParams.project_id"
-            placeholder="请选择项目"
+            placeholder="Type to search project name or code"
             clearable
             filterable
-            style="width: 300px"
+            remote
+            :remote-method="searchProjects"
+            :loading="projectsLoading"
+            style="width: 400px"
             @change="handleProjectChange"
+            @clear="handleReset"
           >
             <el-option
               v-for="project in projects"
               :key="project.ProjectID"
-              :label="`${project.ProjectName} (${project.FormulaCode})`"
+              :label="`${project.ProjectName} (${project.FormulaCode || 'No Code'})`"
               :value="project.ProjectID"
             />
           </el-select>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" :icon="Search" @click="handleSearch">查询</el-button>
-          <el-button :icon="Refresh" @click="handleReset">重置</el-button>
-        </el-form-item>
       </el-form>
 
-      <!-- 项目信息展示 -->
+      <!-- Project Info Display -->
       <el-alert
         v-if="currentProject"
-        :title="`当前项目: ${currentProject.ProjectName} | 配方编号: ${currentProject.FormulaCode} | 项目类型: ${currentProject.TypeName || '-'}`"
+        :title="`Current Project: ${currentProject.ProjectName} | Formula Code: ${currentProject.FormulaCode} | Project Type: ${currentProject.TypeName || '-'}`"
         type="info"
         :closable="false"
         style="margin-bottom: 16px"
       />
 
-      <!-- 操作按钮 -->
+      <!-- Action Buttons -->
       <div class="toolbar">
         <el-button
           type="primary"
@@ -49,11 +49,11 @@
           @click="handleEdit"
           :disabled="!queryParams.project_id || !currentProject"
         >
-          编辑测试结果
+          Edit Test Results
         </el-button>
       </div>
 
-      <!-- 测试结果显示 -->
+      <!-- Test Results Display -->
       <div v-if="testResult" class="test-result-content">
         <el-descriptions :column="2" border>
           <template v-for="(value, key) in filteredTestResult" :key="key">
@@ -63,14 +63,14 @@
           </template>
         </el-descriptions>
       </div>
-      <el-empty v-else-if="queryParams.project_id" description="暂无测试结果，点击上方按钮添加" />
-      <el-empty v-else description="请选择项目查看测试结果" />
+      <el-empty v-else-if="queryParams.project_id" description="No test results yet, click the button above to add" />
+      <el-empty v-else description="Please select a project to view test results" />
     </el-card>
 
-    <!-- 测试结果编辑对话框 -->
+    <!-- Test Results Edit Dialog -->
     <el-dialog
       v-model="dialogVisible"
-      title="编辑测试结果"
+      title="Edit Test Results"
       width="800px"
       @close="handleDialogClose"
     >
@@ -81,8 +81,8 @@
         @saved="handleTestResultSaved"
       />
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSaveTestResult">保存</el-button>
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="handleSaveTestResult">Save</el-button>
       </template>
     </el-dialog>
   </div>
@@ -91,7 +91,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import { Search, Refresh, Edit } from '@element-plus/icons-vue'
+import { Edit } from '@element-plus/icons-vue'
 import {
   getProjectListApi,
   getProjectDetailApi,
@@ -100,22 +100,23 @@ import {
 import { getTestResultApi } from '@/api/test-results'
 import TestResultForm from '@/views/projects/components/TestResultForm.vue'
 
-// 查询参数
+// Query parameters
 const queryParams = reactive({
   project_id: undefined as number | undefined,
 })
 
-// 数据
+// Data
+const projectsLoading = ref(false)
 const projects = ref<ProjectInfo[]>([])
 const currentProject = ref<ProjectInfo | null>(null)
 const testResult = ref<any>(null)
 
-// 对话框
+// Dialog
 const dialogVisible = ref(false)
 const submitLoading = ref(false)
 const testResultFormRef = ref<InstanceType<typeof TestResultForm>>()
 
-// 过滤后的测试结果（排除不需要显示的字段）
+// Filtered test results (exclude fields not to display)
 const filteredTestResult = computed(() => {
   if (!testResult.value) return {}
   const excluded = ['ResultID', 'ProjectID_FK']
@@ -127,73 +128,82 @@ const filteredTestResult = computed(() => {
     }, {})
 })
 
-// 格式化字段标签
+// Format field label
 function formatFieldLabel(field: string): string {
   const labelMap: Record<string, string> = {
-    // 喷墨
-    'Ink_Viscosity': '粘度',
-    'Ink_Reactivity': '反应活性/固化时间',
-    'Ink_ParticleSize': '粒径(nm)',
-    'Ink_SurfaceTension': '表面张力(mN/m)',
-    'Ink_ColorValue': '色度(Lab*色值)',
-    'Ink_RheologyNote': '流变学说明',
-    // 涂层
-    'Coating_Adhesion': '附着力',
-    'Coating_Transparency': '透明度',
-    'Coating_SurfaceHardness': '表面硬度',
-    'Coating_ChemicalResistance': '耐化学性',
-    'Coating_CostEstimate': '成本估算',
-    // 3D打印
-    'Print3D_Shrinkage': '收缩率',
-    'Print3D_YoungsModulus': '杨氏模量(GPa)',
-    'Print3D_FlexuralStrength': '弯曲强度(MPa)',
-    'Print3D_ShoreHardness': '邵氏硬度',
-    'Print3D_ImpactResistance': '冲击强度',
-    // 复合材料
-    'Composite_FlexuralStrength': '弯曲强度(MPa)',
-    'Composite_YoungsModulus': '杨氏模量(GPa)',
-    'Composite_ImpactResistance': '冲击强度(kJ/m²)',
-    'Composite_ConversionRate': '转化率(%)',
-    'Composite_WaterAbsorption': '吸水率(%)',
-    // 通用
-    'TestDate': '测试日期',
-    'Notes': '备注',
+    // Inkjet
+    'Ink_Viscosity': 'Viscosity',
+    'Ink_Reactivity': 'Reactivity/Curing Time',
+    'Ink_ParticleSize': 'Particle Size (nm)',
+    'Ink_SurfaceTension': 'Surface Tension (mN/m)',
+    'Ink_ColorValue': 'Colorimetry (Lab*)',
+    'Ink_RheologyNote': 'Rheology Notes',
+    // Coating
+    'Coating_Adhesion': 'Adhesion',
+    'Coating_Transparency': 'Transparency',
+    'Coating_SurfaceHardness': 'Surface Hardness',
+    'Coating_ChemicalResistance': 'Chemical Resistance',
+    'Coating_CostEstimate': 'Cost Estimate',
+    // 3D Printing
+    'Print3D_Shrinkage': 'Shrinkage',
+    'Print3D_YoungsModulus': "Young's Modulus (GPa)",
+    'Print3D_FlexuralStrength': 'Flexural Strength (MPa)',
+    'Print3D_ShoreHardness': 'Shore Hardness',
+    'Print3D_ImpactResistance': 'Impact Resistance',
+    // Composite
+    'Composite_FlexuralStrength': 'Flexural Strength (MPa)',
+    'Composite_YoungsModulus': "Young's Modulus (GPa)",
+    'Composite_ImpactResistance': 'Impact Resistance (kJ/m²)',
+    'Composite_ConversionRate': 'Degree of Conversion (%)',
+    'Composite_WaterAbsorption': 'Water Absorption (%)',
+    // General
+    'TestDate': 'Test Date',
+    'Notes': 'Notes',
   }
   return labelMap[field] || field
 }
 
-// 获取项目列表（只显示有测试结果的项目）
-async function getProjects() {
+// Search projects by keyword (remote search)
+async function searchProjects(query: string) {
+  if (!query || query.trim() === '') {
+    // If empty, load first 50 projects as default
+    await loadDefaultProjects()
+    return
+  }
+  
+  projectsLoading.value = true
   try {
-    // 使用分页获取所有项目，每次100条
-    let allProjects = []
-    let currentPage = 1
-    let hasMore = true
-    
-    while (hasMore && currentPage <= 20) { // 最多20页，避免无限循环
-      const res = await getProjectListApi({ 
-        page: currentPage, 
-        page_size: 100,
-        has_test_results: true  // 只显示有测试结果的项目
-      })
-      const list = res.list || res.items || []
-      allProjects = allProjects.concat(list)
-      
-      // 如果返回的数量少于100，说明没有更多了
-      if (list.length < 100) {
-        hasMore = false
-      } else {
-        currentPage++
-      }
-    }
-    
-    projects.value = allProjects
+    const res = await getProjectListApi({ 
+      page: 1, 
+      page_size: 50,
+      keyword: query
+    })
+    projects.value = res.list || res.items || []
   } catch (error) {
-    console.error('获取项目列表失败:', error)
+    console.error('Failed to search projects:', error)
+    ElMessage.error('Failed to search projects')
+  } finally {
+    projectsLoading.value = false
   }
 }
 
-// 项目切换
+// Load default projects (first 50)
+async function loadDefaultProjects() {
+  projectsLoading.value = true
+  try {
+    const res = await getProjectListApi({ 
+      page: 1, 
+      page_size: 50
+    })
+    projects.value = res.list || res.items || []
+  } catch (error) {
+    console.error('Failed to get project list:', error)
+  } finally {
+    projectsLoading.value = false
+  }
+}
+
+// Project change
 async function handleProjectChange() {
   if (queryParams.project_id) {
     await loadProjectInfo()
@@ -204,50 +214,45 @@ async function handleProjectChange() {
   }
 }
 
-// 加载项目信息
+// Load project info
 async function loadProjectInfo() {
   if (!queryParams.project_id) return
   try {
     currentProject.value = await getProjectDetailApi(queryParams.project_id)
   } catch (error) {
-    console.error('获取项目信息失败:', error)
+    console.error('Failed to get project info:', error)
   }
 }
 
-// 加载测试结果
+// Load test results
 async function loadTestResults() {
   if (!queryParams.project_id) return
   try {
     const res = await getTestResultApi(queryParams.project_id)
     testResult.value = res || null
   } catch (error) {
-    console.error('加载测试结果失败:', error)
+    console.error('Failed to load test results:', error)
     testResult.value = null
   }
 }
 
-// 查询
-function handleSearch() {
-  loadTestResults()
-}
-
-// 重置
+// Reset
 function handleReset() {
   queryParams.project_id = undefined
   currentProject.value = null
   testResult.value = null
 }
 
-// 编辑
+// Edit
 function handleEdit() {
   if (!queryParams.project_id || !currentProject.value) {
-    ElMessage.warning('请先选择项目')
+    ElMessage.warning('Please select a project first')
     return
   }
   dialogVisible.value = true
 }
 
-// 保存测试结果
+// Save test results
 async function handleSaveTestResult() {
   if (!testResultFormRef.value) return
 
@@ -255,26 +260,26 @@ async function handleSaveTestResult() {
   try {
     await testResultFormRef.value.saveTestResult()
   } catch (error) {
-    // 错误处理已在子组件中完成
+    // Error handling completed in child component
   } finally {
     submitLoading.value = false
   }
 }
 
-// 测试结果保存成功回调
+// Test result saved callback
 async function handleTestResultSaved() {
   dialogVisible.value = false
   await loadTestResults()
-  ElMessage.success('保存成功')
+  ElMessage.success('Saved successfully')
 }
 
-// 关闭对话框
+// Close dialog
 function handleDialogClose() {
-  // 清理逻辑
+  // Cleanup logic
 }
 
 onMounted(() => {
-  getProjects()
+  loadDefaultProjects()  // Load first 50 projects by default
 })
 </script>
 
@@ -301,4 +306,3 @@ onMounted(() => {
   }
 }
 </style>
-

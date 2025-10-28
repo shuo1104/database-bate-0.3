@@ -68,6 +68,7 @@ class UserCRUD:
         username: str,
         password_hash: str,
         real_name: Optional[str] = None,
+        position: Optional[str] = None,
         email: Optional[str] = None,
         role: str = "user"
     ) -> UserModel:
@@ -79,6 +80,7 @@ class UserCRUD:
             username: 用户名
             password_hash: 密码哈希
             real_name: 真实姓名
+            position: 职位
             email: 邮箱
             role: 角色
         
@@ -90,9 +92,10 @@ class UserCRUD:
                 Username=username,
                 PasswordHash=password_hash,
                 RealName=real_name,
+                Position=position,
                 Email=email,
                 Role=role,
-                IsActive=True
+                IsActive=1  # 使用整数而不是布尔值（数据库中是SMALLINT）
             )
             db.add(user)
             await db.flush()
@@ -236,7 +239,7 @@ class UserCRUD:
             if role:
                 conditions.append(UserModel.Role == role)
             if is_active is not None:
-                conditions.append(UserModel.IsActive == is_active)
+                conditions.append(UserModel.IsActive == (1 if is_active else 0))  # 转换布尔值为整数
             
             # 查询总数
             count_stmt = select(func.count()).select_from(UserModel)
@@ -296,7 +299,7 @@ class UserCRUD:
             if role is not None:
                 values["Role"] = role
             if is_active is not None:
-                values["IsActive"] = is_active
+                values["IsActive"] = 1 if is_active else 0  # 转换布尔值为整数
             
             if values:
                 stmt = (

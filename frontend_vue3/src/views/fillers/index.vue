@@ -1,54 +1,54 @@
 <template>
   <div class="fillers-container">
     <el-card shadow="never">
-      <!-- 搜索栏 -->
+      <!-- Search Bar -->
       <el-form :model="queryParams" inline>
-        <el-form-item label="关键词">
+        <el-form-item label="Keyword">
           <el-input
             v-model="queryParams.keyword"
-            placeholder="请输入商品名称"
+            placeholder="Enter trade name"
             clearable
             @clear="handleQuery"
           />
         </el-form-item>
-        <el-form-item label="供应商">
+        <el-form-item label="Supplier">
           <el-input
             v-model="queryParams.supplier"
-            placeholder="请输入供应商"
+            placeholder="Enter supplier"
             clearable
             @clear="handleQuery"
           />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
-          <el-button type="success" @click="handleCreate">新增</el-button>
+          <el-button type="primary" @click="handleQuery">Search</el-button>
+          <el-button @click="handleReset">Reset</el-button>
+          <el-button type="success" @click="handleCreate">Create</el-button>
           <el-dropdown @command="handleExport" style="margin-left: 10px">
             <el-button type="warning">
-              导出全部<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              Export All<el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="csv">导出为 CSV</el-dropdown-item>
-                <el-dropdown-item command="txt">导出为 TXT</el-dropdown-item>
+                <el-dropdown-item command="csv">Export as CSV</el-dropdown-item>
+                <el-dropdown-item command="txt">Export as TXT</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
           <el-dropdown @command="handleExportSelected" style="margin-left: 10px" :disabled="selectedRows.length === 0">
             <el-button type="info" :disabled="selectedRows.length === 0">
-              导出选中({{ selectedRows.length }})<el-icon class="el-icon--right"><ArrowDown /></el-icon>
+              Export Selected ({{ selectedRows.length }})<el-icon class="el-icon--right"><ArrowDown /></el-icon>
             </el-button>
             <template #dropdown>
               <el-dropdown-menu>
-                <el-dropdown-item command="csv">导出为 CSV</el-dropdown-item>
-                <el-dropdown-item command="txt">导出为 TXT</el-dropdown-item>
+                <el-dropdown-item command="csv">Export as CSV</el-dropdown-item>
+                <el-dropdown-item command="txt">Export as TXT</el-dropdown-item>
               </el-dropdown-menu>
             </template>
           </el-dropdown>
         </el-form-item>
       </el-form>
 
-      <!-- 表格 -->
+      <!-- Table -->
       <el-table 
         v-loading="loading" 
         :data="tableData" 
@@ -59,28 +59,28 @@
       >
         <el-table-column type="selection" width="55" />
         <el-table-column prop="FillerID" label="ID" width="80" />
-        <el-table-column prop="TradeName" label="商品名称" min-width="150" />
-        <el-table-column prop="FillerTypeName" label="填料类型" width="120" />
-        <el-table-column prop="Supplier" label="供应商" min-width="150" />
-            <el-table-column prop="ParticleSize" label="粒径" width="120" />
-            <el-table-column label="是否硅烷化" width="110">
+        <el-table-column prop="TradeName" label="Trade Name" min-width="150" />
+        <el-table-column prop="FillerTypeName" label="Filler Type" width="120" />
+        <el-table-column prop="Supplier" label="Supplier" min-width="150" />
+            <el-table-column prop="ParticleSize" label="Particle Size" width="120" />
+            <el-table-column label="Silanized" width="110">
               <template #default="{ row }">
-                <el-tag v-if="row.IsSilanized === 1" type="success">是</el-tag>
-                <el-tag v-else-if="row.IsSilanized === 0" type="info">否</el-tag>
+                <el-tag v-if="row.IsSilanized === 1" type="success">Yes</el-tag>
+                <el-tag v-else-if="row.IsSilanized === 0" type="info">No</el-tag>
                 <span v-else>-</span>
               </template>
             </el-table-column>
-            <el-table-column prop="CouplingAgent" label="偶联剂" min-width="120" show-overflow-tooltip />
-            <el-table-column prop="SurfaceArea" label="比表面积" width="110" />
-        <el-table-column label="操作" width="180" fixed="right">
+            <el-table-column prop="CouplingAgent" label="Coupling Agent" min-width="120" show-overflow-tooltip />
+            <el-table-column prop="SurfaceArea" label="Surface Area" width="110" />
+        <el-table-column label="Actions" width="180" fixed="right">
           <template #default="{ row }">
-            <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDelete(row)">删除</el-button>
+            <el-button type="primary" size="small" @click="handleEdit(row)">Edit</el-button>
+            <el-button type="danger" size="small" @click="handleDelete(row)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
+      <!-- Pagination -->
       <Pagination
         v-show="total > 0"
         :total="total"
@@ -90,19 +90,19 @@
       />
     </el-card>
 
-    <!-- 新增/编辑对话框 -->
+    <!-- Create/Edit Dialog -->
     <el-dialog
       v-model="dialogVisible"
       :title="dialogTitle"
       width="600px"
       @close="handleDialogClose"
     >
-      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="120px">
-        <el-form-item label="商品名称" prop="TradeName">
-          <el-input v-model="formData.TradeName" placeholder="请输入商品名称" />
+      <el-form ref="formRef" :model="formData" :rules="formRules" label-width="150px">
+        <el-form-item label="Trade Name" prop="TradeName">
+          <el-input v-model="formData.TradeName" placeholder="Enter trade name" />
         </el-form-item>
-        <el-form-item label="填料类型" prop="FillerType_FK">
-          <el-select v-model="formData.FillerType_FK" placeholder="请选择填料类型" style="width: 100%">
+        <el-form-item label="Filler Type" prop="FillerType_FK">
+          <el-select v-model="formData.FillerType_FK" placeholder="Select filler type" style="width: 100%">
             <el-option
               v-for="type in fillerTypes"
               :key="type.FillerTypeID"
@@ -111,25 +111,25 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="供应商">
-          <el-input v-model="formData.Supplier" placeholder="请输入供应商" />
+        <el-form-item label="Supplier">
+          <el-input v-model="formData.Supplier" placeholder="Enter supplier" />
         </el-form-item>
-        <el-form-item label="粒径（含D50）">
-          <el-input v-model="formData.ParticleSize" placeholder="例如: 10-20nm" />
+        <el-form-item label="Particle Size (D50)">
+          <el-input v-model="formData.ParticleSize" placeholder="e.g. 10-20nm" />
         </el-form-item>
-        <el-form-item label="是否硅烷化">
+        <el-form-item label="Silanized">
           <el-radio-group v-model="formData.IsSilanized">
-            <el-radio :label="1">是</el-radio>
-            <el-radio :label="0">否</el-radio>
+            <el-radio :label="1">Yes</el-radio>
+            <el-radio :label="0">No</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="所用偶联剂">
-          <el-input v-model="formData.CouplingAgent" placeholder="请输入所用偶联剂" />
+        <el-form-item label="Coupling Agent">
+          <el-input v-model="formData.CouplingAgent" placeholder="Enter coupling agent" />
         </el-form-item>
-        <el-form-item label="比表面积 (m²/g)">
+        <el-form-item label="Surface Area (m²/g)">
           <el-input-number 
             v-model.number="formData.SurfaceArea" 
-            placeholder="请输入比表面积" 
+            placeholder="Enter surface area" 
             :precision="4"
             :step="0.01"
             style="width: 100%"
@@ -137,8 +137,8 @@
         </el-form-item>
       </el-form>
       <template #footer>
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">确定</el-button>
+        <el-button @click="dialogVisible = false">Cancel</el-button>
+        <el-button type="primary" :loading="submitLoading" @click="handleSubmit">Confirm</el-button>
       </template>
     </el-dialog>
   </div>
@@ -175,7 +175,7 @@ const queryParams = reactive({
 })
 
 const dialogVisible = ref(false)
-const dialogTitle = ref('新增填料')
+const dialogTitle = ref('Create Filler')
 const formRef = ref<FormInstance>()
 const formData = reactive<Partial<FillerInfo>>({
   TradeName: '',
@@ -188,20 +188,20 @@ const formData = reactive<Partial<FillerInfo>>({
 })
 
 const formRules = {
-  TradeName: [{ required: true, message: '请输入商品名称', trigger: 'blur' }],
-  FillerType_FK: [{ required: true, message: '请选择填料类型', trigger: 'change' }],
+  TradeName: [{ required: true, message: 'Please enter trade name', trigger: 'blur' }],
+  FillerType_FK: [{ required: true, message: 'Please select filler type', trigger: 'change' }],
 }
 
-// 获取填料类型列表
+// Get filler types list
 async function getFillerTypes() {
   try {
     fillerTypes.value = await getFillerTypesApi()
   } catch (error) {
-    console.error('获取填料类型失败:', error)
+    console.error('Failed to get filler types:', error)
   }
 }
 
-// 获取列表
+// Get list
 async function getList() {
   loading.value = true
   try {
@@ -209,20 +209,20 @@ async function getList() {
     tableData.value = res.list || res.items || []
     total.value = res.total || 0
   } catch (error) {
-    console.error('获取列表错误:', error)
-    ElMessage.error('获取列表失败')
+    console.error('Get list error:', error)
+    ElMessage.error('Failed to get list')
   } finally {
     loading.value = false
   }
 }
 
-// 查询
+// Query
 function handleQuery() {
   queryParams.page = 1
   getList()
 }
 
-// 重置
+// Reset
 function handleReset() {
   queryParams.page = 1
   queryParams.keyword = ''
@@ -230,24 +230,28 @@ function handleReset() {
   getList()
 }
 
-// 新增
+// Create
 function handleCreate() {
-  dialogTitle.value = '新增填料'
+  dialogTitle.value = 'Create Filler'
   dialogVisible.value = true
 }
 
-// 编辑
+// Edit
 function handleEdit(row: FillerInfo) {
-  dialogTitle.value = '编辑填料'
-  Object.assign(formData, row)
+  dialogTitle.value = 'Edit Filler'
+  // 转换数值类型字段，避免类型警告
+  Object.assign(formData, {
+    ...row,
+    SurfaceArea: row.SurfaceArea ? Number(row.SurfaceArea) : undefined,
+  })
   dialogVisible.value = true
 }
 
 // 删除
 function handleDelete(row: FillerInfo) {
-  ElMessageBox.confirm('确定要删除该填料吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
+  ElMessageBox.confirm('Are you sure you want to delete this filler?', 'Confirm', {
+    confirmButtonText: 'Confirm',
+    cancelButtonText: 'Cancel',
     type: 'warning',
   }).then(async () => {
     try {
@@ -260,7 +264,7 @@ function handleDelete(row: FillerInfo) {
   })
 }
 
-// 提交
+// Submit
 async function handleSubmit() {
   if (!formRef.value) return
 
@@ -268,7 +272,7 @@ async function handleSubmit() {
     if (valid) {
       submitLoading.value = true
       try {
-        // 转换字段名为后端要求的格式
+        // Convert field names to backend format
         const requestData: any = {
           trade_name: formData.TradeName,
           filler_type_fk: formData.FillerType_FK,
@@ -281,15 +285,15 @@ async function handleSubmit() {
 
         if (formData.FillerID) {
           await updateFillerApi(formData.FillerID, requestData)
-          ElMessage.success('更新成功')
+          ElMessage.success('Updated successfully')
         } else {
           await createFillerApi(requestData)
-          ElMessage.success('创建成功')
+          ElMessage.success('Created successfully')
         }
         dialogVisible.value = false
         getList()
       } catch (error) {
-        ElMessage.error(formData.FillerID ? '更新失败' : '创建失败')
+        ElMessage.error(formData.FillerID ? 'Failed to update' : 'Failed to create')
       } finally {
         submitLoading.value = false
       }
@@ -297,10 +301,11 @@ async function handleSubmit() {
   })
 }
 
-// 关闭对话框
+// Close dialog
 function handleDialogClose() {
   formRef.value?.resetFields()
   Object.assign(formData, {
+    FillerID: undefined,  // 清除FillerID，确保下次创建时不会误用
     TradeName: '',
     FillerType_FK: undefined,
     Supplier: '',
@@ -311,12 +316,12 @@ function handleDialogClose() {
   })
 }
 
-// 处理选择变化
+// Handle selection change
 function handleSelectionChange(selection: FillerInfo[]) {
   selectedRows.value = selection
 }
 
-// 导出全部数据
+// Export all data
 async function handleExport(format: string) {
   try {
     const params = new URLSearchParams({
@@ -329,7 +334,7 @@ async function handleExport(format: string) {
       responseType: 'blob'
     })
     
-    // 创建下载链接
+    // Create download link
     const url = window.URL.createObjectURL(new Blob([response]))
     const link = document.createElement('a')
     link.href = url
@@ -339,30 +344,30 @@ async function handleExport(format: string) {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success('导出成功')
+    ElMessage.success('Exported successfully')
   } catch (error) {
-    ElMessage.error('导出失败')
-    console.error('导出失败:', error)
+    ElMessage.error('Failed to export')
+    console.error('Export failed:', error)
   }
 }
 
-// 导出选中数据
+// Export selected data
 async function handleExportSelected(format: string) {
   if (selectedRows.value.length === 0) {
-    ElMessage.warning('请先选择要导出的数据')
+    ElMessage.warning('Please select data to export first')
     return
   }
 
   try {
-    // 准备CSV/TXT内容
-    const columns = ['填料ID', '商品名称', '填料类型', '供应商', '粒径', '是否硅烷化', '偶联剂', '比表面积']
+    // Prepare CSV/TXT content
+    const columns = ['Filler ID', 'Trade Name', 'Filler Type', 'Supplier', 'Particle Size', 'Silanized', 'Coupling Agent', 'Surface Area']
     let content = ''
     const separator = format === 'csv' ? ',' : '\t'
     
-    // 添加表头
+    // Add header
     content = columns.join(separator) + '\n'
     
-    // 添加数据行
+    // Add data rows
     selectedRows.value.forEach(row => {
       const values = [
         row.FillerID,
@@ -370,14 +375,14 @@ async function handleExportSelected(format: string) {
         row.FillerTypeName || '',
         row.Supplier || '',
         row.ParticleSize || '',
-        row.IsSilanized ? '是' : '否',
+        row.IsSilanized ? 'Yes' : 'No',
         row.CouplingAgent || '',
         row.SurfaceArea || ''
       ]
       content += values.join(separator) + '\n'
     })
     
-    // 创建Blob并下载
+    // Create Blob and download
     const blob = new Blob(['\ufeff' + content], { type: format === 'csv' ? 'text/csv;charset=utf-8' : 'text/plain;charset=utf-8' })
     const url = window.URL.createObjectURL(blob)
     const link = document.createElement('a')
@@ -388,10 +393,10 @@ async function handleExportSelected(format: string) {
     document.body.removeChild(link)
     window.URL.revokeObjectURL(url)
     
-    ElMessage.success(`已导出 ${selectedRows.value.length} 条数据`)
+    ElMessage.success(`Exported ${selectedRows.value.length} records`)
   } catch (error) {
-    ElMessage.error('导出失败')
-    console.error('导出失败:', error)
+    ElMessage.error('Failed to export')
+    console.error('Export failed:', error)
   }
 }
 

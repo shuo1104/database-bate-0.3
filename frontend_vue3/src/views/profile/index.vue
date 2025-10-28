@@ -1,12 +1,12 @@
 <template>
   <div class="profile-container">
     <el-row :gutter="20">
-      <!-- 左侧基本信息卡片 -->
+      <!-- Left side: Basic information card -->
       <el-col :span="8">
         <el-card shadow="hover" :loading="loading">
           <template #header>
             <div class="card-header">
-              <span>基本信息</span>
+              <span>Basic Information</span>
             </div>
           </template>
           
@@ -32,39 +32,39 @@
           <el-divider />
 
           <el-descriptions :column="1" size="default" class="user-details">
-            <el-descriptions-item label="用户名">
+            <el-descriptions-item label="Username">
               {{ userInfo.username }}
             </el-descriptions-item>
-            <el-descriptions-item label="真实姓名">
-              {{ userInfo.real_name || '未设置' }}
+            <el-descriptions-item label="Real Name">
+              {{ userInfo.real_name || 'Not Set' }}
             </el-descriptions-item>
-            <el-descriptions-item label="职位">
-              {{ userInfo.position || '未设置' }}
+            <el-descriptions-item label="Position">
+              {{ userInfo.position || 'Not Set' }}
             </el-descriptions-item>
-            <el-descriptions-item label="邮箱">
-              {{ userInfo.email || '未设置' }}
+            <el-descriptions-item label="Email">
+              {{ userInfo.email || 'Not Set' }}
             </el-descriptions-item>
-            <el-descriptions-item label="角色">
+            <el-descriptions-item label="Role">
               {{ roleText }}
             </el-descriptions-item>
-            <el-descriptions-item label="创建时间">
+            <el-descriptions-item label="Created At">
               {{ formatDateTime(userInfo.created_at) }}
             </el-descriptions-item>
           </el-descriptions>
         </el-card>
       </el-col>
 
-      <!-- 右侧编辑卡片 -->
+      <!-- Right side: Edit card -->
       <el-col :span="16">
         <el-card shadow="hover">
           <template #header>
             <div class="card-header">
-              <span>编辑信息</span>
+              <span>Edit Information</span>
             </div>
           </template>
 
           <el-tabs v-model="activeTab">
-            <el-tab-pane label="个人信息" name="profile">
+            <el-tab-pane label="Profile" name="profile">
               <el-form
                 ref="profileFormRef"
                 :model="profileForm"
@@ -72,61 +72,61 @@
                 label-width="100px"
                 style="max-width: 600px"
               >
-                <el-form-item label="真实姓名" prop="real_name">
-                  <el-input v-model="profileForm.real_name" placeholder="请输入真实姓名" />
+                <el-form-item label="Real Name" prop="real_name">
+                  <el-input v-model="profileForm.real_name" placeholder="Enter real name" />
                 </el-form-item>
-                <el-form-item label="职位" prop="position">
-                  <el-input v-model="profileForm.position" placeholder="请输入职位" />
+                <el-form-item label="Position" prop="position">
+                  <el-input v-model="profileForm.position" placeholder="Enter position" />
                 </el-form-item>
-                <el-form-item label="邮箱" prop="email">
-                  <el-input v-model="profileForm.email" type="email" placeholder="请输入邮箱" />
+                <el-form-item label="Email" prop="email">
+                  <el-input v-model="profileForm.email" type="email" placeholder="Enter email" />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="handleUpdateProfile" :loading="submitLoading">
-                    保存修改
+                    Save Changes
                   </el-button>
-                  <el-button @click="resetProfileForm">重置</el-button>
+                  <el-button @click="resetProfileForm">Reset</el-button>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
 
-            <el-tab-pane label="修改密码" name="password">
+            <el-tab-pane label="Change Password" name="password">
               <el-form
                 ref="passwordFormRef"
                 :model="passwordForm"
                 :rules="passwordRules"
-                label-width="100px"
+                label-width="130px"
                 style="max-width: 600px"
               >
-                <el-form-item label="当前密码" prop="old_password">
+                <el-form-item label="Current Password" prop="old_password">
                   <el-input
                     v-model="passwordForm.old_password"
                     type="password"
-                    placeholder="请输入当前密码"
+                    placeholder="Enter current password"
                     show-password
                   />
                 </el-form-item>
-                <el-form-item label="新密码" prop="new_password">
+                <el-form-item label="New Password" prop="new_password">
                   <el-input
                     v-model="passwordForm.new_password"
                     type="password"
-                    placeholder="请输入新密码"
+                    placeholder="Enter new password"
                     show-password
                   />
                 </el-form-item>
-                <el-form-item label="确认密码" prop="confirm_password">
+                <el-form-item label="Confirm Password" prop="confirm_password">
                   <el-input
                     v-model="passwordForm.confirm_password"
                     type="password"
-                    placeholder="请再次输入新密码"
+                    placeholder="Enter new password again"
                     show-password
                   />
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" @click="handleChangePassword" :loading="submitLoading">
-                    修改密码
+                    Change Password
                   </el-button>
-                  <el-button @click="resetPasswordForm">重置</el-button>
+                  <el-button @click="resetPasswordForm">Reset</el-button>
                 </el-form-item>
               </el-form>
             </el-tab-pane>
@@ -178,17 +178,17 @@ const passwordForm = reactive({
 
 const roleText = computed(() => {
   const roleMap: Record<string, string> = {
-    'admin': '管理员',
-    'user': '普通用户'
+    'admin': 'Administrator',
+    'user': 'Regular User'
   }
-  return roleMap[userInfo.value.role] || '未知'
+  return roleMap[userInfo.value.role] || 'Unknown'
 })
 
 const validateConfirmPassword = (rule: any, value: any, callback: any) => {
   if (value === '') {
-    callback(new Error('请再次输入密码'))
+    callback(new Error('Please enter password again'))
   } else if (value !== passwordForm.new_password) {
-    callback(new Error('两次输入密码不一致'))
+    callback(new Error('Passwords do not match'))
   } else {
     callback()
   }
@@ -196,43 +196,43 @@ const validateConfirmPassword = (rule: any, value: any, callback: any) => {
 
 const profileRules: FormRules = {
   email: [
-    { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+    { type: 'email', message: 'Please enter a valid email address', trigger: 'blur' }
   ]
 }
 
 const passwordRules: FormRules = {
   old_password: [
-    { required: true, message: '请输入当前密码', trigger: 'blur' }
+    { required: true, message: 'Please enter current password', trigger: 'blur' }
   ],
   new_password: [
-    { required: true, message: '请输入新密码', trigger: 'blur' },
-    { min: 6, message: '密码长度不能少于6位', trigger: 'blur' }
+    { required: true, message: 'Please enter new password', trigger: 'blur' },
+    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
   ],
   confirm_password: [
     { required: true, validator: validateConfirmPassword, trigger: 'blur' }
   ]
 }
 
-// 加载用户信息
+// Load user information
 async function loadUserInfo() {
   loading.value = true
   try {
     const res = await getCurrentUserInfoApi()
     userInfo.value = res
     
-    // 填充表单
+    // Fill form
     profileForm.real_name = res.real_name || ''
     profileForm.position = res.position || ''
     profileForm.email = res.email || ''
   } catch (error) {
-    console.error('加载用户信息失败:', error)
-    ElMessage.error('加载用户信息失败')
+    console.error('Failed to load user information:', error)
+    ElMessage.error('Failed to load user information')
   } finally {
     loading.value = false
   }
 }
 
-// 更新个人信息
+// Update profile
 async function handleUpdateProfile() {
   if (!profileFormRef.value) return
   
@@ -241,14 +241,14 @@ async function handleUpdateProfile() {
       submitLoading.value = true
       try {
         await updateProfileApi(profileForm)
-        ElMessage.success('更新成功')
-        // 重新加载用户信息
+        ElMessage.success('Update successful')
+        // Reload user information
         await loadUserInfo()
-        // 更新store中的用户信息
+        // Update user info in store
         userStore.setUserInfo(userInfo.value)
       } catch (error) {
-        console.error('更新失败:', error)
-        ElMessage.error('更新失败')
+        console.error('Update failed:', error)
+        ElMessage.error('Update failed')
       } finally {
         submitLoading.value = false
       }
@@ -256,7 +256,7 @@ async function handleUpdateProfile() {
   })
 }
 
-// 修改密码
+// Change password
 async function handleChangePassword() {
   if (!passwordFormRef.value) return
   
@@ -265,17 +265,17 @@ async function handleChangePassword() {
       submitLoading.value = true
       try {
         await changePasswordApi(passwordForm)
-        ElMessage.success('密码修改成功，请重新登录')
-        // 清空表单
+        ElMessage.success('Password changed successfully, please login again')
+        // Clear form
         resetPasswordForm()
-        // 退出登录
+        // Logout
         setTimeout(() => {
           userStore.logout()
           window.location.href = '/login'
         }, 1500)
       } catch (error) {
-        console.error('修改密码失败:', error)
-        ElMessage.error('修改密码失败')
+        console.error('Failed to change password:', error)
+        ElMessage.error('Failed to change password')
       } finally {
         submitLoading.value = false
       }
@@ -283,14 +283,14 @@ async function handleChangePassword() {
   })
 }
 
-// 重置个人信息表单
+// Reset profile form
 function resetProfileForm() {
   profileForm.real_name = userInfo.value.real_name || ''
   profileForm.position = userInfo.value.position || ''
   profileForm.email = userInfo.value.email || ''
 }
 
-// 重置密码表单
+// Reset password form
 function resetPasswordForm() {
   passwordFormRef.value?.resetFields()
   passwordForm.old_password = ''

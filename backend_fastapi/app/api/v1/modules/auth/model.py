@@ -63,9 +63,9 @@ class UserModel(Base):
     )
     
     Role: Mapped[str] = mapped_column(
-        SQLEnum(UserRole),
+        String(20),
         nullable=False,
-        default=UserRole.user,
+        default="user",
         comment="角色：admin-管理员，user-普通用户"
     )
     
@@ -76,10 +76,10 @@ class UserModel(Base):
         comment="邮箱"
     )
     
-    IsActive: Mapped[bool] = mapped_column(
-        Boolean,
+    IsActive: Mapped[int] = mapped_column(
+        Integer,
         nullable=False,
-        default=True,
+        default=1,
         comment="是否激活（1:是，0:否）"
     )
     

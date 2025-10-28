@@ -267,14 +267,14 @@ class TestResultCRUD:
         project_id: int,
         project_type: str
     ) -> Optional[Union[TestResultInkModel, TestResultCoatingModel, TestResult3DPrintModel, TestResultCompositeModel]]:
-        """根据项目类型获取测试结果"""
-        if project_type == "喷墨":
+        """根据项目类型获取测试结果（支持中英文）"""
+        if project_type in ["喷墨", "Inkjet"]:
             return await TestResultCRUD.get_ink_result(db, project_id)
-        elif project_type == "涂层":
+        elif project_type in ["涂层", "Coating"]:
             return await TestResultCRUD.get_coating_result(db, project_id)
-        elif project_type == "3D打印":
+        elif project_type in ["3D打印", "3D Printing"]:
             return await TestResultCRUD.get_3dprint_result(db, project_id)
-        elif project_type == "复合材料":
+        elif project_type in ["复合材料", "Composite"]:
             return await TestResultCRUD.get_composite_result(db, project_id)
         else:
             return None

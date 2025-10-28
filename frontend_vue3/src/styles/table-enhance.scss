@@ -1,0 +1,147 @@
+/**
+ * 表格增强样式
+ */
+
+// 表格容器
+.table-container {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+}
+
+// 表格工具栏
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  .toolbar-left {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .toolbar-right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+}
+
+// 搜索表单
+.search-form {
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+}
+
+// 表格增强
+.el-table {
+  // 表头样式
+  .el-table__header {
+    th {
+      background-color: #fafafa;
+      color: #606266;
+      font-weight: 600;
+    }
+  }
+
+  // 行样式
+  .el-table__row {
+    &:hover {
+      background-color: #f5f7fa;
+    }
+  }
+
+  // 操作列按钮
+  .table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .el-button {
+      margin: 0;
+    }
+  }
+}
+
+// 分页
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #ebeef5;
+}
+
+// 统计卡片
+.stats-card {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  transition: all 0.3s;
+
+  &:hover {
+    box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+  }
+
+  .stats-title {
+    font-size: 14px;
+    color: #909399;
+    margin-bottom: 10px;
+  }
+
+  .stats-value {
+    font-size: 28px;
+    font-weight: bold;
+    color: #303133;
+    margin-bottom: 10px;
+  }
+
+  .stats-trend {
+    font-size: 12px;
+
+    &.up {
+      color: #67c23a;
+    }
+
+    &.down {
+      color: #f56c6c;
+    }
+  }
+}
+
+// 状态标签
+.status-tag {
+  &.status-success {
+    color: #67c23a;
+    background-color: #f0f9ff;
+    border-color: #c6e2ff;
+  }
+
+  &.status-warning {
+    color: #e6a23c;
+    background-color: #fdf6ec;
+    border-color: #f5dab1;
+  }
+
+  &.status-danger {
+    color: #f56c6c;
+    background-color: #fef0f0;
+    border-color: #fbc4c4;
+  }
+
+  &.status-info {
+    color: #909399;
+    background-color: #f4f4f5;
+    border-color: #e9e9eb;
+  }
+}
+

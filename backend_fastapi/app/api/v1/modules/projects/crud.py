@@ -508,6 +508,47 @@ class CompositionCRUD:
             raise
     
     @staticmethod
+    async def update_composition(
+        db: AsyncSession,
+        composition_id: int,
+        material_id: Optional[int] = None,
+        filler_id: Optional[int] = None,
+        weight_percentage: Optional[float] = None,
+        addition_method: Optional[str] = None,
+        remarks: Optional[str] = None
+    ) -> Optional[FormulaCompositionModel]:
+        """更新配方成分"""
+        try:
+            # 先查询是否存在
+            stmt = select(FormulaCompositionModel).where(
+                FormulaCompositionModel.CompositionID == composition_id
+            )
+            result = await db.execute(stmt)
+            composition = result.scalar_one_or_none()
+            
+            if not composition:
+                return None
+            
+            # 更新字段
+            if material_id is not None:
+                composition.MaterialID_FK = material_id
+            if filler_id is not None:
+                composition.FillerID_FK = filler_id
+            if weight_percentage is not None:
+                composition.WeightPercentage = weight_percentage
+            if addition_method is not None:
+                composition.AdditionMethod = addition_method
+            if remarks is not None:
+                composition.Remarks = remarks
+            
+            await db.flush()
+            await db.refresh(composition)
+            return composition
+        except Exception as e:
+            logger.error(f"更新配方成分失败: {e}")
+            raise
+    
+    @staticmethod
     async def delete_composition(
         db: AsyncSession,
         composition_id: int

@@ -23,6 +23,7 @@ from app.api.v1.modules.projects.schema import (
     ProjectDetailResponse,
     ProjectTypeResponse,
     CompositionCreateRequest,
+    CompositionUpdateRequest,
     CompositionResponse,
     BatchDeleteRequest
 )
@@ -303,6 +304,7 @@ async def export_project_image(
                 'WeightPercentage': float(comp.WeightPercentage),
                 'MaterialName': comp.material.TradeName if comp.material else None,
                 'FillerName': comp.filler.TradeName if comp.filler else None,
+                'Remarks': comp.Remarks if comp.Remarks else '',
             }
             compositions.append(comp_data)
     
@@ -313,9 +315,28 @@ async def export_project_image(
         try:
             test_result = await TestResultService.get_test_result(db, project_id)
             if test_result:
-                # 将测试结果转换为字典
-                test_results = {k: v for k, v in test_result.__dict__.items() 
-                              if not k.startswith('_') and k not in ['ResultID', 'ProjectID_FK', 'TestDate', 'Notes']}
+                # 将测试结果转换为字典，并清理特殊字符
+                char_replacements = {
+                    '²': '^2',
+                    '³': '^3',
+                    '°': 'deg',
+                    '℃': 'C',
+                    'μ': 'u',
+                    '·': '.',
+                    '～': '~',
+                    '—': '-'
+                }
+                test_results = {}
+                for k, v in test_result.__dict__.items():
+                    if not k.startswith('_') and k not in ['ResultID', 'ProjectID_FK', 'TestDate', 'Notes']:
+                        # 如果值是字符串，替换特殊字符
+                        if isinstance(v, str):
+                            clean_v = v
+                            for old_char, new_char in char_replacements.items():
+                                clean_v = clean_v.replace(old_char, new_char)
+                            test_results[k] = clean_v
+                        else:
+                            test_results[k] = v
         except Exception as e:
             # 如果获取测试结果失败，继续生成图片，只是不包含测试结果
             pass
@@ -325,17 +346,26 @@ async def export_project_image(
         # 1. 创建项目信息表
         info_img = ChartGenerator.create_project_info_table(project_data)
         
-        # 2. 创建配方成分柱状图
+        # 2. 创建配料信息表
+        composition_table_img = ChartGenerator.create_composition_table(compositions)
+        
+        # 3. 创建配方成分柱状图
         bar_chart_bytes = ChartGenerator.create_composition_bar_chart(compositions)
         
-        # 3. 创建测试结果雷达图
+        # 4. 创建测试结果表
+        test_result_table_img = ChartGenerator.create_test_result_table(
+            test_results, project_type_name
+        )
+        
+        # 5. 创建测试结果雷达图
         radar_chart_bytes = ChartGenerator.create_test_result_radar_chart(
             test_results, project_type_name
         )
         
-        # 4. 组合图片
+        # 6. 组合图片
         combined_image_bytes = ChartGenerator.combine_images_vertical(
-            info_img, bar_chart_bytes, radar_chart_bytes
+            info_img, composition_table_img, bar_chart_bytes, 
+            test_result_table_img, radar_chart_bytes
         )
         
         # 生成文件名
@@ -608,6 +638,39 @@ async def create_composition(
     return SuccessResponse(
         data=composition.model_dump(mode='json'),
         msg="配方成分添加成功"
+    )
+
+
+@router.put(
+    "/compositions/{composition_id}",
+    response_model=None,
+    summary="更新配方成分",
+    description="更新指定的配方成分"
+)
+async def update_composition(
+    composition_id: int = Path(..., gt=0, description="成分ID"),
+    composition_data: CompositionUpdateRequest = None,
+    user_id: int = Depends(get_current_user_id),
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    更新配方成分
+    
+    需要认证: 是
+    
+    请求体:
+    - **material_id**: 原料ID（可选）
+    - **filler_id**: 填料ID（可选）
+    - **weight_percentage**: 重量百分比（可选）
+    - **addition_method**: 掺入方法（可选）
+    - **remarks**: 备注（可选）
+    """
+    composition = await CompositionService.update_composition(
+        db, composition_id, composition_data
+    )
+    return SuccessResponse(
+        data=composition.model_dump(mode='json'),
+        msg="配方成分更新成功"
     )
 
 

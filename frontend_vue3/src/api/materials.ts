@@ -8,28 +8,23 @@ import request from '@/utils/request'
  */
 export interface MaterialInfo {
   MaterialID: number
-  MaterialName: string
-  EnglishName?: string
-  CAS?: string
+  TradeName: string  // 商品名称
+  Category_FK?: number  // 类别ID
+  CategoryName?: string  // 类别名称（关联查询）
   Supplier?: string
-  Specification?: string
-  Unit?: string
+  CAS_Number?: string
   Density?: number
   Viscosity?: number
-  Category?: string
-  Remark?: string
-  CreatedAt?: string
-  UpdatedAt?: string
+  FunctionDescription?: string
 }
 
 /**
  * 原料查询参数
  */
 export interface MaterialQueryParams extends ListQueryParams {
-  MaterialName?: string
-  Category?: string
-  Supplier?: string
-  CAS?: string
+  keyword?: string  // 关键词（商品名称或CAS号）
+  category?: string  // 类别名称
+  supplier?: string
 }
 
 /**
@@ -97,13 +92,21 @@ export function batchDeleteMaterialsApi(ids: number[]) {
 }
 
 /**
+ * 原料类别信息
+ */
+export interface MaterialCategory {
+  CategoryID: number
+  CategoryName: string
+}
+
+/**
  * 获取原料类别列表
  */
 export function getMaterialCategoriesApi() {
-  return request<string[]>({
-    url: '/api/v1/materials/categories',
+  return request({
+    url: '/api/v1/materials/config/categories',
     method: 'get',
-  })
+  }) as Promise<MaterialCategory[]>
 }
 
 /**
@@ -111,7 +114,7 @@ export function getMaterialCategoriesApi() {
  */
 export function getMaterialSuppliersApi() {
   return request<string[]>({
-    url: '/api/v1/materials/suppliers',
+    url: '/api/v1/materials/config/suppliers',
     method: 'get',
   })
 }

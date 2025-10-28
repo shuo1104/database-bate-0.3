@@ -5,7 +5,7 @@ export default {
   /**
    * 项目标题
    */
-  title: import.meta.env.VITE_APP_TITLE || '光创化物 R&D 配方管理系统',
+  title: import.meta.env.VITE_APP_TITLE || 'Advanced - PhotoPolymer Formulation Management DB',
 
   /**
    * 是否显示设置

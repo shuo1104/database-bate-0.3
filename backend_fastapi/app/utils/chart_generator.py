@@ -24,35 +24,63 @@ plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 class ChartGenerator:
     """图表生成器"""
     
-    # 行业标准配置（用于雷达图）
+    # 行业标准配置（用于雷达图）- 支持中英文项目类型
     INDUSTRY_STANDARDS = {
         '喷墨': {
-            'Ink_Viscosity': {'name': '粘度', 'min': 0, 'max': 100, 'unit': 'cP'},
-            'Ink_Reactivity': {'name': '反应活性', 'min': 0, 'max': 100, 'unit': 's'},
-            'Ink_ParticleSize': {'name': '粒径', 'min': 0, 'max': 500, 'unit': 'nm'},
-            'Ink_SurfaceTension': {'name': '表面张力', 'min': 0, 'max': 50, 'unit': 'mN/m'},
-            'Ink_ColorValue': {'name': '色度', 'min': 0, 'max': 100, 'unit': 'Lab*'},
+            'Ink_Viscosity': {'name': 'Viscosity', 'min': 0, 'max': 100, 'unit': 'cP'},
+            'Ink_Reactivity': {'name': 'Reactivity', 'min': 0, 'max': 100, 'unit': 's'},
+            'Ink_ParticleSize': {'name': 'Particle Size', 'min': 0, 'max': 500, 'unit': 'nm'},
+            'Ink_SurfaceTension': {'name': 'Surface Tension', 'min': 0, 'max': 50, 'unit': 'mN/m'},
+            'Ink_ColorValue': {'name': 'Colorimetry', 'min': 0, 'max': 100, 'unit': 'Lab*'},
+        },
+        'Inkjet': {
+            'Ink_Viscosity': {'name': 'Viscosity', 'min': 0, 'max': 100, 'unit': 'cP'},
+            'Ink_Reactivity': {'name': 'Reactivity', 'min': 0, 'max': 100, 'unit': 's'},
+            'Ink_ParticleSize': {'name': 'Particle Size', 'min': 0, 'max': 500, 'unit': 'nm'},
+            'Ink_SurfaceTension': {'name': 'Surface Tension', 'min': 0, 'max': 50, 'unit': 'mN/m'},
+            'Ink_ColorValue': {'name': 'Colorimetry', 'min': 0, 'max': 100, 'unit': 'Lab*'},
         },
         '涂层': {
-            'Coating_Adhesion': {'name': '附着力', 'min': 0, 'max': 100, 'unit': ''},
-            'Coating_Transparency': {'name': '透明度', 'min': 0, 'max': 100, 'unit': '%'},
-            'Coating_SurfaceHardness': {'name': '表面硬度', 'min': 0, 'max': 10, 'unit': 'H'},
-            'Coating_ChemicalResistance': {'name': '耐化学性', 'min': 0, 'max': 100, 'unit': ''},
-            'Coating_CostEstimate': {'name': '成本估算', 'min': 0, 'max': 100, 'unit': '€/kg'},
+            'Coating_Adhesion': {'name': 'Adhesion', 'min': 0, 'max': 100, 'unit': ''},
+            'Coating_Transparency': {'name': 'Transparency', 'min': 0, 'max': 100, 'unit': '%'},
+            'Coating_SurfaceHardness': {'name': 'Surface Hardness', 'min': 0, 'max': 10, 'unit': 'H'},
+            'Coating_ChemicalResistance': {'name': 'Chemical Resistance', 'min': 0, 'max': 100, 'unit': ''},
+            'Coating_CostEstimate': {'name': 'Cost Estimate', 'min': 0, 'max': 100, 'unit': 'EUR/kg'},
+        },
+        'Coating': {
+            'Coating_Adhesion': {'name': 'Adhesion', 'min': 0, 'max': 100, 'unit': ''},
+            'Coating_Transparency': {'name': 'Transparency', 'min': 0, 'max': 100, 'unit': '%'},
+            'Coating_SurfaceHardness': {'name': 'Surface Hardness', 'min': 0, 'max': 10, 'unit': 'H'},
+            'Coating_ChemicalResistance': {'name': 'Chemical Resistance', 'min': 0, 'max': 100, 'unit': ''},
+            'Coating_CostEstimate': {'name': 'Cost Estimate', 'min': 0, 'max': 100, 'unit': 'EUR/kg'},
         },
         '3D打印': {
-            'Print3D_Shrinkage': {'name': '收缩率', 'min': 0, 'max': 10, 'unit': '%'},
-            'Print3D_YoungsModulus': {'name': '杨氏模量', 'min': 0, 'max': 5000, 'unit': 'MPa'},
-            'Print3D_FlexuralStrength': {'name': '弯曲强度', 'min': 0, 'max': 200, 'unit': 'MPa'},
-            'Print3D_ShoreHardness': {'name': '邵氏硬度', 'min': 0, 'max': 100, 'unit': 'Shore'},
-            'Print3D_ImpactResistance': {'name': '抗冲击性', 'min': 0, 'max': 100, 'unit': 'kJ/m²'},
+            'Print3D_Shrinkage': {'name': 'Shrinkage', 'min': 0, 'max': 10, 'unit': '%'},
+            'Print3D_YoungsModulus': {'name': "Young's Modulus", 'min': 0, 'max': 5000, 'unit': 'MPa'},
+            'Print3D_FlexuralStrength': {'name': 'Flexural Strength', 'min': 0, 'max': 200, 'unit': 'MPa'},
+            'Print3D_ShoreHardness': {'name': 'Shore Hardness', 'min': 0, 'max': 100, 'unit': 'Shore'},
+            'Print3D_ImpactResistance': {'name': 'Impact Resistance', 'min': 0, 'max': 100, 'unit': 'kJ/m^2'},
+        },
+        '3D Printing': {
+            'Print3D_Shrinkage': {'name': 'Shrinkage', 'min': 0, 'max': 10, 'unit': '%'},
+            'Print3D_YoungsModulus': {'name': "Young's Modulus", 'min': 0, 'max': 5000, 'unit': 'MPa'},
+            'Print3D_FlexuralStrength': {'name': 'Flexural Strength', 'min': 0, 'max': 200, 'unit': 'MPa'},
+            'Print3D_ShoreHardness': {'name': 'Shore Hardness', 'min': 0, 'max': 100, 'unit': 'Shore'},
+            'Print3D_ImpactResistance': {'name': 'Impact Resistance', 'min': 0, 'max': 100, 'unit': 'kJ/m^2'},
         },
         '复合材料': {
-            'Composite_FlexuralStrength': {'name': '弯曲强度', 'min': 0, 'max': 200, 'unit': 'MPa'},
-            'Composite_YoungsModulus': {'name': '杨氏模量', 'min': 0, 'max': 5000, 'unit': 'MPa'},
-            'Composite_ImpactResistance': {'name': '抗冲击性', 'min': 0, 'max': 100, 'unit': 'kJ/m²'},
-            'Composite_ConversionRate': {'name': '转化率', 'min': 0, 'max': 100, 'unit': '%'},
-            'Composite_WaterAbsorption': {'name': '吸水率', 'min': 0, 'max': 10, 'unit': '%'},
+            'Composite_FlexuralStrength': {'name': 'Flexural Strength', 'min': 0, 'max': 200, 'unit': 'MPa'},
+            'Composite_YoungsModulus': {'name': "Young's Modulus", 'min': 0, 'max': 5000, 'unit': 'MPa'},
+            'Composite_ImpactResistance': {'name': 'Impact Resistance', 'min': 0, 'max': 100, 'unit': 'kJ/m^2'},
+            'Composite_ConversionRate': {'name': 'Degree of Conversion', 'min': 0, 'max': 100, 'unit': '%'},
+            'Composite_WaterAbsorption': {'name': 'Water Absorption', 'min': 0, 'max': 10, 'unit': '%'},
+        },
+        'Composite': {
+            'Composite_FlexuralStrength': {'name': 'Flexural Strength', 'min': 0, 'max': 200, 'unit': 'MPa'},
+            'Composite_YoungsModulus': {'name': "Young's Modulus", 'min': 0, 'max': 5000, 'unit': 'MPa'},
+            'Composite_ImpactResistance': {'name': 'Impact Resistance', 'min': 0, 'max': 100, 'unit': 'kJ/m^2'},
+            'Composite_ConversionRate': {'name': 'Degree of Conversion', 'min': 0, 'max': 100, 'unit': '%'},
+            'Composite_WaterAbsorption': {'name': 'Water Absorption', 'min': 0, 'max': 10, 'unit': '%'},
         }
     }
     
@@ -67,65 +95,69 @@ class ChartGenerator:
         Returns:
             PIL Image对象
         """
-        # 创建画布
-        img_width = 800
-        img_height = 350
+        # 创建画布（更高分辨率）
+        img_width = 1600
+        img_height = 700
         img = Image.new('RGB', (img_width, img_height), 'white')
         draw = ImageDraw.Draw(img)
         
-        # 尝试加载字体
+        # 尝试加载字体（更大的字号）
         try:
-            title_font = ImageFont.truetype("simhei.ttf", 24)
-            header_font = ImageFont.truetype("simhei.ttf", 16)
-            content_font = ImageFont.truetype("simhei.ttf", 14)
+            title_font = ImageFont.truetype("simhei.ttf", 48)
+            header_font = ImageFont.truetype("simhei.ttf", 32)
+            content_font = ImageFont.truetype("simhei.ttf", 28)
         except:
             try:
-                title_font = ImageFont.truetype("Arial Unicode MS", 24)
-                header_font = ImageFont.truetype("Arial Unicode MS", 16)
-                content_font = ImageFont.truetype("Arial Unicode MS", 14)
+                title_font = ImageFont.truetype("Arial Unicode MS", 48)
+                header_font = ImageFont.truetype("Arial Unicode MS", 32)
+                content_font = ImageFont.truetype("Arial Unicode MS", 28)
             except:
                 title_font = ImageFont.load_default()
                 header_font = ImageFont.load_default()
                 content_font = ImageFont.load_default()
         
-        # 标题
-        title = "项目信息表"
-        draw.text((img_width // 2 - 80, 20), title, fill='#333333', font=title_font)
+        # 标题（居中）
+        title = "Project Information"
+        title_bbox = draw.textbbox((0, 0), title, font=title_font)
+        title_width = title_bbox[2] - title_bbox[0]
+        draw.text(((img_width - title_width) // 2, 40), title, fill='#333333', font=title_font)
         
         # 表格数据
         table_data = [
-            ('项目ID', str(project_data.get('ProjectID', 'N/A'))),
-            ('项目名称', project_data.get('ProjectName', 'N/A')),
-            ('项目类型', project_data.get('TypeName', 'N/A')),
-            ('配方编号', project_data.get('FormulaCode', 'N/A')),
-            ('配方设计师', project_data.get('FormulatorName', 'N/A')),
-            ('配方日期', str(project_data.get('FormulationDate', 'N/A'))),
-            ('目标基材', project_data.get('SubstrateApplication', 'N/A')[:30] if project_data.get('SubstrateApplication') else 'N/A'),
+            ('Project ID', str(project_data.get('ProjectID', 'N/A'))),
+            ('Project Name', project_data.get('ProjectName', 'N/A')),
+            ('Project Type', project_data.get('TypeName', 'N/A')),
+            ('Formula Code', project_data.get('FormulaCode', 'N/A')),
+            ('Formulator', project_data.get('FormulatorName', 'N/A')),
+            ('Formulation Date', str(project_data.get('FormulationDate', 'N/A'))),
+            ('Substrate/Application', project_data.get('SubstrateApplication', 'N/A')[:30] if project_data.get('SubstrateApplication') else 'N/A'),
         ]
         
-        # 绘制表格
-        y_offset = 80
-        row_height = 35
-        col1_width = 150
-        col2_width = 600
+        # 绘制表格（居中）
+        y_offset = 160
+        row_height = 70
+        col1_width = 300
+        col2_width = 900
+        table_width = col1_width + col2_width
+        x_start = (img_width - table_width) // 2  # 居中起始位置
         
         for i, (label, value) in enumerate(table_data):
             # 绘制边框
             draw.rectangle(
-                [(50, y_offset), (50 + col1_width, y_offset + row_height)],
+                [(x_start, y_offset), (x_start + col1_width, y_offset + row_height)],
                 outline='#cccccc',
-                width=1,
+                width=2,
                 fill='#f5f5f5'
             )
             draw.rectangle(
-                [(50 + col1_width, y_offset), (50 + col1_width + col2_width, y_offset + row_height)],
+                [(x_start + col1_width, y_offset), (x_start + col1_width + col2_width, y_offset + row_height)],
                 outline='#cccccc',
-                width=1
+                width=2
             )
             
             # 绘制文本
-            draw.text((60, y_offset + 8), label, fill='#333333', font=header_font)
-            draw.text((60 + col1_width, y_offset + 8), str(value), fill='#666666', font=content_font)
+            draw.text((x_start + 20, y_offset + 16), label, fill='#333333', font=header_font)
+            draw.text((x_start + col1_width + 20, y_offset + 16), str(value), fill='#666666', font=content_font)
             
             y_offset += row_height
         
@@ -145,7 +177,7 @@ class ChartGenerator:
         if not compositions:
             # 创建空图表
             fig, ax = plt.subplots(figsize=(10, 6))
-            ax.text(0.5, 0.5, '暂无配方成分数据', 
+            ax.text(0.5, 0.5, 'No composition data available', 
                    ha='center', va='center', fontsize=16, color='gray')
             ax.set_xlim(0, 1)
             ax.set_ylim(0, 1)
@@ -185,9 +217,9 @@ class ChartGenerator:
                        ha='center', va='bottom', fontsize=10, fontweight='bold')
             
             # 设置标签和标题
-            ax.set_xlabel('成分名称', fontsize=12, fontweight='bold')
-            ax.set_ylabel('重量百分比 (%)', fontsize=12, fontweight='bold')
-            ax.set_title('配方成分组成', fontsize=14, fontweight='bold', pad=20)
+            ax.set_xlabel('Component Name', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Weight Percentage (%)', fontsize=12, fontweight='bold')
+            ax.set_title('Formula Composition', fontsize=14, fontweight='bold', pad=20)
             ax.set_xticks(range(len(names)))
             ax.set_xticklabels(names, rotation=45, ha='right')
             
@@ -198,16 +230,16 @@ class ChartGenerator:
             # 添加图例
             from matplotlib.patches import Patch
             legend_elements = [
-                Patch(facecolor='#5470c6', label='原料'),
-                Patch(facecolor='#91cc75', label='填料')
+                Patch(facecolor='#5470c6', label='Material'),
+                Patch(facecolor='#91cc75', label='Filler')
             ]
             ax.legend(handles=legend_elements, loc='upper right')
             
             plt.tight_layout()
         
-        # 保存到字节流
+        # 保存到字节流（提高DPI）
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=150, bbox_inches='tight')
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight')
         plt.close(fig)
         buf.seek(0)
         return buf.getvalue()
@@ -233,7 +265,7 @@ class ChartGenerator:
         if not standards or not test_results:
             # 创建空图表
             fig, ax = plt.subplots(figsize=(8, 8))
-            ax.text(0.5, 0.5, f'暂无{project_type}测试结果数据', 
+            ax.text(0.5, 0.5, f'No test data available for {project_type}', 
                    ha='center', va='center', fontsize=16, color='gray')
             ax.set_xlim(0, 1)
             ax.set_ylim(0, 1)
@@ -266,7 +298,7 @@ class ChartGenerator:
             if not categories:
                 # 没有有效数据
                 fig, ax = plt.subplots(figsize=(8, 8))
-                ax.text(0.5, 0.5, '测试结果数据格式无效', 
+                ax.text(0.5, 0.5, 'Invalid test result data format', 
                        ha='center', va='center', fontsize=16, color='gray')
                 ax.set_xlim(0, 1)
                 ax.set_ylim(0, 1)
@@ -281,12 +313,12 @@ class ChartGenerator:
                 fig, ax = plt.subplots(figsize=(10, 10), subplot_kw=dict(projection='polar'))
                 
                 # 绘制数据
-                ax.plot(angles, values, 'o-', linewidth=2, label='实测值', color='#5470c6')
+                ax.plot(angles, values, 'o-', linewidth=2, label='Measured', color='#5470c6')
                 ax.fill(angles, values, alpha=0.25, color='#5470c6')
                 
                 # 绘制标准参考线（假设标准值为80%）
                 reference = [80] * (num_vars + 1)
-                ax.plot(angles, reference, '--', linewidth=1.5, label='参考标准(80%)', color='#ee6666', alpha=0.7)
+                ax.plot(angles, reference, '--', linewidth=1.5, label='Reference (80%)', color='#ee6666', alpha=0.7)
                 
                 # 设置标签
                 ax.set_xticks(angles[:-1])
@@ -299,29 +331,341 @@ class ChartGenerator:
                 ax.grid(True, linestyle='--', alpha=0.7)
                 
                 # 标题和图例
-                ax.set_title(f'{project_type} - 测试结果雷达图\n(标准化值: 0-100)', 
+                ax.set_title(f'{project_type} - Test Results Radar Chart\n(Normalized: 0-100)', 
                            fontsize=14, fontweight='bold', pad=30)
                 ax.legend(loc='upper right', bbox_to_anchor=(1.3, 1.1), fontsize=10)
         
-        # 保存到字节流
+        # 保存到字节流（提高DPI）
         buf = io.BytesIO()
-        plt.savefig(buf, format='png', dpi=150, bbox_inches='tight')
+        plt.savefig(buf, format='png', dpi=300, bbox_inches='tight')
         plt.close(fig)
         buf.seek(0)
         return buf.getvalue()
     
     @staticmethod
+    def create_composition_table(compositions: List[Dict[str, Any]]) -> Image.Image:
+        """
+        创建配料信息表格图片
+        
+        Args:
+            compositions: 配料成分列表
+            
+        Returns:
+            PIL Image对象
+        """
+        # 创建画布 - 根据行数动态调整高度（更高分辨率）
+        img_width = 1600
+        row_height = 70
+        header_height = 160
+        num_rows = len(compositions) if compositions else 1
+        img_height = header_height + row_height * (num_rows + 1) + 60  # 标题 + 表头 + 数据行 + 底部边距
+        
+        img = Image.new('RGB', (img_width, img_height), 'white')
+        draw = ImageDraw.Draw(img)
+        
+        # 尝试加载字体（更大的字号）
+        try:
+            title_font = ImageFont.truetype("simhei.ttf", 48)
+            header_font = ImageFont.truetype("simhei.ttf", 28)
+            content_font = ImageFont.truetype("simhei.ttf", 24)
+        except:
+            try:
+                title_font = ImageFont.truetype("Arial Unicode MS", 48)
+                header_font = ImageFont.truetype("Arial Unicode MS", 28)
+                content_font = ImageFont.truetype("Arial Unicode MS", 24)
+            except:
+                title_font = ImageFont.load_default()
+                header_font = ImageFont.load_default()
+                content_font = ImageFont.load_default()
+        
+        # 标题（居中）
+        title = "Composition Information"
+        title_bbox = draw.textbbox((0, 0), title, font=title_font)
+        title_width = title_bbox[2] - title_bbox[0]
+        draw.text(((img_width - title_width) // 2, 40), title, fill='#333333', font=title_font)
+        
+        # 表格列宽
+        col_widths = [120, 600, 280, 400]  # 序号、成分名称、类型、百分比
+        col_names = ['No.', 'Component', 'Type', 'Weight%']  # 使用英文列名避免乱码
+        table_width = sum(col_widths)
+        x_start = (img_width - table_width) // 2  # 居中起始位置
+        
+        # 绘制表头
+        y_offset = header_height
+        x_offset = x_start
+        for i, (col_name, col_width) in enumerate(zip(col_names, col_widths)):
+            draw.rectangle(
+                [(x_offset, y_offset), (x_offset + col_width, y_offset + row_height)],
+                outline='#cccccc',
+                width=2,
+                fill='#f5f5f5'
+            )
+            draw.text((x_offset + 20, y_offset + 16), col_name, fill='#333333', font=header_font)
+            x_offset += col_width
+        
+        # 绘制数据行
+        y_offset += row_height
+        if compositions:
+            for idx, comp in enumerate(compositions, 1):
+                x_offset = x_start
+                # 序号
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[0], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 40, y_offset + 16), str(idx), fill='#666666', font=content_font)
+                x_offset += col_widths[0]
+                
+                # 成分名称
+                name = comp.get('MaterialName') or comp.get('FillerName') or '未知'
+                if len(name) > 20:
+                    name = name[:20] + '...'
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[1], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 20, y_offset + 16), name, fill='#666666', font=content_font)
+                x_offset += col_widths[1]
+                
+                # 类型（使用英文避免乱码）
+                comp_type = 'Material' if comp.get('MaterialName') else 'Filler'
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[2], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 70, y_offset + 16), comp_type, fill='#666666', font=content_font)
+                x_offset += col_widths[2]
+                
+                # 重量百分比
+                percentage = f"{float(comp.get('WeightPercentage', 0)):.2f}%"
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[3], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 150, y_offset + 16), percentage, fill='#666666', font=content_font)
+                x_offset += col_widths[3]
+                
+                y_offset += row_height
+        else:
+            # 无数据提示
+            x_offset = x_start
+            total_width = sum(col_widths)
+            draw.rectangle(
+                [(x_offset, y_offset), (x_offset + total_width, y_offset + row_height)],
+                outline='#cccccc',
+                width=2
+            )
+            # 居中显示提示文本
+            hint_text = "No composition data available"  # 使用英文避免字体问题
+            try:
+                hint_bbox = draw.textbbox((0, 0), hint_text, font=content_font)
+                hint_width = hint_bbox[2] - hint_bbox[0]
+                draw.text((x_offset + (total_width - hint_width) // 2, y_offset + 16), 
+                         hint_text, fill='#999999', font=content_font)
+            except:
+                # 如果textbbox失败，使用估算位置
+                draw.text((x_offset + 500, y_offset + 16), hint_text, fill='#999999', font=content_font)
+        
+        return img
+    
+    @staticmethod
+    def create_test_result_table(test_results: Dict[str, Any], project_type: str) -> Image.Image:
+        """
+        创建测试结果表格图片
+        
+        Args:
+            test_results: 测试结果数据
+            project_type: 项目类型
+            
+        Returns:
+            PIL Image对象
+        """
+        # 获取该项目类型的行业标准
+        standards = ChartGenerator.INDUSTRY_STANDARDS.get(project_type, {})
+        
+        # 创建画布 - 根据行数动态调整高度（更高分辨率）
+        img_width = 1600
+        row_height = 70
+        header_height = 160
+        num_rows = len(standards) if standards else 1
+        img_height = header_height + row_height * (num_rows + 1) + 60
+        
+        img = Image.new('RGB', (img_width, img_height), 'white')
+        draw = ImageDraw.Draw(img)
+        
+        # 尝试加载字体（更大的字号）
+        try:
+            title_font = ImageFont.truetype("simhei.ttf", 48)
+            header_font = ImageFont.truetype("simhei.ttf", 28)
+            content_font = ImageFont.truetype("simhei.ttf", 24)
+        except:
+            try:
+                title_font = ImageFont.truetype("Arial Unicode MS", 48)
+                header_font = ImageFont.truetype("Arial Unicode MS", 28)
+                content_font = ImageFont.truetype("Arial Unicode MS", 24)
+            except:
+                title_font = ImageFont.load_default()
+                header_font = ImageFont.load_default()
+                content_font = ImageFont.load_default()
+        
+        # 标题（居中）
+        title = "Test Results"
+        title_bbox = draw.textbbox((0, 0), title, font=title_font)
+        title_width = title_bbox[2] - title_bbox[0]
+        draw.text(((img_width - title_width) // 2, 40), title, fill='#333333', font=title_font)
+        
+        # 表格列宽
+        col_widths = [120, 480, 500, 400]  # 序号、指标名称、测试值、单位
+        col_names = ['No.', 'Index', 'Value', 'Unit']  # 使用英文列名避免乱码
+        table_width = sum(col_widths)
+        x_start = (img_width - table_width) // 2  # 居中起始位置
+        
+        # 绘制表头
+        y_offset = header_height
+        x_offset = x_start
+        for col_name, col_width in zip(col_names, col_widths):
+            draw.rectangle(
+                [(x_offset, y_offset), (x_offset + col_width, y_offset + row_height)],
+                outline='#cccccc',
+                width=2,
+                fill='#f5f5f5'
+            )
+            draw.text((x_offset + 20, y_offset + 16), col_name, fill='#333333', font=header_font)
+            x_offset += col_width
+        
+        # 绘制数据行
+        y_offset += row_height
+        if standards and test_results:
+            idx = 1
+            for field, standard in standards.items():
+                value_str = test_results.get(field, '-')
+                
+                x_offset = x_start
+                # 序号
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[0], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 40, y_offset + 16), str(idx), fill='#666666', font=content_font)
+                x_offset += col_widths[0]
+                
+                # 指标名称（也处理特殊字符）
+                index_name = standard['name']
+                # 替换指标名称中可能包含的特殊字符
+                name_replacements = {
+                    '²': '^2',
+                    '³': '^3',
+                    '°': 'deg',
+                    '℃': 'C',
+                    'μ': 'u',
+                    '·': '.',
+                    '～': '~',
+                    '—': '-'
+                }
+                for old_char, new_char in name_replacements.items():
+                    index_name = index_name.replace(old_char, new_char)
+                
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[1], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 20, y_offset + 16), index_name, fill='#666666', font=content_font)
+                x_offset += col_widths[1]
+                
+                # 测试值（也处理特殊字符）
+                value_display = str(value_str)[:35]
+                # 替换测试值中可能包含的特殊字符
+                value_replacements = {
+                    '²': '^2',
+                    '³': '^3',
+                    '°': 'deg',
+                    '℃': 'C',
+                    'μ': 'u',
+                    '·': '.',
+                    '～': '~',
+                    '—': '-'
+                }
+                for old_char, new_char in value_replacements.items():
+                    value_display = value_display.replace(old_char, new_char)
+                
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[2], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 20, y_offset + 16), value_display, fill='#666666', font=content_font)
+                x_offset += col_widths[2]
+                
+                # 单位（处理特殊字符，使用ASCII安全字符）
+                unit_text = standard['unit']
+                # 替换所有可能导致乱码的特殊字符为ASCII安全字符
+                unit_replacements = {
+                    '²': '^2',
+                    '³': '^3',
+                    '°': 'deg',
+                    '℃': 'C',
+                    'μ': 'u',
+                    '·': '.',
+                    '～': '~',
+                    '—': '-'
+                }
+                for old_char, new_char in unit_replacements.items():
+                    unit_text = unit_text.replace(old_char, new_char)
+                
+                draw.rectangle(
+                    [(x_offset, y_offset), (x_offset + col_widths[3], y_offset + row_height)],
+                    outline='#cccccc',
+                    width=2
+                )
+                draw.text((x_offset + 150, y_offset + 16), unit_text, fill='#666666', font=content_font)
+                x_offset += col_widths[3]
+                
+                y_offset += row_height
+                idx += 1
+        else:
+            # 无数据提示
+            x_offset = x_start
+            total_width = sum(col_widths)
+            draw.rectangle(
+                [(x_offset, y_offset), (x_offset + total_width, y_offset + row_height)],
+                outline='#cccccc',
+                width=2
+            )
+            # 居中显示提示文本
+            hint_text = "No test data available"  # 使用英文避免字体问题
+            try:
+                hint_bbox = draw.textbbox((0, 0), hint_text, font=content_font)
+                hint_width = hint_bbox[2] - hint_bbox[0]
+                draw.text((x_offset + (total_width - hint_width) // 2, y_offset + 16), 
+                         hint_text, fill='#999999', font=content_font)
+            except:
+                # 如果textbbox失败，使用估算位置
+                draw.text((x_offset + 500, y_offset + 16), hint_text, fill='#999999', font=content_font)
+        
+        return img
+    
+    @staticmethod
     def combine_images_vertical(
         project_info_img: Image.Image,
+        composition_table_img: Image.Image,
         bar_chart_bytes: bytes,
+        test_result_table_img: Image.Image,
         radar_chart_bytes: bytes
     ) -> bytes:
         """
-        垂直组合三张图片
+        垂直组合五张图片
         
         Args:
             project_info_img: 项目信息表PIL Image
+            composition_table_img: 配料信息表PIL Image
             bar_chart_bytes: 柱状图字节数据
+            test_result_table_img: 测试结果表PIL Image
             radar_chart_bytes: 雷达图字节数据
             
         Returns:
@@ -332,38 +676,42 @@ class ChartGenerator:
         radar_chart_img = Image.open(io.BytesIO(radar_chart_bytes))
         
         # 统一宽度（使用最大宽度）
-        max_width = max(project_info_img.width, bar_chart_img.width, radar_chart_img.width)
+        max_width = max(
+            project_info_img.width,
+            composition_table_img.width,
+            bar_chart_img.width,
+            test_result_table_img.width,
+            radar_chart_img.width
+        )
         
-        # 调整图片宽度
-        if project_info_img.width < max_width:
-            new_height = int(project_info_img.height * max_width / project_info_img.width)
-            project_info_img = project_info_img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+        # 调整所有图片宽度
+        images = [
+            project_info_img,
+            composition_table_img,
+            bar_chart_img,
+            test_result_table_img,
+            radar_chart_img
+        ]
         
-        if bar_chart_img.width < max_width:
-            new_height = int(bar_chart_img.height * max_width / bar_chart_img.width)
-            bar_chart_img = bar_chart_img.resize((max_width, new_height), Image.Resampling.LANCZOS)
-        
-        if radar_chart_img.width < max_width:
-            new_height = int(radar_chart_img.height * max_width / radar_chart_img.width)
-            radar_chart_img = radar_chart_img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+        resized_images = []
+        for img in images:
+            if img.width < max_width:
+                new_height = int(img.height * max_width / img.width)
+                img = img.resize((max_width, new_height), Image.Resampling.LANCZOS)
+            resized_images.append(img)
         
         # 计算总高度（添加间距）
         spacing = 30
-        total_height = (project_info_img.height + bar_chart_img.height + 
-                       radar_chart_img.height + spacing * 2)
+        total_height = sum(img.height for img in resized_images) + spacing * (len(resized_images) - 1)
         
         # 创建组合图片
         combined_img = Image.new('RGB', (max_width, total_height), 'white')
         
         # 粘贴图片
         y_offset = 0
-        combined_img.paste(project_info_img, (0, y_offset))
-        y_offset += project_info_img.height + spacing
-        
-        combined_img.paste(bar_chart_img, (0, y_offset))
-        y_offset += bar_chart_img.height + spacing
-        
-        combined_img.paste(radar_chart_img, (0, y_offset))
+        for img in resized_images:
+            combined_img.paste(img, (0, y_offset))
+            y_offset += img.height + spacing
         
         # 保存到字节流
         buf = io.BytesIO()

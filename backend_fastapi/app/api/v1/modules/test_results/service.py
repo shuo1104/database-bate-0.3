@@ -46,14 +46,14 @@ class TestResultService:
         if not result:
             return None
         
-        # 转换为响应模型
-        if project_type == "喷墨":
+        # 转换为响应模型（支持中英文项目类型）
+        if project_type in ["喷墨", "Inkjet"]:
             return TestResultInkResponse.model_validate(result)
-        elif project_type == "涂层":
+        elif project_type in ["涂层", "Coating"]:
             return TestResultCoatingResponse.model_validate(result)
-        elif project_type == "3D打印":
+        elif project_type in ["3D打印", "3D Printing"]:
             return TestResult3DPrintResponse.model_validate(result)
-        elif project_type == "复合材料":
+        elif project_type in ["复合材料", "Composite"]:
             return TestResultCompositeResponse.model_validate(result)
         
         return None

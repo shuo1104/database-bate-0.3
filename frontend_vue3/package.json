@@ -1,6 +1,6 @@
 {
-  "name": "r-and-d-formula-management",
-  "description": "光创化物 R&D 配方数据库管理系统 - Vue3前端",
+  "name": "advanced-photopolymer-formulation-db",
+  "description": "Advanced - PhotoPolymer Formulation Management Database - Vue3 Frontend",
   "version": "2.0.0",
   "private": true,
   "type": "module",

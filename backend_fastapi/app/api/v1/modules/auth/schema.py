@@ -93,6 +93,14 @@ class UserInfoResponse(BaseSchema):
     created_at: Optional[datetime] = Field(None, description="创建时间", alias="CreatedAt")
     last_login: Optional[datetime] = Field(None, description="最后登录", alias="LastLogin")
     
+    @field_validator("is_active", mode="before")
+    @classmethod
+    def convert_is_active(cls, v):
+        """将整数转换为布尔值（数据库中是SMALLINT类型）"""
+        if isinstance(v, int):
+            return bool(v)
+        return v
+    
     class Config:
         populate_by_name = True  # 允许使用别名
         from_attributes = True

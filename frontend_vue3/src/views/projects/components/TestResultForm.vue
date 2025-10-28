@@ -1,48 +1,48 @@
 <template>
   <div class="test-result-form">
-    <!-- 喷墨测试结果表单 -->
+    <!-- Inkjet Test Results Form -->
     <el-form
-      v-if="projectType === '喷墨'"
+      v-if="isInkjetType"
       ref="inkFormRef"
       :model="inkForm"
-      label-width="140px"
+      label-width="200px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="粘度">
-            <el-input v-model="inkForm.Ink_Viscosity" placeholder="请输入粘度" />
+          <el-form-item label="Viscosity">
+            <el-input v-model="inkForm.Ink_Viscosity" placeholder="Enter viscosity" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="反应活性/固化时间">
-            <el-input v-model="inkForm.Ink_Reactivity" placeholder="请输入反应活性/固化时间" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="粒径(nm)">
-            <el-input v-model="inkForm.Ink_ParticleSize" placeholder="请输入粒径" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="表面张力(mN/m)">
-            <el-input v-model="inkForm.Ink_SurfaceTension" placeholder="请输入表面张力" />
+          <el-form-item label="Reactivity/Cure Time">
+            <el-input v-model="inkForm.Ink_Reactivity" placeholder="Enter reactivity/cure time" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="色度(Lab*色值)">
-            <el-input v-model="inkForm.Ink_ColorValue" placeholder="请输入色度" />
+          <el-form-item label="Particle Size (nm)">
+            <el-input v-model="inkForm.Ink_ParticleSize" placeholder="Enter particle size" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="测试日期">
+          <el-form-item label="Surface Tension (mN/m)">
+            <el-input v-model="inkForm.Ink_SurfaceTension" placeholder="Enter surface tension" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="Colorimetry (Lab*)">
+            <el-input v-model="inkForm.Ink_ColorValue" placeholder="Enter colorimetry" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Test Date">
             <el-date-picker
               v-model="inkForm.TestDate"
               type="date"
-              placeholder="选择测试日期"
+              placeholder="Select test date"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
               style="width: 100%"
@@ -50,67 +50,67 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="流变学说明">
+      <el-form-item label="Rheology Notes">
         <el-input
           v-model="inkForm.Ink_RheologyNote"
           type="textarea"
           :rows="2"
-          placeholder="请输入流变学说明"
+          placeholder="Enter rheology notes"
         />
       </el-form-item>
-      <el-form-item label="备注">
+      <el-form-item label="Remarks">
         <el-input
           v-model="inkForm.Notes"
           type="textarea"
           :rows="2"
-          placeholder="请输入备注"
+          placeholder="Enter remarks"
         />
       </el-form-item>
     </el-form>
 
-    <!-- 涂层测试结果表单 -->
+    <!-- Coating Test Results Form -->
     <el-form
-      v-else-if="projectType === '涂层'"
+      v-else-if="isCoatingType"
       ref="coatingFormRef"
       :model="coatingForm"
-      label-width="140px"
+      label-width="200px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="附着力">
-            <el-input v-model="coatingForm.Coating_Adhesion" placeholder="请输入附着力" />
+          <el-form-item label="Adhesion">
+            <el-input v-model="coatingForm.Coating_Adhesion" placeholder="Enter adhesion" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="透明度">
-            <el-input v-model="coatingForm.Coating_Transparency" placeholder="请输入透明度" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="表面硬度">
-            <el-input v-model="coatingForm.Coating_SurfaceHardness" placeholder="请输入表面硬度" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="耐化学性">
-            <el-input v-model="coatingForm.Coating_ChemicalResistance" placeholder="请输入耐化学性" />
+          <el-form-item label="Transparency">
+            <el-input v-model="coatingForm.Coating_Transparency" placeholder="Enter transparency" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="成本估算(€/kg)">
-            <el-input v-model="coatingForm.Coating_CostEstimate" placeholder="请输入成本估算" />
+          <el-form-item label="Surface Hardness">
+            <el-input v-model="coatingForm.Coating_SurfaceHardness" placeholder="Enter surface hardness" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="测试日期">
+          <el-form-item label="Chemical Resistance">
+            <el-input v-model="coatingForm.Coating_ChemicalResistance" placeholder="Enter chemical resistance" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="Cost Estimate (€/kg)">
+            <el-input v-model="coatingForm.Coating_CostEstimate" placeholder="Enter cost estimate" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Test Date">
             <el-date-picker
               v-model="coatingForm.TestDate"
               type="date"
-              placeholder="选择测试日期"
+              placeholder="Select test date"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
               style="width: 100%"
@@ -118,59 +118,59 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注">
+      <el-form-item label="Remarks">
         <el-input
           v-model="coatingForm.Notes"
           type="textarea"
           :rows="2"
-          placeholder="请输入备注"
+          placeholder="Enter remarks"
         />
       </el-form-item>
     </el-form>
 
-    <!-- 3D打印测试结果表单 -->
+    <!-- 3D Printing Test Results Form -->
     <el-form
-      v-else-if="projectType === '3D打印'"
+      v-else-if="is3DPrintType"
       ref="printFormRef"
       :model="printForm"
-      label-width="140px"
+      label-width="200px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="收缩率(%)">
-            <el-input v-model="printForm.Print3D_Shrinkage" placeholder="请输入收缩率" />
+          <el-form-item label="Shrinkage (%)">
+            <el-input v-model="printForm.Print3D_Shrinkage" placeholder="Enter shrinkage" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="杨氏模量">
-            <el-input v-model="printForm.Print3D_YoungsModulus" placeholder="请输入杨氏模量" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="弯曲强度">
-            <el-input v-model="printForm.Print3D_FlexuralStrength" placeholder="请输入弯曲强度" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="邵氏硬度">
-            <el-input v-model="printForm.Print3D_ShoreHardness" placeholder="请输入邵氏硬度" />
+          <el-form-item label="Young's Modulus">
+            <el-input v-model="printForm.Print3D_YoungsModulus" placeholder="Enter Young's modulus" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="抗冲击性">
-            <el-input v-model="printForm.Print3D_ImpactResistance" placeholder="请输入抗冲击性" />
+          <el-form-item label="Flexural Strength">
+            <el-input v-model="printForm.Print3D_FlexuralStrength" placeholder="Enter flexural strength" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="测试日期">
+          <el-form-item label="Shore Hardness">
+            <el-input v-model="printForm.Print3D_ShoreHardness" placeholder="Enter shore hardness" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="Impact Resistance">
+            <el-input v-model="printForm.Print3D_ImpactResistance" placeholder="Enter impact resistance" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Test Date">
             <el-date-picker
               v-model="printForm.TestDate"
               type="date"
-              placeholder="选择测试日期"
+              placeholder="Select test date"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
               style="width: 100%"
@@ -178,59 +178,59 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注">
+      <el-form-item label="Remarks">
         <el-input
           v-model="printForm.Notes"
           type="textarea"
           :rows="2"
-          placeholder="请输入备注"
+          placeholder="Enter remarks"
         />
       </el-form-item>
     </el-form>
 
-    <!-- 复合材料测试结果表单 -->
+    <!-- Composite Material Test Results Form -->
     <el-form
-      v-else-if="projectType === '复合材料'"
+      v-else-if="isCompositeType"
       ref="compositeFormRef"
       :model="compositeForm"
-      label-width="160px"
+      label-width="220px"
     >
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="弯曲强度">
-            <el-input v-model="compositeForm.Composite_FlexuralStrength" placeholder="请输入弯曲强度" />
+          <el-form-item label="Flexural Strength">
+            <el-input v-model="compositeForm.Composite_FlexuralStrength" placeholder="Enter flexural strength" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="杨氏模量">
-            <el-input v-model="compositeForm.Composite_YoungsModulus" placeholder="请输入杨氏模量" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row :gutter="20">
-        <el-col :span="12">
-          <el-form-item label="抗冲击性">
-            <el-input v-model="compositeForm.Composite_ImpactResistance" placeholder="请输入抗冲击性" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="转化率(可选)">
-            <el-input v-model="compositeForm.Composite_ConversionRate" placeholder="请输入转化率" />
+          <el-form-item label="Young's Modulus">
+            <el-input v-model="compositeForm.Composite_YoungsModulus" placeholder="Enter Young's modulus" />
           </el-form-item>
         </el-col>
       </el-row>
       <el-row :gutter="20">
         <el-col :span="12">
-          <el-form-item label="吸水率/溶解度(可选)">
-            <el-input v-model="compositeForm.Composite_WaterAbsorption" placeholder="请输入吸水率/溶解度" />
+          <el-form-item label="Impact Resistance">
+            <el-input v-model="compositeForm.Composite_ImpactResistance" placeholder="Enter impact resistance" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="测试日期">
+          <el-form-item label="Degree of Conversion (%)">
+            <el-input v-model="compositeForm.Composite_ConversionRate" placeholder="Enter degree of conversion" />
+          </el-form-item>
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form-item label="Water Absorption/Solubility">
+            <el-input v-model="compositeForm.Composite_WaterAbsorption" placeholder="Enter water absorption/solubility" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="Test Date">
             <el-date-picker
               v-model="compositeForm.TestDate"
               type="date"
-              placeholder="选择测试日期"
+              placeholder="Select test date"
               format="YYYY-MM-DD"
               value-format="YYYY-MM-DD"
               style="width: 100%"
@@ -238,24 +238,24 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-form-item label="备注">
+      <el-form-item label="Remarks">
         <el-input
           v-model="compositeForm.Notes"
           type="textarea"
           :rows="2"
-          placeholder="请输入备注"
+          placeholder="Enter remarks"
         />
       </el-form-item>
     </el-form>
 
     <div v-else class="no-type-tip">
-      <el-empty description="请先为项目设置项目类型" />
+      <el-empty description="Please set a project type first" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import { ElMessage, type FormInstance } from 'element-plus'
 import {
   getTestResultApi,
@@ -276,6 +276,23 @@ interface Props {
 
 const props = defineProps<Props>()
 const emit = defineEmits(['saved'])
+
+// Computed properties to check project type (支持中英文)
+const isInkjetType = computed(() => {
+  return props.projectType === '喷墨' || props.projectType === 'Inkjet'
+})
+
+const isCoatingType = computed(() => {
+  return props.projectType === '涂层' || props.projectType === 'Coating'
+})
+
+const is3DPrintType = computed(() => {
+  return props.projectType === '3D打印' || props.projectType === '3D Printing'
+})
+
+const isCompositeType = computed(() => {
+  return props.projectType === '复合材料' || props.projectType === 'Composite'
+})
 
 const inkFormRef = ref<FormInstance>()
 const coatingFormRef = ref<FormInstance>()
@@ -323,51 +340,51 @@ const compositeForm = reactive<Partial<TestResultComposite>>({
   Notes: '',
 })
 
-// 加载测试结果
+// Load test results
 async function loadTestResult() {
   try {
     const res = await getTestResultApi(props.projectId)
     if (res) {
-      if (props.projectType === '喷墨') {
+      if (isInkjetType.value) {
         Object.assign(inkForm, res)
-      } else if (props.projectType === '涂层') {
+      } else if (isCoatingType.value) {
         Object.assign(coatingForm, res)
-      } else if (props.projectType === '3D打印') {
+      } else if (is3DPrintType.value) {
         Object.assign(printForm, res)
-      } else if (props.projectType === '复合材料') {
+      } else if (isCompositeType.value) {
         Object.assign(compositeForm, res)
       }
     }
   } catch (error) {
-    console.error('加载测试结果失败:', error)
+    console.error('Failed to load test results:', error)
   }
 }
 
-// 保存测试结果
+// Save test results
 async function saveTestResult() {
   try {
-    if (props.projectType === '喷墨') {
+    if (isInkjetType.value) {
       await saveInkResultApi(props.projectId, inkForm)
-    } else if (props.projectType === '涂层') {
+    } else if (isCoatingType.value) {
       await saveCoatingResultApi(props.projectId, coatingForm)
-    } else if (props.projectType === '3D打印') {
+    } else if (is3DPrintType.value) {
       await save3DPrintResultApi(props.projectId, printForm)
-    } else if (props.projectType === '复合材料') {
+    } else if (isCompositeType.value) {
       await saveCompositeResultApi(props.projectId, compositeForm)
     } else {
-      ElMessage.warning('未知的项目类型')
+      ElMessage.warning('Unknown project type')
       return
     }
     
-    ElMessage.success('测试结果保存成功')
+    ElMessage.success('Test results saved successfully')
     emit('saved')
   } catch (error) {
-    ElMessage.error('测试结果保存失败')
-    console.error('保存测试结果失败:', error)
+    ElMessage.error('Failed to save test results')
+    console.error('Failed to save test results:', error)
   }
 }
 
-// 监听项目ID和类型变化，重新加载数据
+// Watch for project ID and type changes, reload data
 watch(
   () => [props.projectId, props.projectType],
   () => {
@@ -378,7 +395,7 @@ watch(
   { immediate: true }
 )
 
-// 暴露保存方法给父组件
+// Expose save method to parent component
 defineExpose({
   saveTestResult
 })

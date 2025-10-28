@@ -18,7 +18,7 @@ from app.core.logger import logger
 # ==================== 密码加密 ====================
 # 支持 Bcrypt（新系统）和 Argon2（旧 Flask 系统）
 pwd_context = CryptContext(
-    schemes=["argon2", "bcrypt"],
+    schemes=["bcrypt", "argon2"],  # 优先使用bcrypt（更广泛支持）
     deprecated="auto"
 )
 

@@ -23,7 +23,7 @@ export function useHeartbeat() {
 
     try {
       await updateHeartbeatApi(logId)
-      console.log('[Heartbeat] 心跳发送成功', new Date().toLocaleTimeString())
+      // 心跳发送成功
     } catch (error) {
       console.error('[Heartbeat] 心跳发送失败:', error)
     }
@@ -43,7 +43,7 @@ export function useHeartbeat() {
       sendHeartbeat()
     }, HEARTBEAT_INTERVAL)
 
-    console.log('[Heartbeat] 心跳已启动')
+    // 心跳已启动
   }
 
   /**
@@ -53,7 +53,7 @@ export function useHeartbeat() {
     if (heartbeatTimer) {
       clearInterval(heartbeatTimer)
       heartbeatTimer = null
-      console.log('[Heartbeat] 心跳已停止')
+      // 心跳已停止
     }
   }
 
@@ -66,7 +66,7 @@ export function useHeartbeat() {
 
     try {
       await userLogoutApi(logId)
-      console.log('[Heartbeat] 登出成功')
+      // 登出成功
     } catch (error) {
       console.error('[Heartbeat] 登出失败:', error)
     }
@@ -99,29 +99,27 @@ export function useHeartbeat() {
     }
   }
 
-  // 生命周期
-  onMounted(() => {
+  // 返回启动和停止函数，由外部在生命周期钩子中调用
+  const init = () => {
     // 如果用户已登录，启动心跳
     if (userStore.logId) {
       startHeartbeat()
-
       // 监听页面可见性变化
       document.addEventListener('visibilitychange', handleVisibilityChange)
-
       // 监听页面关闭
       window.addEventListener('beforeunload', handleBeforeUnload)
     }
-  })
+  }
 
-  onUnmounted(() => {
+  const destroy = () => {
     stopHeartbeat()
     document.removeEventListener('visibilitychange', handleVisibilityChange)
     window.removeEventListener('beforeunload', handleBeforeUnload)
-  })
+  }
 
   return {
-    startHeartbeat,
-    stopHeartbeat,
+    init,
+    destroy,
     sendHeartbeat,
     logout
   }

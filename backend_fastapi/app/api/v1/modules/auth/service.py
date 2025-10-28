@@ -60,8 +60,8 @@ class AuthService:
                 detail="用户名或密码错误"
             )
         
-        # 检查用户是否激活
-        if not user.IsActive:
+        # 检查用户是否激活（IsActive是整数：1-激活，0-禁用）
+        if user.IsActive == 0:
             logger.warning(f"登录失败: 账号已禁用 - {login_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
@@ -379,14 +379,27 @@ class UserManagementService:
             username=username,
             password_hash=password_hash,
             real_name=real_name,
+            position=position,
             email=email,
             role=role
         )
         
-        # 更新职位
-        if position:
-            await UserCRUD.update_user(db, user.UserID, position=position)
-            await db.refresh(user)
+        # 创建注册日志
+        try:
+            from app.api.v1.modules.logs.crud import LogCRUD
+            await LogCRUD.create_registration_log(
+                db=db,
+                user_id=user.UserID,
+                username=username,
+                real_name=real_name,
+                position=position,
+                email=email,
+                role=role,
+                ip_address=None  # TODO: 可以从请求中获取IP地址
+            )
+        except Exception as e:
+            logger.warning(f"创建注册日志失败: {e}")
+            # 不影响用户创建，继续执行
         
         await db.commit()
         
