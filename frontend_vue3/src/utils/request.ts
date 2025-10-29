@@ -56,16 +56,25 @@ service.interceptors.response.use(
       
       switch (status) {
         case 401:
-          // Unauthorized, clear token and redirect to login page
-          ElMessageBox.confirm('Login session expired, please login again', 'System Notification', {
-            confirmButtonText: 'Re-login',
-            cancelButtonText: 'Cancel',
-            type: 'warning',
-          }).then(() => {
-            removeToken()
-            storage.clear()
-            window.location.href = '/login'
-          })
+          // Check if this is a login request (no token in request)
+          const isLoginRequest = !error.config?.headers?.Authorization
+          
+          if (isLoginRequest) {
+            // Login failed - show error message from server
+            const errorMsg = (data as any)?.detail || (data as any)?.msg || 'Incorrect username or password'
+            ElMessage.error(errorMsg)
+          } else {
+            // Token expired - show session expired dialog
+            ElMessageBox.confirm('Login session expired, please login again', 'System Notification', {
+              confirmButtonText: 'Re-login',
+              cancelButtonText: 'Cancel',
+              type: 'warning',
+            }).then(() => {
+              removeToken()
+              storage.clear()
+              window.location.href = '/login'
+            })
+          }
           break
         case 403:
           ElMessage.error('No permission to access this resource')

@@ -1,140 +1,93 @@
-# Advanced - PhotoPolymer Formulation Management DB
+# Advanced - PhotoPolymer 配方管理系统
 
-## 高级光敏聚合物配方管理数据库
+一个基于 **FastAPI + Vue 3** 的现代化光敏聚合物配方管理系统。
 
-一个基于 FastAPI + Vue 3 的现代化光敏聚合物配方管理系统，用于管理项目、原料、填料、配方和测试结果。
+## 📋 项目简介
 
-## 🚀 项目特性
+本系统专为光敏聚合物材料研发设计，提供完整的配方管理、原料管理、测试结果记录等功能。采用前后端分离架构，支持多用户协作和权限管理。
 
-### 后端 (FastAPI)
-- ✅ 基于 FastAPI 的高性能 RESTful API
-- ✅ SQLAlchemy ORM 数据库管理
-- ✅ JWT 身份认证与授权
-- ✅ 完整的 CRUD 操作
-- ✅ 图片导出功能（项目报告）
-- ✅ 系统日志记录
-- ✅ 用户权限管理
+## ✨ 主要功能
 
-### 前端 (Vue 3)
-- ✅ Vue 3 + TypeScript + Vite
-- ✅ Element Plus UI 组件库
-- ✅ UnoCSS 原子化 CSS
-- ✅ Pinia 状态管理
-- ✅ Vue Router 路由管理
-- ✅ 响应式设计
-- ✅ 暗黑/白天主题切换
-- ✅ 现代化交互体验
+- 🔐 **用户认证**：JWT 令牌认证，支持管理员和普通用户角色
+- 📊 **项目管理**：项目创建、编辑、查询，支持多种项目类型（喷墨、涂层、3D打印、复合材料）
+- 🧪 **配方管理**：配方组成管理，原料和填料配比
+- 📈 **测试结果**：多种测试指标录入和管理
+- 🎨 **数据可视化**：测试结果图表导出
+- 📝 **系统日志**：登录日志、操作日志记录
+- 👥 **用户管理**：用户创建、编辑、权限管理（管理员功能）
+
+## 🛠️ 技术栈
+
+### 后端
+- **框架**：FastAPI 0.104+
+- **数据库**：PostgreSQL 14+
+- **ORM**：SQLAlchemy 2.0（异步）
+- **认证**：JWT (python-jose)
+- **密码加密**：Passlib + Bcrypt
+- **图表生成**：Matplotlib + Pillow
+
+### 前端
+- **框架**：Vue 3.5+
+- **语言**：TypeScript 5.0+
+- **构建工具**：Vite 6.0+
+- **UI 组件**：Element Plus 2.10+
+- **CSS 框架**：UnoCSS
+- **状态管理**：Pinia
+- **路由**：Vue Router 4
+- **HTTP 客户端**：Axios
 
 ## 📦 项目结构
 
 ```
 data_base/
-├── backend_fastapi/        # FastAPI 后端
+├── backend_fastapi/          # 后端服务
 │   ├── app/
-│   │   ├── api/           # API 路由
-│   │   ├── core/          # 核心功能（数据库、安全等）
-│   │   ├── config/        # 配置文件
-│   │   ├── utils/         # 工具函数
-│   │   └── scripts/       # 数据库脚本
-│   ├── logs/              # 日志文件
-│   ├── static/            # 静态文件
-│   ├── main.py            # 应用入口
-│   └── requirements.txt   # Python 依赖
+│   │   ├── api/v1/          # API 路由
+│   │   ├── core/            # 核心功能
+│   │   ├── config/          # 配置文件
+│   │   └── utils/           # 工具函数
+│   ├── scripts/             # 数据库脚本
+│   ├── logs/                # 日志文件
+│   ├── main.py              # 应用入口
+│   └── requirements.txt     # Python 依赖
 │
-├── frontend_vue3/         # Vue 3 前端
+├── frontend_vue3/           # 前端应用
 │   ├── src/
-│   │   ├── api/          # API 接口
-│   │   ├── components/   # 公共组件
-│   │   ├── composables/  # 组合式函数
-│   │   ├── layouts/      # 布局组件
-│   │   ├── router/       # 路由配置
-│   │   ├── store/        # 状态管理
-│   │   ├── styles/       # 全局样式
-│   │   ├── utils/        # 工具函数
-│   │   └── views/        # 页面组件
-│   ├── package.json      # Node 依赖
-│   └── vite.config.ts    # Vite 配置
+│   │   ├── api/            # API 接口
+│   │   ├── components/     # 公共组件
+│   │   ├── layouts/        # 布局组件
+│   │   ├── router/         # 路由配置
+│   │   ├── store/          # 状态管理
+│   │   └── views/          # 页面组件
+│   ├── package.json        # 依赖配置
+│   └── vite.config.ts      # Vite 配置
 │
-├── START_SERVICES.bat     # 启动服务（Windows）
-└── START_DEV_SERVICES.bat # 开发环境启动（Windows）
+└── README.md               # 项目文档
 ```
-
-## 🛠️ 技术栈
-
-### 后端
-- **框架**: FastAPI 0.104+
-- **数据库**: PostgreSQL / MySQL
-- **ORM**: SQLAlchemy 2.0+
-- **认证**: JWT (python-jose)
-- **密码加密**: Passlib + Bcrypt
-- **图片处理**: Pillow + Matplotlib
-- **日志**: Python logging
-
-### 前端
-- **框架**: Vue 3.3+
-- **语言**: TypeScript 5.0+
-- **构建工具**: Vite 5.0+
-- **UI 组件**: Element Plus
-- **CSS 框架**: UnoCSS
-- **状态管理**: Pinia
-- **路由**: Vue Router 4
-- **HTTP 客户端**: Axios
-
-## 📋 功能模块
-
-### 1. 用户管理
-- 用户注册与登录
-- 角色权限管理（管理员/普通用户）
-- 用户信息编辑
-- 密码修改
-
-### 2. 项目管理
-- 项目 CRUD 操作
-- 项目详情查看
-- 项目报告导出（图片）
-- 项目统计
-
-### 3. 原料管理
-- 原料信息维护
-- 原料分类
-- 供应商信息
-- 原料库存
-
-### 4. 填料管理
-- 填料信息维护
-- 填料分类
-- 填料属性管理
-
-### 5. 配方管理
-- 配方创建与编辑
-- 配方组成管理
-- 配方版本控制
-
-### 6. 测试结果
-- 测试数据录入
-- 测试结果查询
-- 数据可视化
-
-### 7. 系统日志
-- 登录日志
-- 操作日志
-- 系统统计
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Python 3.9+
-- Node.js 16+
-- PostgreSQL / MySQL
-- pnpm (推荐) 或 npm
 
-### 后端启动
+- **Python**：3.9+
+- **Node.js**：18+
+- **PostgreSQL**：14+
+- **pnpm**：8+ （推荐）或 npm
+
+### 1. 克隆项目
+
+```bash
+git clone <repository-url>
+cd data_base
+```
+
+### 2. 后端配置
 
 ```bash
 # 进入后端目录
 cd backend_fastapi
 
-# 创建虚拟环境（可选）
+# 创建虚拟环境（推荐）
 python -m venv env
 .\env\Scripts\activate  # Windows
 # source env/bin/activate  # Linux/Mac
@@ -142,17 +95,49 @@ python -m venv env
 # 安装依赖
 pip install -r requirements.txt
 
-# 配置数据库（修改 app/config/settings.py）
+# 配置数据库
+# 编辑 env/.env.dev 文件，设置 PostgreSQL 连接信息
+```
 
-# 启动服务
+**env/.env.dev 配置示例：**
+
+```env
+# 数据库配置
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=postgres
+DB_PASSWORD=your_password
+DB_DATABASE=photopolymer_db
+
+# JWT 配置
+SECRET_KEY=your-secret-key-change-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+REFRESH_TOKEN_EXPIRE_DAYS=7
+```
+
+### 3. 初始化数据库
+
+```bash
+# 创建数据库表
+cd backend_fastapi
+python scripts/create_tables.py
+
+# 脚本会自动创建所有表和默认管理员账号
+```
+
+### 4. 启动后端服务
+
+```bash
+cd backend_fastapi
 python main.py
-# 或
-uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
 后端服务将在 `http://localhost:8000` 运行
 
-### 前端启动
+API 文档：`http://localhost:8000/docs`
+
+### 5. 前端配置
 
 ```bash
 # 进入前端目录
@@ -169,121 +154,159 @@ pnpm dev
 npm run dev
 ```
 
-前端服务将在 `http://localhost:3000` 运行
+前端应用将在 `http://localhost:3000` 运行
 
-### 一键启动（Windows）
-
-```bash
-# 开发环境
-START_DEV_SERVICES.bat
-
-# 生产环境
-START_SERVICES.bat
-```
-
-## 🎨 主题系统
-
-系统支持暗黑/白天主题切换：
-- 点击右上角的太阳/月亮图标切换主题
-- 主题偏好自动保存到本地存储
-- 跨标签页主题同步
-- 完整的暗黑模式适配
-
-## 📝 默认账号
-
-系统初始化后会创建默认管理员账号：
+### 6. 默认账号
 
 ```
-用户名: admin
-密码: admin123
+用户名：admin
+密码：admin123
 ```
 
-**⚠️ 生产环境请立即修改默认密码！**
+⚠️ **生产环境请立即修改默认密码！**
 
-## 🔧 配置说明
+## 📚 功能模块
 
-### 后端配置
+### 用户管理
+- 用户登录/登出
+- 个人信息编辑
+- 密码修改
+- 用户列表管理（管理员）
+- 角色权限管理（管理员）
 
-编辑 `backend_fastapi/app/config/settings.py`：
+### 项目管理
+- 项目创建和编辑
+- 项目列表查询
+- 项目详情查看
+- 配方组成管理
+- 测试结果录入
+- 项目报告导出（图片）
 
-```python
-# 数据库配置
-DATABASE_URL = "postgresql://user:password@localhost:5432/dbname"
+### 原料管理
+- 原料信息维护
+- 原料列表查询
+- 供应商信息管理
 
-# JWT 配置
-SECRET_KEY = "your-secret-key"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+### 填料管理
+- 填料信息维护
+- 填料列表查询
+- 填料属性管理
 
-# CORS 配置
-ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000"
-]
+### 测试结果
+- 支持多种项目类型的测试指标：
+  - **喷墨**：粘度、反应活性、粒径、表面张力、色度值
+  - **涂层**：附着力、透明度、表面硬度、耐化学性、成本
+  - **3D打印**：收缩率、杨氏模量、弯曲强度、邵氏硬度、抗冲击性
+  - **复合材料**：弯曲强度、杨氏模量、抗冲击性、转化率、吸水率
+
+### 系统日志
+- 登录日志记录
+- 系统操作统计
+- 用户活动监控（管理员）
+
+## 🔧 开发指南
+
+### 后端开发
+
+后端采用分层架构：
+
+```
+模块/
+├── model.py       # ORM 模型（数据库表定义）
+├── schema.py      # Pydantic 模型（请求/响应验证）
+├── crud.py        # 数据访问层（数据库操作）
+├── service.py     # 业务逻辑层（核心业务逻辑）
+└── controller.py  # 控制器层（HTTP 路由）
 ```
 
-### 前端配置
+### 前端开发
 
-编辑 `frontend_vue3/src/settings.ts`：
+前端使用 Vue 3 组合式 API：
+
+```vue
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+
+const data = ref([])
+
+onMounted(async () => {
+  // 调用 API
+})
+</script>
+```
+
+### API 调用示例
 
 ```typescript
-// API 基础地址
-export const API_BASE_URL = 'http://localhost:8000'
+import { getProjectListApi } from '@/api/projects'
 
-// 应用配置
-export const APP_NAME = '材料配方管理系统'
-export const APP_VERSION = '1.0.0'
+// 获取项目列表
+const response = await getProjectListApi({
+  page: 1,
+  page_size: 20
+})
 ```
 
-## 📊 数据库初始化
+## 📊 数据生成
+
+项目提供了批量测试数据生成脚本：
 
 ```bash
 cd backend_fastapi
 
-# 运行初始化脚本
-python app/scripts/create_log_tables.py
+# 生成 99 万条项目记录（包含配方和测试结果）
+python scripts/generate_test_data.py
 
-# 创建管理员账号
-python -c "from app.api.v1.modules.auth.service import AuthService; AuthService.create_default_admin()"
+# 生成原料和填料数据（各 50 万条）
+python scripts/generate_materials_fillers.py
 ```
+
+详细说明请查看：`backend_fastapi/scripts/DATA_GENERATION_README.md`
 
 ## 🐛 常见问题
 
-### 1. 后端启动失败
-- 检查 Python 版本是否 >= 3.9
-- 检查数据库连接配置
-- 检查端口 8000 是否被占用
+### 后端启动失败
 
-### 2. 前端启动失败
-- 检查 Node.js 版本是否 >= 16
-- 删除 `node_modules` 重新安装依赖
-- 检查端口 3000 是否被占用
+1. 检查 Python 版本是否 >= 3.9
+2. 检查 PostgreSQL 服务是否运行
+3. 检查数据库连接配置是否正确
+4. 检查端口 8000 是否被占用
 
-### 3. 跨域问题
-- 确保后端 CORS 配置包含前端地址
-- 检查前端 API 请求地址是否正确
+### 前端启动失败
 
-### 4. 登录失败
-- 检查数据库是否已创建用户
-- 检查密码是否正确
-- 查看浏览器控制台和后端日志
+1. 检查 Node.js 版本是否 >= 18
+2. 删除 `node_modules` 和 `pnpm-lock.yaml`，重新安装
+3. 检查端口 3000 是否被占用
+
+### 登录失败
+
+1. 确认数据库已初始化（运行 `create_tables.py`）
+2. 检查用户名和密码是否正确
+3. 查看浏览器控制台和后端日志
+
+### 跨域问题
+
+1. 确保后端 CORS 配置包含前端地址
+2. 检查前端 API 基础地址配置
+
+## 🔒 安全建议
+
+- ✅ 生产环境修改默认管理员密码
+- ✅ 使用强密码策略
+- ✅ 定期备份数据库
+- ✅ 启用 HTTPS（生产环境）
+- ✅ 限制管理员账号数量
+- ✅ 定期查看系统日志
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证。
+MIT License
 
-## 🏢 关于 Advanced
+## 👥 关于
 
-**Advanced** 是一家专注于光敏聚合物材料研发的高新技术企业，致力于为客户提供先进的配方管理解决方案。
-
-## 👥 联系方式
-
-如有问题或建议，请联系开发团队。
+**Advanced** - 专注于光敏聚合物材料研发的高新技术企业
 
 ---
 
-**项目名称**: Advanced - PhotoPolymer Formulation Management DB  
-**开发时间**: 2025年10月  
-**最后更新**: 2025年10月28日  
-**版本**: 2.0.0
-
+**版本**：2.0.0  
+**最后更新**：2025年10月29日

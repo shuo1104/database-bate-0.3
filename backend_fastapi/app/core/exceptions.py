@@ -68,7 +68,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             content={
                 "code": 422,
-                "msg": f"参数验证失败: {error_msg}",
+                "msg": f"Validation failed: {error_msg}",
                 "success": False,
                 "detail": error_msg,
                 "errors": serializable_errors
@@ -86,7 +86,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={
                 "code": 500,
-                "msg": "数据库操作失败",
+                "msg": "Database operation failed",
                 "success": False
             }
         )
@@ -99,7 +99,7 @@ def register_exception_handlers(app: FastAPI) -> None:
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             content={
                 "code": 500,
-                "msg": "服务器内部错误",
+                "msg": "Internal server error",
                 "success": False
             }
         )

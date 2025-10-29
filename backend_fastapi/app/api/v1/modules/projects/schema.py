@@ -38,7 +38,7 @@ class ProjectCreateRequest(BaseModel):
     def validate_not_empty(cls, v: str) -> str:
         """验证非空字符串"""
         if not v or not v.strip():
-            raise ValueError("字段不能为空")
+            raise ValueError("Field cannot be empty")
         return v.strip()
 
 
@@ -106,7 +106,7 @@ class CompositionCreateRequest(BaseModel):
     def validate_percentage(cls, v: Decimal) -> Decimal:
         """验证百分比"""
         if v < 0 or v > 100.5:
-            raise ValueError("重量百分比必须在0-100.5之间")
+            raise ValueError("Weight percentage must be between 0 and 100.5")
         return v
 
 

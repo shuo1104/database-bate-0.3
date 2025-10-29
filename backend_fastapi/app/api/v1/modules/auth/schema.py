@@ -23,7 +23,7 @@ class LoginRequest(BaseModel):
     def validate_username(cls, v: str) -> str:
         """验证用户名格式"""
         if not re.match(r'^[a-zA-Z0-9_]+$', v):
-            raise ValueError("用户名只能包含字母、数字和下划线")
+            raise ValueError("Username can only contain letters, numbers and underscores")
         return v
 
 
@@ -39,7 +39,7 @@ class RegisterRequest(BaseModel):
     def validate_username(cls, v: str) -> str:
         """验证用户名格式"""
         if not re.match(r'^[a-zA-Z0-9_]+$', v):
-            raise ValueError("用户名只能包含字母、数字和下划线")
+            raise ValueError("Username can only contain letters, numbers and underscores")
         return v
     
     @field_validator("email", mode="before")
@@ -140,7 +140,7 @@ class CreateUserRequest(BaseModel):
     def validate_username(cls, v: str) -> str:
         """验证用户名格式"""
         if not re.match(r'^[a-zA-Z0-9_]+$', v):
-            raise ValueError("用户名只能包含字母、数字和下划线")
+            raise ValueError("Username can only contain letters, numbers and underscores")
         return v
     
     @field_validator("email", mode="before")

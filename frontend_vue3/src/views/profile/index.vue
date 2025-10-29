@@ -69,7 +69,7 @@
                 ref="profileFormRef"
                 :model="profileForm"
                 :rules="profileRules"
-                label-width="100px"
+                label-width="150px"
                 style="max-width: 600px"
               >
                 <el-form-item label="Real Name" prop="real_name">
@@ -95,7 +95,7 @@
                 ref="passwordFormRef"
                 :model="passwordForm"
                 :rules="passwordRules"
-                label-width="130px"
+                label-width="160px"
                 style="max-width: 600px"
               >
                 <el-form-item label="Current Password" prop="old_password">

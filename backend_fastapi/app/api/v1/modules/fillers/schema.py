@@ -36,7 +36,7 @@ class FillerCreateRequest(BaseModel):
     @classmethod
     def validate_trade_name(cls, v: str) -> str:
         if not v or not v.strip():
-            raise ValueError("商品名称不能为空")
+            raise ValueError("Trade name cannot be empty")
         return v.strip()
 
 

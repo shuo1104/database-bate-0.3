@@ -119,7 +119,7 @@ async function handleLogin() {
         const redirect = route.query.redirect as string
         router.push(redirect || '/')
       } catch (error: any) {
-        ElMessage.error(error.message || 'Login failed')
+        // Error is already handled by axios interceptor, no need to show again
       } finally {
         loading.value = false
       }

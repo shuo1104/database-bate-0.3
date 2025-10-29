@@ -1,267 +1,226 @@
-# 光创化物 R&D 配方数据库管理系统 - FastAPI 后端
+# PhotoPolymer 配方管理系统 - 后端
 
-**化学配方数据管理系统后端 - 基于 FastAPI 的现代化重构版本**
+基于 **FastAPI** 的高性能异步 API 服务。
 
-版本: 2.0.0
+## ✨ 技术栈
 
----
-
-## 📋 项目概述
-
-这是将原 Flask 项目迁移到 FastAPI 架构的后端系统，采用现代化的异步架构和前后端分离设计。
-
-### **核心改进**
-
-| 项目 | 原架构 (Flask) | 新架构 (FastAPI) |
-|------|---------------|------------------|
-| **框架** | Flask 2.3 (同步) | FastAPI 0.115 (异步) |
-| **认证** | Session + Cookie | JWT (Access + Refresh Token) |
-| **数据库** | 原生 mysql-connector | SQLAlchemy 2.0 异步 |
-| **架构** | Blueprint | 分层架构 (Model/Schema/CRUD/Service/Controller) |
-| **文档** | 手动 Swagger | 自动生成 Swagger/ReDoc |
-
----
-
-## 🏗️ 项目结构
-
-```
-backend_fastapi/
-├── main.py                  # 应用入口
-├── requirements.txt         # Python依赖
-├── env/                     # 环境配置
-│   └── .env.dev            # 开发环境配置
-├── app/
-│   ├── api/v1/             # API版本1
-│   │   └── modules/        # 业务模块
-│   │       ├── auth/       # 认证模块 ✅
-│   │       │   ├── model.py      # ORM模型
-│   │       │   ├── schema.py     # Pydantic模型
-│   │       │   ├── crud.py       # 数据访问层
-│   │       │   ├── service.py    # 业务逻辑层
-│   │       │   └── controller.py # 路由控制器
-│   │       ├── projects/   # 项目管理 🚧
-│   │       ├── materials/  # 原料管理 🚧
-│   │       ├── fillers/    # 填料管理 🚧
-│   │       └── formulas/   # 配方管理 🚧
-│   ├── core/               # 核心模块
-│   │   ├── database.py     # 数据库引擎
-│   │   ├── security.py     # JWT认证
-│   │   ├── logger.py       # 日志系统
-│   │   ├── middlewares.py  # 中间件
-│   │   └── exceptions.py   # 异常处理
-│   ├── common/             # 公共模块
-│   │   └── response.py     # 统一响应
-│   ├── config/             # 配置管理
-│   │   └── settings.py     # 系统配置
-│   └── plugin/             # 插件系统
-│       └── init_app.py     # 应用初始化
-├── logs/                   # 日志目录
-└── static/                 # 静态文件
-```
-
----
+- **FastAPI 0.104** - 高性能异步 Web 框架
+- **SQLAlchemy 2.0** - ORM（异步）
+- **PostgreSQL 14+** - 关系型数据库
+- **Asyncpg** - PostgreSQL 异步驱动
+- **JWT** - 身份认证
+- **Bcrypt** - 密码加密
+- **Matplotlib** - 图表生成
 
 ## 🚀 快速开始
 
-### **1. 安装依赖**
+### 安装依赖
 
 ```bash
 cd backend_fastapi
 pip install -r requirements.txt
 ```
 
-### **2. 配置环境变量**
+### 配置数据库
 
 编辑 `env/.env.dev` 文件：
 
 ```env
-# 数据库配置
 DB_HOST=localhost
-DB_PORT=3306
-DB_USER=root
+DB_PORT=5432
+DB_USER=postgres
 DB_PASSWORD=your_password
-DB_DATABASE=test_base
+DB_DATABASE=photopolymer_db
 
-# JWT配置
-SECRET_KEY=your-secret-key-change-in-production
+SECRET_KEY=your-secret-key
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=1440
+REFRESH_TOKEN_EXPIRE_DAYS=7
 ```
 
-### **3. 启动服务**
+### 初始化数据库
 
 ```bash
-# 开发环境启动
-python main.py run --env=dev
+python scripts/create_tables.py
 ```
 
-### **4. 访问文档**
+### 启动服务
 
-- **Swagger UI**: http://localhost:8000/docs
-- **ReDoc**: http://localhost:8000/redoc
-- **健康检查**: http://localhost:8000/health
+```bash
+python main.py
+```
 
----
+服务地址：http://localhost:8000  
+API 文档：http://localhost:8000/docs
+
+## 📁 项目结构
+
+```
+backend_fastapi/
+├── app/
+│   ├── api/v1/              # API 版本 1
+│   │   └── modules/         # 业务模块
+│   │       ├── auth/        # 认证模块
+│   │       ├── projects/    # 项目管理
+│   │       ├── materials/   # 原料管理
+│   │       ├── fillers/     # 填料管理
+│   │       ├── formulas/    # 配方管理
+│   │       ├── test_results/# 测试结果
+│   │       └── logs/        # 系统日志
+│   ├── core/                # 核心模块
+│   │   ├── database.py      # 数据库引擎
+│   │   ├── security.py      # JWT 认证
+│   │   ├── logger.py        # 日志系统
+│   │   ├── middlewares.py   # 中间件
+│   │   └── exceptions.py    # 异常处理
+│   ├── config/              # 配置管理
+│   │   └── settings.py      # 系统配置
+│   └── utils/               # 工具函数
+│       └── chart_generator.py # 图表生成
+├── scripts/                 # 脚本工具
+│   ├── create_tables.py     # 创建数据库表
+│   ├── generate_test_data.py # 生成测试数据
+│   └── DATA_GENERATION_README.md # 数据生成说明
+├── logs/                    # 日志文件
+├── static/                  # 静态文件
+├── main.py                  # 应用入口
+└── requirements.txt         # Python 依赖
+```
+
+## 🏗️ 分层架构
+
+每个业务模块遵循分层架构：
+
+```
+module/
+├── model.py       # ORM 模型（数据库表定义）
+├── schema.py      # Pydantic 模型（请求/响应验证）
+├── crud.py        # 数据访问层（数据库操作）
+├── service.py     # 业务逻辑层（核心业务逻辑）
+└── controller.py  # 控制器层（HTTP 路由）
+```
 
 ## 📚 API 文档
 
-### **认证模块** (已完成 ✅)
+### 认证模块
 
 | 接口 | 方法 | 路径 | 说明 |
 |------|------|------|------|
-| 用户登录 | POST | `/api/v1/auth/login` | 返回JWT令牌 |
-| 用户注册 | POST | `/api/v1/auth/register` | 创建新用户 |
+| 用户登录 | POST | `/api/v1/auth/login` | 返回 JWT 令牌 |
 | 获取用户信息 | GET | `/api/v1/auth/current/info` | 需要认证 |
 | 更新个人信息 | PUT | `/api/v1/auth/current/profile` | 需要认证 |
 | 修改密码 | PUT | `/api/v1/auth/current/password` | 需要认证 |
+| 获取用户列表 | GET | `/api/v1/auth/users` | 管理员 |
+| 创建用户 | POST | `/api/v1/auth/users` | 管理员 |
 
-### **示例请求**
+### 项目管理
 
-#### 登录
+| 接口 | 方法 | 路径 | 说明 |
+|------|------|------|------|
+| 获取项目列表 | GET | `/api/v1/projects` | 分页查询 |
+| 创建项目 | POST | `/api/v1/projects` | - |
+| 获取项目详情 | GET | `/api/v1/projects/{id}` | - |
+| 更新项目 | PUT | `/api/v1/projects/{id}` | - |
+| 删除项目 | DELETE | `/api/v1/projects/{id}` | - |
+| 导出项目报告 | GET | `/api/v1/projects/{id}/export` | 图片格式 |
 
-```bash
-curl -X POST "http://localhost:8000/api/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d '{"username": "admin", "password": "admin123"}'
-```
+### 配方管理
 
-#### 使用令牌访问
+| 接口 | 方法 | 路径 | 说明 |
+|------|------|------|------|
+| 获取配方列表 | GET | `/api/v1/formulas` | 按项目查询 |
+| 创建配方 | POST | `/api/v1/formulas` | - |
+| 更新配方 | PUT | `/api/v1/formulas/{id}` | - |
+| 删除配方 | DELETE | `/api/v1/formulas/{id}` | - |
 
-```bash
-curl -X GET "http://localhost:8000/api/v1/auth/current/info" \
-  -H "Authorization: Bearer YOUR_ACCESS_TOKEN"
-```
+## 🔐 安全特性
 
----
-
-## 🔧 开发指南
-
-### **分层架构规范**
-
-每个业务模块遵循以下结构：
-
-```
-module_name/
-├── model.py       # 1. ORM模型 - 数据库表定义
-├── schema.py      # 2. Pydantic模型 - 请求/响应验证
-├── crud.py        # 3. 数据访问层 - 数据库操作
-├── service.py     # 4. 业务逻辑层 - 核心业务逻辑
-└── controller.py  # 5. 控制器层 - HTTP路由
-```
-
-### **开发新模块步骤**
-
-1. **创建模型** (`model.py`)
-   ```python
-   from app.core.database import Base
-   
-   class YourModel(Base):
-       __tablename__ = "your_table"
-       ...
-   ```
-
-2. **创建Schema** (`schema.py`)
-   ```python
-   from pydantic import BaseModel
-   
-   class YourRequest(BaseModel):
-       field: str
-   ```
-
-3. **创建CRUD** (`crud.py`)
-   ```python
-   class YourCRUD:
-       @staticmethod
-       async def get_all(db: AsyncSession):
-           ...
-   ```
-
-4. **创建Service** (`service.py`)
-   ```python
-   class YourService:
-       @staticmethod
-       async def list_items(db: AsyncSession):
-           ...
-   ```
-
-5. **创建Controller** (`controller.py`)
-   ```python
-   router = APIRouter()
-   
-   @router.get("/list")
-   async def list_items(db: AsyncSession = Depends(get_db)):
-       ...
-   ```
-
-6. **注册路由** (`app/api/v1/__init__.py`)
-   ```python
-   from app.api.v1.modules.your_module.controller import router
-   api_router.include_router(router, prefix="/your-module")
-   ```
-
----
-
-## ✅ 迁移进度
-
-- [x] **项目结构搭建**
-- [x] **核心配置迁移**
-- [x] **数据库引擎** (异步SQLAlchemy 2.0)
-- [x] **JWT认证系统**
-- [x] **用户认证模块** (完整实现)
-- [ ] **项目管理模块** (待迁移)
-- [ ] **原料管理模块** (待迁移)
-- [ ] **填料管理模块** (待迁移)
-- [ ] **配方管理模块** (待迁移)
-- [ ] **前端对接** (待开发)
-
----
-
-## 📊 数据库表映射
-
-| 原表名 | 模型类 | 状态 |
-|--------|--------|------|
-| `tbl_Users` | `UserModel` | ✅ 完成 |
-| `tbl_ProjectInfo` | `ProjectModel` | 🚧 待迁移 |
-| `tbl_RawMaterials` | `MaterialModel` | 🚧 待迁移 |
-| `tbl_InorganicFillers` | `FillerModel` | 🚧 待迁移 |
-| `tbl_FormulaComposition` | `FormulaModel` | 🚧 待迁移 |
-
----
-
-## 🔒 安全特性
-
-- ✅ JWT认证 (Access + Refresh Token)
-- ✅ 密码Bcrypt加密
-- ✅ Pydantic数据验证
-- ✅ CORS中间件
+- ✅ JWT 认证（Access + Refresh Token）
+- ✅ 密码 Bcrypt 加密
+- ✅ Pydantic 数据验证
+- ✅ CORS 中间件
 - ✅ 请求日志记录
 - ✅ 全局异常处理
+- ✅ SQL 注入防护
 
----
+## 📊 数据库
 
-## 📝 下一步计划
+### 主要数据表
 
-1. **继续迁移业务模块**
-   - 项目管理模块
-   - 原料/填料管理模块
-   - 配方管理模块
+- `tbl_Users` - 用户表
+- `tbl_ProjectInfo` - 项目信息表
+- `tbl_ProjectType` - 项目类型表
+- `tbl_RawMaterials` - 原料表
+- `tbl_InorganicFillers` - 填料表
+- `tbl_FormulaComposition` - 配方组成表
+- `tbl_TestResults_*` - 测试结果表（按项目类型分表）
+- `tbl_LoginLogs` - 登录日志表
+- `tbl_RegistrationLogs` - 注册日志表
 
-2. **添加高级功能**
-   - 数据库迁移 (Alembic)
-   - 批量操作API
-   - Excel导入导出
-   - 文件上传
+### 数据生成
 
-3. **前端开发**
-   - Vue3 前端项目搭建
-   - API对接
-   - UI组件开发
+```bash
+# 生成 99 万条项目记录
+python scripts/generate_test_data.py
 
----
+# 生成原料和填料数据
+python scripts/generate_materials_fillers.py
+```
 
-## 🤝 贡献者
+## 🛠️ 开发指南
 
-光创化物 R&D 团队
+### 创建新模块
 
----
+1. 在 `app/api/v1/modules/` 创建模块目录
+2. 创建 `model.py`（ORM 模型）
+3. 创建 `schema.py`（Pydantic 模型）
+4. 创建 `crud.py`（数据访问层）
+5. 创建 `service.py`（业务逻辑层）
+6. 创建 `controller.py`（路由控制器）
+7. 在 `app/api/v1/__init__.py` 注册路由
 
-**最后更新**: 2025-10-24
+### 示例代码
 
+```python
+# controller.py
+from fastapi import APIRouter, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.database import get_db
+
+router = APIRouter()
+
+@router.get("/list")
+async def get_list(db: AsyncSession = Depends(get_db)):
+    # 调用 service 层
+    result = await YourService.get_list(db)
+    return {"data": result}
+```
+
+## 🐛 常见问题
+
+### 数据库连接失败
+
+1. 检查 PostgreSQL 服务是否运行
+2. 检查 `.env.dev` 配置是否正确
+3. 检查数据库是否已创建
+
+### 导入错误
+
+确保在虚拟环境中运行：
+
+```bash
+.\env\Scripts\activate  # Windows
+source env/bin/activate # Linux/Mac
+```
+
+### 端口被占用
+
+修改 `main.py` 中的端口号：
+
+```python
+uvicorn.run(app, host="0.0.0.0", port=8001)
+```
+
+## 📄 许可证
+
+MIT License

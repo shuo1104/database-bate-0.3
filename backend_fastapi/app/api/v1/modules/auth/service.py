@@ -57,7 +57,7 @@ class AuthService:
             logger.warning(f"登录失败: 用户名不存在 - {login_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="用户名或密码错误"
+                detail="Incorrect username or password"
             )
         
         # 检查用户是否激活（IsActive是整数：1-激活，0-禁用）
@@ -65,7 +65,7 @@ class AuthService:
             logger.warning(f"登录失败: 账号已禁用 - {login_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="账号已被禁用，请联系管理员"
+                detail="Account has been disabled, please contact administrator"
             )
         
         # 验证密码
@@ -73,7 +73,7 @@ class AuthService:
             logger.warning(f"登录失败: 密码错误 - {login_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="用户名或密码错误"
+                detail="Incorrect username or password"
             )
         
         # 生成JWT令牌
@@ -141,7 +141,7 @@ class AuthService:
             logger.warning(f"注册失败: 用户名已存在 - {register_data.username}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="用户名已存在"
+                detail="Username already exists"
             )
         
         # 创建用户
@@ -200,7 +200,7 @@ class AuthService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         # 验证旧密码
@@ -208,7 +208,7 @@ class AuthService:
             logger.warning(f"修改密码失败: 旧密码错误 - UserID:{user_id}")
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="旧密码错误"
+                detail="Incorrect old password"
             )
         
         # 更新密码
@@ -246,7 +246,7 @@ class AuthService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         # 更新信息
@@ -262,7 +262,7 @@ class AuthService:
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="更新失败"
+                detail="Update failed"
             )
         
         # 刷新用户信息
@@ -293,7 +293,7 @@ class AuthService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         return UserInfoResponse.model_validate(user)
@@ -369,7 +369,7 @@ class UserManagementService:
         if existing_user:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="用户名已存在"
+                detail="Username already exists"
             )
         
         # 创建用户
@@ -438,7 +438,7 @@ class UserManagementService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         # 更新用户信息
@@ -455,7 +455,7 @@ class UserManagementService:
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="更新失败"
+                detail="Update failed"
             )
         
         await db.commit()
@@ -486,7 +486,7 @@ class UserManagementService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         # 删除用户
@@ -494,7 +494,7 @@ class UserManagementService:
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="删除失败"
+                detail="Delete failed"
             )
         
         await db.commit()
@@ -525,7 +525,7 @@ class UserManagementService:
         if not user:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="用户不存在"
+                detail="User not found"
             )
         
         # 重置密码
@@ -535,7 +535,7 @@ class UserManagementService:
         if not success:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="重置密码失败"
+                detail="Password reset failed"
             )
         
         await db.commit()

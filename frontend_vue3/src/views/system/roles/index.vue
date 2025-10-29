@@ -268,8 +268,7 @@ async function getList() {
     total.value = res.total
   } catch (error: any) {
     console.error('Failed to get user list:', error)
-    const errorMsg = error.response?.data?.detail || error.response?.data?.msg || 'Failed to get user list'
-    ElMessage.error(errorMsg)
+    // Error is already handled by axios interceptor
   } finally {
     loading.value = false
   }
@@ -335,8 +334,7 @@ function handleDelete(row: UserInfo) {
       getAllUsers() // Reload statistics data
     } catch (error: any) {
       console.error('Failed to delete:', error)
-      const errorMsg = error.response?.data?.detail || error.response?.data?.msg || 'Failed to delete'
-      ElMessage.error(errorMsg)
+      // Error is already handled by axios interceptor
     }
   })
 }
@@ -354,8 +352,7 @@ function handleResetPassword(row: UserInfo) {
       ElMessage.success('Password reset successfully')
     } catch (error: any) {
       console.error('Failed to reset password:', error)
-      const errorMsg = error.response?.data?.detail || error.response?.data?.msg || 'Failed to reset password'
-      ElMessage.error(errorMsg)
+      // Error is already handled by axios interceptor
     }
   })
 }
@@ -394,8 +391,7 @@ async function handleSubmit() {
         getAllUsers() // Reload statistics data
       } catch (error: any) {
         console.error('Failed to submit:', error)
-        const errorMsg = error.response?.data?.detail || error.response?.data?.msg || 'Failed to submit'
-        ElMessage.error(errorMsg)
+        // Error is already handled by axios interceptor
       } finally {
         submitLoading.value = false
       }
