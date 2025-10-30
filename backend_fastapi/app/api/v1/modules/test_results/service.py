@@ -4,7 +4,6 @@
 """
 
 from typing import Union
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.modules.test_results.crud import TestResultCRUD
@@ -16,6 +15,10 @@ from app.api.v1.modules.test_results.schema import (
 )
 from app.api.v1.modules.projects.crud import ProjectCRUD
 from app.core.logger import logger
+from app.core.custom_exceptions import (
+    RecordNotFoundException,
+    DatabaseException,
+)
 
 
 class TestResultService:
@@ -30,10 +33,7 @@ class TestResultService:
         # 先获取项目信息确定项目类型
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         project_type = project.project_type.TypeName if project.project_type else None
         
@@ -68,10 +68,7 @@ class TestResultService:
         # 检查项目是否存在
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         # 检查是否已存在测试结果
         existing = await TestResultCRUD.get_ink_result(db, project_id)
@@ -89,16 +86,15 @@ class TestResultService:
                 result = await TestResultCRUD.create_ink_result(db, project_id, **create_data)
                 await db.commit()
             
-            logger.info(f"喷墨测试结果{'更新' if existing else '创建'}成功: 项目ID {project_id}")
+            logger.info(f"喷墨testresult{'update' if existing else 'create'}successful: projectID {project_id}")
             return TestResultInkResponse.model_validate(result)
             
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"操作喷墨测试结果失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"操作测试结果失败: {str(e)}"
-            )
+            logger.error(f"Failed to operate ink test result: {e}")
+            raise DatabaseException(f"Failed to operate test result: {str(e)}")
     
     @staticmethod
     async def create_or_update_coating_result(
@@ -109,10 +105,7 @@ class TestResultService:
         """创建或更新涂层测试结果"""
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         existing = await TestResultCRUD.get_coating_result(db, project_id)
         
@@ -127,16 +120,15 @@ class TestResultService:
                 result = await TestResultCRUD.create_coating_result(db, project_id, **create_data)
                 await db.commit()
             
-            logger.info(f"涂层测试结果{'更新' if existing else '创建'}成功: 项目ID {project_id}")
+            logger.info(f"涂层testresult{'update' if existing else 'create'}successful: projectID {project_id}")
             return TestResultCoatingResponse.model_validate(result)
             
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"操作涂层测试结果失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"操作测试结果失败: {str(e)}"
-            )
+            logger.error(f"Failed to operate coating test result: {e}")
+            raise DatabaseException(f"Failed to operate test result: {str(e)}")
     
     @staticmethod
     async def create_or_update_3dprint_result(
@@ -147,10 +139,7 @@ class TestResultService:
         """创建或更新3D打印测试结果"""
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         existing = await TestResultCRUD.get_3dprint_result(db, project_id)
         
@@ -165,16 +154,15 @@ class TestResultService:
                 result = await TestResultCRUD.create_3dprint_result(db, project_id, **create_data)
                 await db.commit()
             
-            logger.info(f"3D打印测试结果{'更新' if existing else '创建'}成功: 项目ID {project_id}")
+            logger.info(f"3D打印testresult{'update' if existing else 'create'}successful: projectID {project_id}")
             return TestResult3DPrintResponse.model_validate(result)
             
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"操作3D打印测试结果失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"操作测试结果失败: {str(e)}"
-            )
+            logger.error(f"Failed to operate 3D printing test result: {e}")
+            raise DatabaseException(f"Failed to operate test result: {str(e)}")
     
     @staticmethod
     async def create_or_update_composite_result(
@@ -185,10 +173,7 @@ class TestResultService:
         """创建或更新复合材料测试结果"""
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         existing = await TestResultCRUD.get_composite_result(db, project_id)
         
@@ -203,14 +188,13 @@ class TestResultService:
                 result = await TestResultCRUD.create_composite_result(db, project_id, **create_data)
                 await db.commit()
             
-            logger.info(f"复合材料测试结果{'更新' if existing else '创建'}成功: 项目ID {project_id}")
+            logger.info(f"复合材料testresult{'update' if existing else 'create'}successful: projectID {project_id}")
             return TestResultCompositeResponse.model_validate(result)
             
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"操作复合材料测试结果失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"操作测试结果失败: {str(e)}"
-            )
+            logger.error(f"Failed to operate composite test result: {e}")
+            raise DatabaseException(f"Failed to operate test result: {str(e)}")
 

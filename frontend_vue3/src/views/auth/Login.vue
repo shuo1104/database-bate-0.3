@@ -87,6 +87,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { ElMessage, type FormInstance } from 'element-plus'
 import { User, Lock, Grid } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store'
+import { usernameRules, passwordRules } from '@/utils/validators'
 
 const router = useRouter()
 const route = useRoute()
@@ -101,8 +102,8 @@ const loginForm = reactive({
 })
 
 const loginRules = {
-  username: [{ required: true, message: 'Please enter username', trigger: 'blur' }],
-  password: [{ required: true, message: 'Please enter password', trigger: 'blur' }],
+  username: usernameRules,
+  password: passwordRules,
 }
 
 async function handleLogin() {

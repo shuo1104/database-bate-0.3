@@ -23,9 +23,7 @@ class Settings(BaseSettings):
     # Banner
     BANNER: ClassVar[str] = """
     ╔═══════════════════════════════════════════════════════════╗
-    ║   Advanced - PhotoPolymer Formulation Management DB     ║
-    ║   高级光敏聚合物配方管理数据库 - FastAPI版本             ║
-    ║   Version: 2.0.0                                         ║
+    ║   Advanced - PhotoPolymer Formulation Management DB       ║                                         ║
     ╚═══════════════════════════════════════════════════════════╝
     """
     
@@ -38,12 +36,12 @@ class Settings(BaseSettings):
     # ==================== 服务器配置 ====================
     SERVER_HOST: str = "0.0.0.0"
     SERVER_PORT: int = 8000
-    RELOAD: bool = True  # 开发环境自动重载
-    WORKERS: int = 1  # 生产环境建议 4
+    RELOAD: bool = True  # 开发环境自动重载（与 WORKERS > 1 互斥）
+    WORKERS: int = 1  # Uvicorn 工作进程数。生产环境建议：CPU核心数 × 2 + 1
     
     # ==================== API文档配置 ====================
     TITLE: str = "Advanced - PhotoPolymer Formulation Management API"
-    VERSION: str = "2.0.0"
+    VERSION: str = "1.0.0"
     DESCRIPTION: str = "高级光敏聚合物配方管理数据库 RESTful API"
     SUMMARY: str = "基于 FastAPI 的现代化配方管理系统"
     DOCS_URL: str = "/docs"  # Swagger UI

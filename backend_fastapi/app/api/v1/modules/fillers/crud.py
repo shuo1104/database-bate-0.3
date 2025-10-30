@@ -30,7 +30,7 @@ class FillerCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询填料失败: {e}")
+            logger.error(f"queryfillerfailed: {e}")
             raise
     
     @staticmethod
@@ -96,7 +96,7 @@ class FillerCRUD:
             return list(fillers), total
             
         except Exception as e:
-            logger.error(f"分页查询填料失败: {e}")
+            logger.error(f"分页queryfillerfailed: {e}")
             raise
     
     @staticmethod
@@ -129,7 +129,7 @@ class FillerCRUD:
             return filler
             
         except Exception as e:
-            logger.error(f"创建填料失败: {e}")
+            logger.error(f"createfillerfailed: {e}")
             raise
     
     @staticmethod
@@ -155,7 +155,7 @@ class FillerCRUD:
             return True
             
         except Exception as e:
-            logger.error(f"更新填料失败: {e}")
+            logger.error(f"updatefillerfailed: {e}")
             return False
     
     @staticmethod
@@ -169,7 +169,7 @@ class FillerCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"删除填料失败: {e}")
+            logger.error(f"deletedfillerfailed: {e}")
             return False
     
     @staticmethod
@@ -183,7 +183,7 @@ class FillerCRUD:
             result = await db.execute(stmt)
             return result.rowcount
         except Exception as e:
-            logger.error(f"批量删除填料失败: {e}")
+            logger.error(f"batchdeletedfillerfailed: {e}")
             raise
 
 
@@ -198,7 +198,7 @@ class FillerTypeCRUD:
             result = await db.execute(stmt)
             return list(result.scalars().all())
         except Exception as e:
-            logger.error(f"查询填料类型失败: {e}")
+            logger.error(f"queryfiller类型failed: {e}")
             raise
     
     @staticmethod
@@ -215,6 +215,6 @@ class FillerTypeCRUD:
             result = await db.execute(stmt)
             return [row[0] for row in result.all()]
         except Exception as e:
-            logger.error(f"查询供应商列表失败: {e}")
+            logger.error(f"query供应商列表failed: {e}")
             raise
 

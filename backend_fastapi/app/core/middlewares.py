@@ -28,7 +28,7 @@ def register_cors(app: FastAPI) -> None:
             allow_headers=settings.ALLOW_HEADERS,
             expose_headers=["X-Request-ID"]
         )
-        logger.info("✅ CORS中间件已注册")
+        logger.info("✅ CORS middleware registered")
 
 
 def register_request_logger(app: FastAPI) -> None:
@@ -65,7 +65,7 @@ def register_request_logger(app: FastAPI) -> None:
         
         return response
     
-    logger.info("✅ 请求日志中间件已注册")
+    logger.info("✅ Request logging middleware registered")
 
 
 def register_auth_middleware(app: FastAPI) -> None:
@@ -108,5 +108,5 @@ def register_auth_middleware(app: FastAPI) -> None:
         response = await call_next(request)
         return response
     
-    logger.info("✅ 认证中间件已注册")
+    logger.info("✅ Authentication middleware registered")
 

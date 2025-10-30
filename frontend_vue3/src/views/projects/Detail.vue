@@ -265,6 +265,13 @@ import { getFillerListApi, type FillerInfo } from '@/api/fillers'
 import { getTestResultApi } from '@/api/test-results'
 import { formatDateTime } from '@/utils/common'
 import TestResultForm from './components/TestResultForm.vue'
+import {
+  projectNameRules,
+  formulatorNameRules,
+  weightPercentageRules,
+  createSelectRequiredRule,
+  createDateRequiredRule,
+} from '@/utils/validators'
 
 const route = useRoute()
 const router = useRouter()
@@ -311,13 +318,10 @@ const compositionFormData = reactive<CompositionFormData>({
 })
 
 const compositionFormRules = {
-  componentType: [{ required: true, message: 'Please select component type', trigger: 'change' }],
-  MaterialID_FK: [{ required: true, message: 'Please select material', trigger: 'change' }],
-  FillerID_FK: [{ required: true, message: 'Please select filler', trigger: 'change' }],
-  WeightPercentage: [
-    { required: true, message: 'Please enter weight percentage', trigger: 'blur' },
-    { type: 'number', min: 0, max: 100, message: 'Weight percentage should be between 0-100', trigger: 'blur' }
-  ],
+  componentType: [createSelectRequiredRule('component type')],
+  MaterialID_FK: [createSelectRequiredRule('material')],
+  FillerID_FK: [createSelectRequiredRule('filler')],
+  WeightPercentage: weightPercentageRules,
 }
 
 // 测试结果相关
@@ -340,10 +344,10 @@ const projectFormData = reactive({
 })
 
 const projectFormRules = {
-  project_name: [{ required: true, message: 'Please enter project name', trigger: 'blur' }],
-  project_type_fk: [{ required: true, message: 'Please select project type', trigger: 'change' }],
-  formulator_name: [{ required: true, message: 'Please enter formulator name', trigger: 'blur' }],
-  formulation_date: [{ required: true, message: 'Please select formulation date', trigger: 'change' }],
+  project_name: projectNameRules,
+  project_type_fk: [createSelectRequiredRule('project type')],
+  formulator_name: formulatorNameRules,
+  formulation_date: [createDateRequiredRule('formulation date')],
 }
 
 // Get project details

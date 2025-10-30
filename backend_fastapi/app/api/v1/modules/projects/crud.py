@@ -55,7 +55,7 @@ class ProjectCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询项目失败: {e}")
+            logger.error(f"queryprojectfailed: {e}")
             raise
     
     @staticmethod
@@ -91,7 +91,7 @@ class ProjectCRUD:
         """
         try:
             # 记录查询参数
-            logger.info(f"项目查询参数: keyword={keyword}, has_compositions={has_compositions}, has_test_results={has_test_results}")
+            logger.info(f"projectquery参数: keyword={keyword}, has_compositions={has_compositions}, has_test_results={has_test_results}")
             
             # 构建查询条件
             conditions = []
@@ -124,7 +124,7 @@ class ProjectCRUD:
                     # 先查询有配方成分的项目ID列表用于调试
                     comp_ids_result = await db.execute(select(FormulaCompositionModel.ProjectID_FK).distinct())
                     comp_ids = [row[0] for row in comp_ids_result.all()]
-                    logger.info(f"有配方成分的项目ID列表: {comp_ids}")
+                    logger.info(f"有formula成分的projectID列表: {comp_ids}")
                     
                     conditions.append(
                         ProjectModel.ProjectID.in_(
@@ -153,7 +153,7 @@ class ProjectCRUD:
                     composite_ids_result = await db.execute(select(TestResultCompositeModel.ProjectID_FK).distinct())
                     composite_ids = [row[0] for row in composite_ids_result.all()]
                     all_test_ids = set(ink_ids + coating_ids + print3d_ids + composite_ids)
-                    logger.info(f"有测试结果的项目ID列表: {all_test_ids}")
+                    logger.info(f"有testresult的projectID列表: {all_test_ids}")
                     
                     conditions.append(
                         or_(
@@ -227,12 +227,12 @@ class ProjectCRUD:
             result = await db.execute(stmt)
             projects = result.scalars().all()
             
-            logger.info(f"查询结果: 总数={total}, 返回数量={len(projects)}, 项目IDs={[p.ProjectID for p in projects]}")
+            logger.info(f"queryresult: total={total}, returned={len(projects)}, projectIDs={[p.ProjectID for p in projects]}")
             
             return list(projects), total
             
         except Exception as e:
-            logger.error(f"分页查询项目失败: {e}")
+            logger.error(f"分页queryprojectfailed: {e}")
             raise
     
     @staticmethod
@@ -280,7 +280,7 @@ class ProjectCRUD:
             return project
             
         except Exception as e:
-            logger.error(f"创建项目失败: {e}")
+            logger.error(f"createprojectfailed: {e}")
             raise
     
     @staticmethod
@@ -317,7 +317,7 @@ class ProjectCRUD:
             return True
             
         except Exception as e:
-            logger.error(f"更新项目失败: {e}")
+            logger.error(f"updateprojectfailed: {e}")
             return False
     
     @staticmethod
@@ -340,7 +340,7 @@ class ProjectCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"删除项目失败: {e}")
+            logger.error(f"deletedprojectfailed: {e}")
             return False
     
     @staticmethod
@@ -363,7 +363,7 @@ class ProjectCRUD:
             result = await db.execute(stmt)
             return result.rowcount
         except Exception as e:
-            logger.error(f"批量删除项目失败: {e}")
+            logger.error(f"batchdeletedprojectfailed: {e}")
             raise
     
     @staticmethod
@@ -418,7 +418,7 @@ class ProjectCRUD:
             return formula_code
             
         except Exception as e:
-            logger.error(f"生成配方编码失败: {e}")
+            logger.error(f"生成formula编码failed: {e}")
             raise
 
 
@@ -433,7 +433,7 @@ class ProjectTypeCRUD:
             result = await db.execute(stmt)
             return list(result.scalars().all())
         except Exception as e:
-            logger.error(f"查询项目类型失败: {e}")
+            logger.error(f"queryproject类型failed: {e}")
             raise
     
     @staticmethod
@@ -450,7 +450,7 @@ class ProjectTypeCRUD:
             result = await db.execute(stmt)
             return [row[0] for row in result.all()]
         except Exception as e:
-            logger.error(f"查询配方设计师列表失败: {e}")
+            logger.error(f"queryformula设计师列表failed: {e}")
             raise
 
 
@@ -476,7 +476,7 @@ class CompositionCRUD:
             result = await db.execute(stmt)
             return list(result.scalars().all())
         except Exception as e:
-            logger.error(f"查询配方成分失败: {e}")
+            logger.error(f"queryformula成分failed: {e}")
             raise
     
     @staticmethod
@@ -504,7 +504,7 @@ class CompositionCRUD:
             await db.refresh(composition)
             return composition
         except Exception as e:
-            logger.error(f"创建配方成分失败: {e}")
+            logger.error(f"createformula成分failed: {e}")
             raise
     
     @staticmethod
@@ -545,7 +545,7 @@ class CompositionCRUD:
             await db.refresh(composition)
             return composition
         except Exception as e:
-            logger.error(f"更新配方成分失败: {e}")
+            logger.error(f"updateformula成分failed: {e}")
             raise
     
     @staticmethod
@@ -561,6 +561,6 @@ class CompositionCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"删除配方成分失败: {e}")
+            logger.error(f"deletedformula成分failed: {e}")
             return False
 

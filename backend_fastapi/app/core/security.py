@@ -8,11 +8,15 @@ from datetime import datetime, timedelta
 from typing import Optional, Any
 from jose import JWTError, jwt
 from passlib.context import CryptContext
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 from app.config.settings import settings
 from app.core.logger import logger
+from app.core.custom_exceptions import (
+    InvalidTokenException,
+    AuthenticationException,
+)
 
 
 # ==================== 密码加密 ====================
@@ -38,28 +42,43 @@ def hash_password(password: str) -> str:
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     """
-    验证密码（支持 Argon2、Bcrypt 和明文密码）
+    验证密码（仅支持 Bcrypt 和 Argon2 哈希密码）
+    
+    安全说明：
+    - 强制要求密码必须是哈希存储
+    - 不再支持明文密码（安全风险）
+    - 如需迁移旧密码，请使用迁移脚本
     
     Args:
         plain_password: 明文密码
-        hashed_password: 密码哈希或明文密码
+        hashed_password: 密码哈希（必须是 Bcrypt 或 Argon2 格式）
     
     Returns:
         密码是否匹配
+    
+    Raises:
+        ValueError: 如果检测到明文密码存储
     """
-    # 如果数据库中存储的是明文密码（没有哈希前缀），直接比对
-    # 哈希密码通常以 $ 开头，如 $2b$, $argon2id$ 等
-    if not hashed_password.startswith('$'):
-        logger.warning("检测到明文密码存储，建议使用哈希密码")
-        return plain_password == hashed_password
+    # 安全检查：拒绝明文密码
+    if not hashed_password or not hashed_password.startswith('$'):
+        logger.error(f"Security Warning: Illegal password format detected, verification refused")
+        raise ValueError(
+            "检测到非法密码格式。出于安全考虑，系统不再支持明文密码。"
+            "请联系管理员运行密码迁移脚本或重置密码。"
+        )
     
     # 使用 passlib 验证哈希密码（自动识别 Argon2 或 Bcrypt）
     try:
-        return pwd_context.verify(plain_password, hashed_password)
+        is_valid = pwd_context.verify(plain_password, hashed_password)
+        return is_valid
+    except (ValueError, TypeError) as e:
+        # 密码格式错误或类型错误
+        logger.error(f"Password verification failed - Format error: {e}")
+        return False
     except Exception as e:
-        logger.error(f"密码哈希验证失败: {e}")
-        # 如果哈希验证失败，尝试明文比对（兼容性处理）
-        return plain_password == hashed_password
+        # 其他未预期的错误
+        logger.error(f"Password verification failed - Unknown error: {type(e).__name__}: {e}", exc_info=True)
+        return False
 
 
 # ==================== JWT令牌 ====================
@@ -158,12 +177,8 @@ def decode_token(token: str) -> dict[str, Any]:
         )
         return payload
     except JWTError as e:
-        logger.error(f"JWT解码失败: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="无效的令牌",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+        logger.error(f"JWT decode failed: {e}")
+        raise InvalidTokenException()
 
 
 # ==================== HTTP Bearer认证 ====================
@@ -191,11 +206,7 @@ async def get_current_user_id(
     
     user_id: Optional[int] = payload.get("user_id")
     if user_id is None:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="无效的令牌：缺少用户信息",
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+        raise AuthenticationException("Invalid token: missing user information")
     
     return user_id
 
@@ -258,10 +269,8 @@ def get_current_user_with_role(required_role: str):
         }
         
         if user_role != required_role:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"权限不足：需要{required_role}角色"
-            )
+            from app.core.custom_exceptions import AuthorizationException
+            raise AuthorizationException(f"Insufficient permissions: {required_role} role required")
         
         return user_info
     

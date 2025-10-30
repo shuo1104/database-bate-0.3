@@ -4,7 +4,6 @@
 """
 
 from typing import List, Tuple
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.modules.materials.crud import MaterialCRUD, MaterialCategoryCRUD
@@ -17,6 +16,11 @@ from app.api.v1.modules.materials.schema import (
     BatchDeleteRequest
 )
 from app.core.logger import logger
+from app.core.custom_exceptions import (
+    RecordNotFoundException,
+    DatabaseException,
+    IntegrityConstraintException,
+)
 
 
 class MaterialService:
@@ -47,7 +51,7 @@ class MaterialService:
                 material_data.CategoryName = material.category.CategoryName
             material_list.append(material_data)
         
-        logger.info(f"查询原料列表成功: 页码{page}, 共{total}条")
+        logger.info(f"querymaterial列表successful: page{page}, total{total}items")
         return material_list, total
     
     @staticmethod
@@ -59,10 +63,7 @@ class MaterialService:
         material = await MaterialCRUD.get_by_id(db, material_id)
         
         if not material:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"原料ID {material_id} 不存在"
-            )
+            raise RecordNotFoundException("Material", material_id)
         
         material_data = MaterialResponse.model_validate(material)
         if material.category:
@@ -91,7 +92,7 @@ class MaterialService:
             await db.commit()
             await db.refresh(material)
             
-            logger.info(f"原料创建成功: {material.TradeName}")
+            logger.info(f"materialcreatesuccessful: {material.TradeName}")
             
             material = await MaterialCRUD.get_by_id(db, material.MaterialID)
             response = MaterialResponse.model_validate(material)
@@ -102,11 +103,8 @@ class MaterialService:
             
         except Exception as e:
             await db.rollback()
-            logger.error(f"创建原料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"创建原料失败: {str(e)}"
-            )
+            logger.error(f"Failed to create material: {e}")
+            raise DatabaseException(f"Failed to create material: {str(e)}")
     
     @staticmethod
     async def update_material(
@@ -118,10 +116,7 @@ class MaterialService:
         # 检查原料是否存在
         material = await MaterialCRUD.get_by_id(db, material_id)
         if not material:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"原料ID {material_id} 不存在"
-            )
+            raise RecordNotFoundException("Material", material_id)
         
         # 构建更新字段
         update_data = {}
@@ -144,7 +139,7 @@ class MaterialService:
             await MaterialCRUD.update_material(db, material_id, **update_data)
             await db.commit()
             
-            logger.info(f"原料更新成功: ID {material_id}")
+            logger.info(f"materialupdatesuccessful: ID {material_id}")
             
             material = await MaterialCRUD.get_by_id(db, material_id)
             response = MaterialResponse.model_validate(material)
@@ -155,11 +150,8 @@ class MaterialService:
             
         except Exception as e:
             await db.rollback()
-            logger.error(f"更新原料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"更新原料失败: {str(e)}"
-            )
+            logger.error(f"Failed to update material: {e}")
+            raise DatabaseException(f"Failed to update material: {str(e)}")
     
     @staticmethod
     async def delete_material(
@@ -169,23 +161,19 @@ class MaterialService:
         """删除原料"""
         material = await MaterialCRUD.get_by_id(db, material_id)
         if not material:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"原料ID {material_id} 不存在"
-            )
+            raise RecordNotFoundException("Material", material_id)
         
         try:
             await MaterialCRUD.delete_material(db, material_id)
             await db.commit()
-            logger.info(f"原料删除成功: ID {material_id}")
+            logger.info(f"materialdeletedsuccessful: ID {material_id}")
             return True
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"删除原料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"删除原料失败: {str(e)}"
-            )
+            logger.error(f"Failed to delete material: {e}")
+            raise DatabaseException(f"Failed to delete material: {str(e)}")
     
     @staticmethod
     async def batch_delete_materials(
@@ -196,15 +184,12 @@ class MaterialService:
         try:
             count = await MaterialCRUD.batch_delete_materials(db, delete_data.ids)
             await db.commit()
-            logger.info(f"批量删除原料成功: 删除{count}条")
+            logger.info(f"batchdeletedmaterialsuccessful: deleted{count}items")
             return count
         except Exception as e:
             await db.rollback()
-            logger.error(f"批量删除原料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"批量删除原料失败: {str(e)}"
-            )
+            logger.error(f"Failed to batch delete materials: {e}")
+            raise DatabaseException(f"Failed to batch delete materials: {str(e)}")
     
     @staticmethod
     async def get_categories(

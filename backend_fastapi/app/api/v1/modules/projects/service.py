@@ -5,8 +5,8 @@
 """
 
 from typing import List, Tuple
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError, DataError
 
 from app.api.v1.modules.projects.crud import (
     ProjectCRUD,
@@ -26,6 +26,14 @@ from app.api.v1.modules.projects.schema import (
     BatchDeleteRequest
 )
 from app.core.logger import logger
+from app.core.custom_exceptions import (
+    RecordNotFoundException,
+    DuplicateRecordException,
+    DatabaseException,
+    ValidationException,
+    IntegrityConstraintException,
+    BusinessLogicException,
+)
 
 
 class ProjectService:
@@ -73,7 +81,7 @@ class ProjectService:
                 project_data.TypeName = project.project_type.TypeName
             project_list.append(project_data)
         
-        logger.info(f"查询项目列表成功: 页码{page}, 每页{page_size}条, 共{total}条")
+        logger.info(f"queryproject列表successful: page{page}, per page{page_size}items, total{total}items")
         return project_list, total
     
     @staticmethod
@@ -94,10 +102,7 @@ class ProjectService:
         project = await ProjectCRUD.get_by_id(db, project_id)
         
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         # 构建响应
         project_detail = ProjectDetailResponse.model_validate(project)
@@ -129,6 +134,10 @@ class ProjectService:
         
         Returns:
             创建的项目信息
+        
+        Raises:
+            IntegrityConstraintException: 数据完整性约束违规（如外键不存在）
+            DatabaseException: 数据库操作失败
         """
         try:
             project = await ProjectCRUD.create_project(
@@ -143,7 +152,7 @@ class ProjectService:
             await db.commit()
             await db.refresh(project)
             
-            logger.info(f"项目创建成功: {project.ProjectName} ({project.FormulaCode})")
+            logger.info(f"projectcreatesuccessful: {project.ProjectName} ({project.FormulaCode})")
             
             # 获取完整信息（包含关联数据）
             project = await ProjectCRUD.get_by_id(db, project.ProjectID)
@@ -152,13 +161,24 @@ class ProjectService:
                 response.TypeName = project.project_type.TypeName
             
             return response
-            
+        
+        except IntegrityError as e:
+            await db.rollback()
+            logger.warning(f"projectcreatefailed - 数据完整性error: {e}")
+            raise IntegrityConstraintException(
+                message="Referenced project type does not exist or data constraint violated"
+            )
+        except DataError as e:
+            await db.rollback()
+            logger.warning(f"projectcreatefailed - 数据格式error: {e}")
+            raise ValidationException(
+                message="Invalid data format for project creation"
+            )
         except Exception as e:
             await db.rollback()
-            logger.error(f"创建项目失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"创建项目失败: {str(e)}"
+            logger.error(f"projectcreatefailed - 未知error: {type(e).__name__}: {e}", exc_info=True)
+            raise DatabaseException(
+                message="Failed to create project due to database error"
             )
     
     @staticmethod
@@ -181,10 +201,7 @@ class ProjectService:
         # 检查项目是否存在
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         # 构建更新字段
         update_data = {}
@@ -203,7 +220,7 @@ class ProjectService:
             await ProjectCRUD.update_project(db, project_id, **update_data)
             await db.commit()
             
-            logger.info(f"项目更新成功: ID {project_id}")
+            logger.info(f"projectupdatesuccessful: ID {project_id}")
             
             # 返回更新后的信息
             project = await ProjectCRUD.get_by_id(db, project_id)
@@ -212,13 +229,24 @@ class ProjectService:
                 response.TypeName = project.project_type.TypeName
             
             return response
-            
+        
+        except IntegrityError as e:
+            await db.rollback()
+            logger.warning(f"projectupdatefailed - 数据完整性error: {e}")
+            raise IntegrityConstraintException(
+                message="Referenced project type does not exist or data constraint violated"
+            )
+        except DataError as e:
+            await db.rollback()
+            logger.warning(f"projectupdatefailed - 数据格式error: {e}")
+            raise ValidationException(
+                message="Invalid data format for project update"
+            )
         except Exception as e:
             await db.rollback()
-            logger.error(f"更新项目失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"更新项目失败: {str(e)}"
+            logger.error(f"projectupdatefailed - 未知error: {type(e).__name__}: {e}", exc_info=True)
+            raise DatabaseException(
+                message="Failed to update project due to database error"
             )
     
     @staticmethod
@@ -239,22 +267,24 @@ class ProjectService:
         # 检查项目是否存在
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         try:
             await ProjectCRUD.delete_project(db, project_id)
             await db.commit()
-            logger.info(f"项目删除成功: ID {project_id}")
+            logger.info(f"projectdeletedsuccessful: ID {project_id}")
             return True
+        except IntegrityError as e:
+            await db.rollback()
+            logger.warning(f"projectdeletedfailed - 数据完整性error（可能存在关联数据）: {e}")
+            raise IntegrityConstraintException(
+                message="Cannot delete project with existing associated data (compositions, test results, etc.)"
+            )
         except Exception as e:
             await db.rollback()
-            logger.error(f"删除项目失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"删除项目失败: {str(e)}"
+            logger.error(f"projectdeletedfailed - 未知error: {type(e).__name__}: {e}", exc_info=True)
+            raise DatabaseException(
+                message="Failed to delete project due to database error"
             )
     
     @staticmethod
@@ -275,14 +305,19 @@ class ProjectService:
         try:
             count = await ProjectCRUD.batch_delete_projects(db, delete_data.ids)
             await db.commit()
-            logger.info(f"批量删除项目成功: 删除{count}条")
+            logger.info(f"batchdeletedprojectsuccessful: deleted{count}items")
             return count
+        except IntegrityError as e:
+            await db.rollback()
+            logger.warning(f"batchdeletedprojectfailed - 数据完整性error（部分project存在关联数据）: {e}")
+            raise IntegrityConstraintException(
+                message="Cannot delete some projects with existing associated data"
+            )
         except Exception as e:
             await db.rollback()
-            logger.error(f"批量删除项目失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"批量删除项目失败: {str(e)}"
+            logger.error(f"batchdeletedprojectfailed - 未知error: {type(e).__name__}: {e}", exc_info=True)
+            raise DatabaseException(
+                message="Failed to batch delete projects due to database error"
             )
     
     @staticmethod
@@ -338,10 +373,7 @@ class CompositionService:
         # 检查项目是否存在
         project = await ProjectCRUD.get_by_id(db, project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", project_id)
         
         compositions = await CompositionCRUD.get_by_project_id(db, project_id)
         result = []
@@ -372,18 +404,12 @@ class CompositionService:
         """
         # 验证至少有一个成分ID
         if not composition_data.material_id and not composition_data.filler_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="必须提供原料ID或填料ID"
-            )
+            raise ValidationException("At least one of material_id or filler_id must be provided")
         
         # 检查项目是否存在
         project = await ProjectCRUD.get_by_id(db, composition_data.project_id)
         if not project:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"项目ID {composition_data.project_id} 不存在"
-            )
+            raise RecordNotFoundException("Project", composition_data.project_id)
         
         try:
             composition = await CompositionCRUD.create_composition(
@@ -397,17 +423,14 @@ class CompositionService:
             )
             
             await db.commit()
-            logger.info(f"配方成分创建成功: 项目ID {composition_data.project_id}")
+            logger.info(f"formula成分createsuccessful: projectID {composition_data.project_id}")
             
             return CompositionResponse.model_validate(composition)
             
         except Exception as e:
             await db.rollback()
-            logger.error(f"创建配方成分失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"创建配方成分失败: {str(e)}"
-            )
+            logger.error(f"Failed to create composition: {e}")
+            raise DatabaseException(f"Failed to create composition: {str(e)}")
     
     @staticmethod
     async def update_composition(
@@ -438,26 +461,20 @@ class CompositionService:
             )
             
             if not composition:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"配方成分ID {composition_id} 不存在"
-                )
+                raise RecordNotFoundException("Composition", composition_id)
             
             await db.commit()
             await db.refresh(composition)
-            logger.info(f"配方成分更新成功: ID {composition_id}")
+            logger.info(f"formula成分updatesuccessful: ID {composition_id}")
             
             return CompositionResponse.model_validate(composition)
             
-        except HTTPException:
+        except RecordNotFoundException:
             raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"更新配方成分失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"更新配方成分失败: {str(e)}"
-            )
+            logger.error(f"Failed to update composition: {e}")
+            raise DatabaseException(f"Failed to update composition: {str(e)}")
     
     @staticmethod
     async def delete_composition(
@@ -477,22 +494,16 @@ class CompositionService:
         try:
             success = await CompositionCRUD.delete_composition(db, composition_id)
             if not success:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"配方成分ID {composition_id} 不存在"
-                )
+                raise RecordNotFoundException("Composition", composition_id)
             
             await db.commit()
-            logger.info(f"配方成分删除成功: ID {composition_id}")
+            logger.info(f"formula成分deletedsuccessful: ID {composition_id}")
             return True
             
-        except HTTPException:
+        except RecordNotFoundException:
             raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"删除配方成分失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"删除配方成分失败: {str(e)}"
-            )
+            logger.error(f"Failed to delete composition: {e}")
+            raise DatabaseException(f"Failed to delete composition: {str(e)}")
 

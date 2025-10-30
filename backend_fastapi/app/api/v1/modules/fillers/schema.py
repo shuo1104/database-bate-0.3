@@ -24,31 +24,79 @@ class FillerTypeResponse(BaseSchema):
 # ==================== 填料请求Schema ====================
 class FillerCreateRequest(BaseModel):
     """创建填料请求"""
-    trade_name: str = Field(..., max_length=255, description="商品名称")
-    filler_type_fk: Optional[int] = Field(None, description="填料类型ID")
-    supplier: Optional[str] = Field(None, max_length=255, description="供应商")
-    particle_size: Optional[str] = Field(None, max_length=255, description="粒径")
+    trade_name: str = Field(..., min_length=1, max_length=255, description="商品名称")
+    filler_type_fk: Optional[int] = Field(None, gt=0, description="填料类型ID（必须大于0）")
+    supplier: Optional[str] = Field(None, min_length=1, max_length=255, description="供应商")
+    particle_size: Optional[str] = Field(None, min_length=1, max_length=255, description="粒径")
     is_silanized: Optional[int] = Field(None, ge=0, le=1, description="是否硅烷化 (1:是, 0:否)")
-    coupling_agent: Optional[str] = Field(None, max_length=255, description="所用偶联剂")
-    surface_area: Optional[Decimal] = Field(None, ge=0, description="比表面积 (m²/g)")
+    coupling_agent: Optional[str] = Field(None, min_length=1, max_length=255, description="所用偶联剂")
+    surface_area: Optional[Decimal] = Field(
+        None, 
+        ge=0, 
+        le=10000,
+        decimal_places=2,
+        description="比表面积 (m²/g)，范围: 0-10000"
+    )
     
     @field_validator("trade_name")
     @classmethod
     def validate_trade_name(cls, v: str) -> str:
+        """验证商品名称不为空"""
         if not v or not v.strip():
-            raise ValueError("Trade name cannot be empty")
+            raise ValueError("商品名称不能为空")
         return v.strip()
+    
+    @field_validator("is_silanized")
+    @classmethod
+    def validate_is_silanized(cls, v: Optional[int]) -> Optional[int]:
+        """验证硅烷化标志"""
+        if v is not None and v not in [0, 1]:
+            raise ValueError("是否硅烷化只能为 0（否）或 1（是）")
+        return v
+    
+    @field_validator("surface_area")
+    @classmethod
+    def validate_surface_area(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """验证比表面积"""
+        if v is not None:
+            if v < 0:
+                raise ValueError("比表面积不能为负数")
+            if v > 10000:
+                raise ValueError("比表面积值过大，请检查输入（通常在0-10000 m²/g之间）")
+        return v
 
 
 class FillerUpdateRequest(BaseModel):
     """更新填料请求"""
-    trade_name: Optional[str] = Field(None, max_length=255, description="商品名称")
-    filler_type_fk: Optional[int] = Field(None, description="填料类型ID")
-    supplier: Optional[str] = Field(None, max_length=255, description="供应商")
-    particle_size: Optional[str] = Field(None, max_length=255, description="粒径")
+    trade_name: Optional[str] = Field(None, min_length=1, max_length=255, description="商品名称")
+    filler_type_fk: Optional[int] = Field(None, gt=0, description="填料类型ID（必须大于0）")
+    supplier: Optional[str] = Field(None, min_length=1, max_length=255, description="供应商")
+    particle_size: Optional[str] = Field(None, min_length=1, max_length=255, description="粒径")
     is_silanized: Optional[int] = Field(None, ge=0, le=1, description="是否硅烷化 (1:是, 0:否)")
-    coupling_agent: Optional[str] = Field(None, max_length=255, description="所用偶联剂")
-    surface_area: Optional[Decimal] = Field(None, ge=0, description="比表面积 (m²/g)")
+    coupling_agent: Optional[str] = Field(None, min_length=1, max_length=255, description="所用偶联剂")
+    surface_area: Optional[Decimal] = Field(
+        None, 
+        ge=0, 
+        le=10000,
+        decimal_places=2,
+        description="比表面积 (m²/g)，范围: 0-10000"
+    )
+    
+    @field_validator("is_silanized")
+    @classmethod
+    def validate_is_silanized(cls, v: Optional[int]) -> Optional[int]:
+        """验证硅烷化标志"""
+        if v is not None and v not in [0, 1]:
+            raise ValueError("是否硅烷化只能为 0（否）或 1（是）")
+        return v
+    
+    @field_validator("surface_area")
+    @classmethod
+    def validate_surface_area(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """验证比表面积"""
+        if v is not None and v < 0:
+            raise ValueError("比表面积不能为负数")
+        return v
 
 
 class FillerQueryParams(BaseModel):

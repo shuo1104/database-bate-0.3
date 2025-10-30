@@ -167,6 +167,23 @@ python scripts/generate_test_data.py
 python scripts/generate_materials_fillers.py
 ```
 
+## 📝 日志系统
+
+### 日志轮转策略
+- **轮转方式**：按日期（每天午夜）
+- **文件命名**：
+  - 当前日志：`app.log` / `error.log`
+  - 历史日志：`app.log.YYYY-MM-DD` / `error.log.YYYY-MM-DD`
+- **保留策略**：保留最近 N 天（`LOG_BACKUP_COUNT` 配置）
+- **日志级别**：
+  - `app.log`：INFO 及以上
+  - `error.log`：ERROR 及以上
+
+### 日志格式
+```
+[2025-10-30 14:30:45] INFO [fastapi_app:123] - User login successful
+```
+
 ## 🛠️ 开发指南
 
 ### 创建新模块

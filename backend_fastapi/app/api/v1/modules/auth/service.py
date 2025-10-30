@@ -5,7 +5,6 @@
 """
 
 from typing import Optional
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.modules.auth.crud import UserCRUD
@@ -27,6 +26,14 @@ from app.core.security import (
 from app.config.settings import settings
 from app.core.logger import logger
 from app.api.v1.modules.logs.service import LogService
+from app.core.custom_exceptions import (
+    AuthenticationException,
+    AuthorizationException,
+    RecordNotFoundException,
+    DuplicateRecordException,
+    BusinessLogicException,
+    DatabaseException,
+)
 
 
 class AuthService:
@@ -54,27 +61,18 @@ class AuthService:
         user = await UserCRUD.get_by_username(db, login_data.username)
         
         if not user:
-            logger.warning(f"登录失败: 用户名不存在 - {login_data.username}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password"
-            )
+            logger.warning(f"Login failed: Username does not exist - {login_data.username}")
+            raise AuthenticationException("Incorrect username or password")
         
         # 检查用户是否激活（IsActive是整数：1-激活，0-禁用）
         if user.IsActive == 0:
-            logger.warning(f"登录失败: 账号已禁用 - {login_data.username}")
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Account has been disabled, please contact administrator"
-            )
+            logger.warning(f"Login failed: Account disabled - {login_data.username}")
+            raise AuthorizationException("Account has been disabled, please contact administrator")
         
         # 验证密码
         if not verify_password(login_data.password, user.PasswordHash):
-            logger.warning(f"登录失败: 密码错误 - {login_data.username}")
-            raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Incorrect username or password"
-            )
+            logger.warning(f"Login failed: Incorrect password - {login_data.username}")
+            raise AuthenticationException("Incorrect username or password")
         
         # 生成JWT令牌
         token_data = {
@@ -99,11 +97,12 @@ class AuthService:
                 user_agent=None   # 可以从Request headers中获取
             )
         except Exception as e:
-            logger.error(f"记录登录日志失败: {str(e)}")
+            # 日志记录失败不影响登录流程，仅记录错误
+            logger.error(f"记录登录日志failed: {type(e).__name__}: {e}", exc_info=True)
         
         await db.commit()
         
-        logger.info(f"用户登录成功: {login_data.username}")
+        logger.info(f"user登录successful: {login_data.username}")
         
         # 返回登录响应
         return LoginResponse(
@@ -138,11 +137,8 @@ class AuthService:
         # 检查用户名是否已存在
         existing_user = await UserCRUD.get_by_username(db, register_data.username)
         if existing_user:
-            logger.warning(f"注册失败: 用户名已存在 - {register_data.username}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already exists"
-            )
+            logger.warning(f"Registration failed: Username already exists - {register_data.username}")
+            raise DuplicateRecordException("User", "username", register_data.username)
         
         # 创建用户
         password_hash = hash_password(register_data.password)
@@ -167,11 +163,12 @@ class AuthService:
                 ip_address=None  # 可以从Request中获取
             )
         except Exception as e:
-            logger.error(f"记录注册日志失败: {str(e)}")
+            # 日志记录失败不影响注册流程，仅记录错误
+            logger.error(f"记录注册日志failed: {type(e).__name__}: {e}", exc_info=True)
         
         await db.commit()
         
-        logger.info(f"用户注册成功: {register_data.username}")
+        logger.info(f"user注册successful: {register_data.username}")
         
         return UserInfoResponse.model_validate(user)
     
@@ -198,18 +195,12 @@ class AuthService:
         # 查询用户
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         # 验证旧密码
         if not verify_password(password_data.old_password, user.PasswordHash):
-            logger.warning(f"修改密码失败: 旧密码错误 - UserID:{user_id}")
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Incorrect old password"
-            )
+            logger.warning(f"Password change failed: Incorrect old password - UserID:{user_id}")
+            raise BusinessLogicException("Incorrect old password")
         
         # 更新密码
         new_password_hash = hash_password(password_data.new_password)
@@ -217,7 +208,7 @@ class AuthService:
         await db.commit()
         
         if success:
-            logger.info(f"密码修改成功 - UserID:{user_id}")
+            logger.info(f"Password changed successfully - UserID:{user_id}")
         
         return success
     
@@ -244,10 +235,7 @@ class AuthService:
         # 查询用户
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         # 更新信息
         success = await UserCRUD.update_profile(
@@ -260,14 +248,11 @@ class AuthService:
         await db.commit()
         
         if not success:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Update failed"
-            )
+            raise DatabaseException("Failed to update user profile")
         
         # 刷新用户信息
         await db.refresh(user)
-        logger.info(f"个人信息更新成功 - UserID:{user_id}")
+        logger.info(f"Profile updated successfully - UserID:{user_id}")
         
         return UserInfoResponse.model_validate(user)
     
@@ -287,14 +272,11 @@ class AuthService:
             用户信息
         
         Raises:
-            HTTPException: 查询失败
+            RecordNotFoundException: 用户不存在
         """
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         return UserInfoResponse.model_validate(user)
 
@@ -367,10 +349,7 @@ class UserManagementService:
         # 检查用户名是否已存在
         existing_user = await UserCRUD.get_by_username(db, username)
         if existing_user:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Username already exists"
-            )
+            raise DuplicateRecordException("User", "username", username)
         
         # 创建用户
         password_hash = hash_password(password)
@@ -398,8 +377,8 @@ class UserManagementService:
                 ip_address=None  # TODO: 可以从请求中获取IP地址
             )
         except Exception as e:
-            logger.warning(f"创建注册日志失败: {e}")
-            # 不影响用户创建，继续执行
+            # 日志记录失败不影响用户创建，仅记录错误
+            logger.warning(f"create注册日志failed: {type(e).__name__}: {e}", exc_info=False)
         
         await db.commit()
         
@@ -436,10 +415,7 @@ class UserManagementService:
         # 检查用户是否存在
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         # 更新用户信息
         success = await UserCRUD.update_user(
@@ -453,10 +429,7 @@ class UserManagementService:
         )
         
         if not success:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Update failed"
-            )
+            raise DatabaseException("Failed to update user")
         
         await db.commit()
         await db.refresh(user)
@@ -484,18 +457,12 @@ class UserManagementService:
         # 检查用户是否存在
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         # 删除用户
         success = await UserCRUD.delete_user(db, user_id)
         if not success:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Delete failed"
-            )
+            raise DatabaseException("Failed to delete user")
         
         await db.commit()
         return True
@@ -523,20 +490,14 @@ class UserManagementService:
         # 检查用户是否存在
         user = await UserCRUD.get_by_id(db, user_id)
         if not user:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User not found"
-            )
+            raise RecordNotFoundException("User", user_id)
         
         # 重置密码
         password_hash = hash_password(new_password)
         success = await UserCRUD.update_password(db, user_id, password_hash)
         
         if not success:
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail="Password reset failed"
-            )
+            raise DatabaseException("Failed to reset password")
         
         await db.commit()
         return True

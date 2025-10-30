@@ -24,7 +24,7 @@ def register_middlewares(app: FastAPI) -> None:
     Args:
         app: FastAPI应用实例
     """
-    logger.info("🔧 开始注册中间件...")
+    logger.info("🔧 Registering middlewares...")
     
     # CORS中间件
     register_cors(app)
@@ -35,7 +35,7 @@ def register_middlewares(app: FastAPI) -> None:
     # 认证中间件（可选，根据需求启用）
     # register_auth_middleware(app)
     
-    logger.info("✅ 所有中间件注册完成")
+    logger.info("✅ All middlewares registered")
 
 
 def register_exceptions(app: FastAPI) -> None:
@@ -45,9 +45,9 @@ def register_exceptions(app: FastAPI) -> None:
     Args:
         app: FastAPI应用实例
     """
-    logger.info("🔧 开始注册异常处理器...")
+    logger.info("🔧 Registering exception handlers...")
     register_exception_handlers(app)
-    logger.info("✅ 异常处理器注册完成")
+    logger.info("✅ Exception handlers registered")
 
 
 def register_routers(app: FastAPI) -> None:
@@ -57,7 +57,7 @@ def register_routers(app: FastAPI) -> None:
     Args:
         app: FastAPI应用实例
     """
-    logger.info("🔧 开始注册路由...")
+    logger.info("🔧 Registering routes...")
     
     from app.api.v1 import api_router
     
@@ -77,7 +77,7 @@ def register_routers(app: FastAPI) -> None:
             "environment": settings.ENVIRONMENT
         }
     
-    logger.info("✅ 所有路由注册完成")
+    logger.info("✅ All routes registered")
 
 
 def register_static_files(app: FastAPI) -> None:
@@ -87,7 +87,7 @@ def register_static_files(app: FastAPI) -> None:
     Args:
         app: FastAPI应用实例
     """
-    logger.info("🔧 开始注册静态文件...")
+    logger.info("🔧 Registering static files...")
     
     # 创建静态文件目录
     static_dir = settings.BASE_DIR / "static"
@@ -96,5 +96,5 @@ def register_static_files(app: FastAPI) -> None:
     # 挂载静态文件
     app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
     
-    logger.info("✅ 静态文件服务注册完成")
+    logger.info("✅ Static file service registered")
 

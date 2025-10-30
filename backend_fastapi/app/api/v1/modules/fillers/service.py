@@ -4,7 +4,6 @@
 """
 
 from typing import List, Tuple
-from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.modules.fillers.crud import FillerCRUD, FillerTypeCRUD
@@ -17,6 +16,11 @@ from app.api.v1.modules.fillers.schema import (
     BatchDeleteRequest
 )
 from app.core.logger import logger
+from app.core.custom_exceptions import (
+    RecordNotFoundException,
+    DatabaseException,
+    IntegrityConstraintException,
+)
 
 
 class FillerService:
@@ -47,7 +51,7 @@ class FillerService:
                 filler_data.FillerTypeName = filler.filler_type.FillerTypeName
             filler_list.append(filler_data)
         
-        logger.info(f"查询填料列表成功: 页码{page}, 共{total}条")
+        logger.info(f"queryfiller列表successful: page{page}, total{total}items")
         return filler_list, total
     
     @staticmethod
@@ -59,10 +63,7 @@ class FillerService:
         filler = await FillerCRUD.get_by_id(db, filler_id)
         
         if not filler:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"填料ID {filler_id} 不存在"
-            )
+            raise RecordNotFoundException("Filler", filler_id)
         
         filler_data = FillerResponse.model_validate(filler)
         if filler.filler_type:
@@ -91,7 +92,7 @@ class FillerService:
             await db.commit()
             await db.refresh(filler)
             
-            logger.info(f"填料创建成功: {filler.TradeName}")
+            logger.info(f"fillercreatesuccessful: {filler.TradeName}")
             
             filler = await FillerCRUD.get_by_id(db, filler.FillerID)
             response = FillerResponse.model_validate(filler)
@@ -102,11 +103,8 @@ class FillerService:
             
         except Exception as e:
             await db.rollback()
-            logger.error(f"创建填料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"创建填料失败: {str(e)}"
-            )
+            logger.error(f"Failed to create filler: {e}")
+            raise DatabaseException(f"Failed to create filler: {str(e)}")
     
     @staticmethod
     async def update_filler(
@@ -118,10 +116,7 @@ class FillerService:
         # 检查填料是否存在
         filler = await FillerCRUD.get_by_id(db, filler_id)
         if not filler:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"填料ID {filler_id} 不存在"
-            )
+            raise RecordNotFoundException("Filler", filler_id)
         
         # 构建更新字段
         update_data = {}
@@ -144,7 +139,7 @@ class FillerService:
             await FillerCRUD.update_filler(db, filler_id, **update_data)
             await db.commit()
             
-            logger.info(f"填料更新成功: ID {filler_id}")
+            logger.info(f"fillerupdatesuccessful: ID {filler_id}")
             
             filler = await FillerCRUD.get_by_id(db, filler_id)
             response = FillerResponse.model_validate(filler)
@@ -155,11 +150,8 @@ class FillerService:
             
         except Exception as e:
             await db.rollback()
-            logger.error(f"更新填料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"更新填料失败: {str(e)}"
-            )
+            logger.error(f"Failed to update filler: {e}")
+            raise DatabaseException(f"Failed to update filler: {str(e)}")
     
     @staticmethod
     async def delete_filler(
@@ -169,23 +161,19 @@ class FillerService:
         """删除填料"""
         filler = await FillerCRUD.get_by_id(db, filler_id)
         if not filler:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail=f"填料ID {filler_id} 不存在"
-            )
+            raise RecordNotFoundException("Filler", filler_id)
         
         try:
             await FillerCRUD.delete_filler(db, filler_id)
             await db.commit()
-            logger.info(f"填料删除成功: ID {filler_id}")
+            logger.info(f"fillerdeletedsuccessful: ID {filler_id}")
             return True
+        except RecordNotFoundException:
+            raise
         except Exception as e:
             await db.rollback()
-            logger.error(f"删除填料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"删除填料失败: {str(e)}"
-            )
+            logger.error(f"Failed to delete filler: {e}")
+            raise DatabaseException(f"Failed to delete filler: {str(e)}")
     
     @staticmethod
     async def batch_delete_fillers(
@@ -196,15 +184,12 @@ class FillerService:
         try:
             count = await FillerCRUD.batch_delete_fillers(db, delete_data.ids)
             await db.commit()
-            logger.info(f"批量删除填料成功: 删除{count}条")
+            logger.info(f"batchdeletedfillersuccessful: deleted{count}items")
             return count
         except Exception as e:
             await db.rollback()
-            logger.error(f"批量删除填料失败: {e}")
-            raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"批量删除填料失败: {str(e)}"
-            )
+            logger.error(f"Failed to batch delete fillers: {e}")
+            raise DatabaseException(f"Failed to batch delete fillers: {str(e)}")
     
     @staticmethod
     async def get_filler_types(

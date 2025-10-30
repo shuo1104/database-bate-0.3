@@ -263,6 +263,18 @@ python scripts/generate_materials_fillers.py
 
 详细说明请查看：`backend_fastapi/scripts/DATA_GENERATION_README.md`
 
+## 📝 日志系统
+
+### 日志文件
+- 日志按日期自动轮转（每天午夜）
+- 当前日志：`logs/app.log` / `logs/error.log`
+- 历史日志：`logs/app.log.2025-10-29` / `logs/error.log.2025-10-29`
+
+### 日志配置
+- 保留天数通过 `LOG_BACKUP_COUNT` 配置（默认 10 天）
+- 自动清理过期日志
+- 错误日志单独存储便于排查
+
 ## 🐛 常见问题
 
 ### 后端启动失败
@@ -308,5 +320,5 @@ MIT License
 
 ---
 
-**版本**：2.0.0  
+**版本**：1.0.0  
 **最后更新**：2025年10月29日

@@ -107,8 +107,8 @@ async def get_project_list(
 @router.get(
     "/export",
     response_model=None,
-    summary="导出项目完整信息",
-    description="导出项目列表数据为CSV或TXT格式，包含项目基本信息、配方成分和测试结果"
+    summary="导出项目完整信息（性能优化版）",
+    description="流式导出项目列表数据为CSV或TXT格式，包含项目基本信息、配方成分和测试结果。使用批量查询和流式响应，支持大数据集导出"
 )
 async def export_projects(
     format: str = Query('csv', description="导出格式: csv 或 txt"),
@@ -119,7 +119,13 @@ async def export_projects(
     db: AsyncSession = Depends(get_db)
 ):
     """
-    导出项目完整信息（包含配方成分和测试结果）
+    导出项目完整信息（性能优化版）
+    
+    **性能优化**:
+    - ✅ 使用 selectinload 解决 N+1 查询问题
+    - ✅ 批量处理（每批100条），避免内存溢出
+    - ✅ 流式响应，边生成边输出
+    - ✅ 最大导出限制：50000条记录
     
     需要认证: 是
     
@@ -129,10 +135,8 @@ async def export_projects(
     - **formulator**: 配方设计师筛选
     - **keyword**: 关键词搜索
     """
-    from app.api.v1.modules.projects.service import CompositionService
-    from app.api.v1.modules.test_results.service import TestResultService
-    import io
-    import csv
+    from app.api.v1.modules.projects.export_service import ProjectExportService
+    from fastapi.responses import StreamingResponse
     from datetime import datetime
     
     # 构建查询参数
@@ -142,110 +146,25 @@ async def export_projects(
         keyword=keyword
     )
     
-    # 获取所有符合条件的项目（不分页）
-    projects, _ = await ProjectService.get_project_list(
-        db=db,
-        page=1,
-        page_size=10000,
-        query_params=query_params
-    )
-    
-    # 准备导出内容 - 表格形式
-    output = io.StringIO()
-    separator = ',' if format == 'csv' else '\t'
-    
-    # 写入表头
-    output.write(f'项目ID{separator}项目名称{separator}项目类型{separator}配方编号{separator}'
-                f'配方设计师{separator}配方日期{separator}目标基材{separator}'
-                f'成分序号{separator}成分类型{separator}成分名称{separator}重量百分比(%){separator}'
-                f'掺入方法{separator}成分备注{separator}总重量百分比(%){separator}'
-                f'测试数据\n')
-    
-    for project in projects:
-        # 获取配方成分
-        compositions = await CompositionService.get_compositions_by_project(db, project.ProjectID)
-        
-        # 获取测试结果
-        test_result_str = ''
-        try:
-            test_result = await TestResultService.get_test_result_by_project(db, project.ProjectID, project.TypeName or '')
-            if test_result:
-                test_dict = test_result.model_dump(mode='json')
-                test_items = []
-                for key, value in test_dict.items():
-                    if key not in ['ResultID', 'ProjectID_FK'] and value:
-                        test_items.append(f'{key}={value}')
-                test_result_str = '; '.join(test_items)
-        except:
-            pass
-        
-        # 计算总重量百分比
-        total_weight = sum(float(c.WeightPercentage) for c in compositions) if compositions else 0
-        
-        if compositions:
-            # 如果有配方成分，每个成分一行
-            for idx, comp in enumerate(compositions):
-                comp_type = '原料' if comp.MaterialID_FK else '填料'
-                comp_name = comp.MaterialName or comp.FillerName or ''
-                
-                # 项目基本信息（每行都重复）
-                output.write(f'{project.ProjectID}{separator}'
-                           f'{project.ProjectName}{separator}'
-                           f'{project.TypeName or ""}{separator}'
-                           f'{project.FormulaCode or ""}{separator}'
-                           f'{project.FormulatorName or ""}{separator}'
-                           f'{str(project.FormulationDate) if project.FormulationDate else ""}{separator}'
-                           f'{project.SubstrateApplication or ""}{separator}')
-                
-                # 成分信息
-                output.write(f'{idx + 1}{separator}'
-                           f'{comp_type}{separator}'
-                           f'{comp_name}{separator}'
-                           f'{comp.WeightPercentage}{separator}'
-                           f'{comp.AdditionMethod or ""}{separator}'
-                           f'{comp.Remarks or ""}{separator}')
-                
-                # 总重量百分比（只在第一行显示）
-                if idx == 0:
-                    output.write(f'{total_weight:.2f}{separator}')
-                else:
-                    output.write(f'{separator}')
-                
-                # 测试结果（只在第一行显示）
-                if idx == 0:
-                    output.write(f'{test_result_str}\n')
-                else:
-                    output.write('\n')
-        else:
-            # 如果没有配方成分，项目信息占一行
-            output.write(f'{project.ProjectID}{separator}'
-                       f'{project.ProjectName}{separator}'
-                       f'{project.TypeName or ""}{separator}'
-                       f'{project.FormulaCode or ""}{separator}'
-                       f'{project.FormulatorName or ""}{separator}'
-                       f'{str(project.FormulationDate) if project.FormulationDate else ""}{separator}'
-                       f'{project.SubstrateApplication or ""}{separator}'
-                       f'{separator}{separator}{separator}{separator}{separator}{separator}'
-                       f'0.00{separator}'
-                       f'{test_result_str}\n')
-    
-    # 生成文件内容
-    content_str = output.getvalue()
-    
-    # 添加UTF-8 BOM以支持中文
-    content_bytes = '\ufeff'.encode('utf-8') + content_str.encode('utf-8')
-    
     # 生成文件名
     timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"projects_full_{timestamp}.{format}"
+    filename = f"projects_export_{timestamp}.{format}"
     
-    # 返回文件响应
-    media_type = 'text/csv; charset=utf-8' if format == 'csv' else 'text/plain; charset=utf-8'
-    return Response(
-        content=content_bytes,
+    # 选择导出格式
+    if format == 'txt':
+        stream_generator = ProjectExportService.stream_export_txt(db, query_params)
+        media_type = 'text/plain; charset=utf-8'
+    else:
+        stream_generator = ProjectExportService.stream_export_csv(db, query_params)
+        media_type = 'text/csv; charset=utf-8'
+    
+    # 返回流式响应
+    return StreamingResponse(
+        stream_generator,
         media_type=media_type,
         headers={
-            'Content-Disposition': f'attachment; filename="{filename}"'
+            'Content-Disposition': f'attachment; filename="{filename}"',
+            'Cache-Control': 'no-cache'
         }
     )
 

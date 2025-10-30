@@ -73,20 +73,29 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
     获取异步数据库会话
     用于FastAPI依赖注入
     
+    注意：
+    - 不在此处自动提交，由 Service 层控制事务
+    - 发生异常时自动回滚
+    - 会话会在上下文结束时自动关闭
+    
     示例:
         @router.get("/users")
         async def get_users(db: AsyncSession = Depends(get_db)):
-            ...
+            result = await SomeService.get_users(db)
+            # Service 层负责 commit/rollback
+            return result
     """
     async with AsyncSessionLocal() as session:
         try:
             yield session
-            await session.commit()
+            # ✅ 不自动提交，让 Service 层控制事务边界
         except Exception:
+            # ✅ 发生异常时自动回滚
             await session.rollback()
             raise
         finally:
-            await session.close()
+            # ✅ 会话自动关闭（async with 语法已处理）
+            pass
 
 
 # ==================== 数据库初始化 ====================
@@ -96,14 +105,17 @@ async def init_database():
         async with async_engine.begin() as conn:
             # 创建所有表（生产环境应使用Alembic迁移）
             await conn.run_sync(Base.metadata.create_all)
-        logger.info("✅ 数据库表初始化成功")
+        logger.info("✅ database表初始化successful")
+    except (OSError, ConnectionError) as e:
+        logger.error(f"❌ database连接failed: {e}")
+        raise
     except Exception as e:
-        logger.error(f"❌ 数据库表初始化失败: {e}")
+        logger.error(f"❌ database表初始化failed: {type(e).__name__}: {e}", exc_info=True)
         raise
 
 
 async def close_database():
     """关闭数据库连接"""
     await async_engine.dispose()
-    logger.info("✅ 数据库连接已关闭")
+    logger.info("✅ database连接已关闭")
 

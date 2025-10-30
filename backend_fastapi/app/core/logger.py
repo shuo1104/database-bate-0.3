@@ -7,7 +7,7 @@
 import logging
 import sys
 from pathlib import Path
-from logging.handlers import RotatingFileHandler
+from logging.handlers import TimedRotatingFileHandler
 from app.config.settings import settings
 
 
@@ -38,23 +38,30 @@ def setup_logger(name: str = "fastapi_app") -> logging.Logger:
         datefmt='%Y-%m-%d %H:%M:%S'
     )
     
-    # 文件处理器 - 记录所有日志
-    file_handler = RotatingFileHandler(
+    # 文件处理器 - 记录所有日志，按日期轮转
+    file_handler = TimedRotatingFileHandler(
         filename=settings.LOG_DIR / settings.LOG_FILE,
-        maxBytes=settings.LOG_MAX_BYTES,
-        backupCount=settings.LOG_BACKUP_COUNT,
-        encoding='utf-8'
+        when='midnight',  # 每天午夜轮转
+        interval=1,  # 每1天
+        backupCount=settings.LOG_BACKUP_COUNT,  # 保留的备份数
+        encoding='utf-8',
+        utc=False  # 使用本地时间
     )
+    # 设置日志文件名后缀格式为日期
+    file_handler.suffix = "%Y-%m-%d"
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.INFO)
     
-    # 错误文件处理器 - 只记录错误
-    error_handler = RotatingFileHandler(
+    # 错误文件处理器 - 只记录错误，按日期轮转
+    error_handler = TimedRotatingFileHandler(
         filename=settings.LOG_DIR / "error.log",
-        maxBytes=settings.LOG_MAX_BYTES,
+        when='midnight',
+        interval=1,
         backupCount=settings.LOG_BACKUP_COUNT,
-        encoding='utf-8'
+        encoding='utf-8',
+        utc=False
     )
+    error_handler.suffix = "%Y-%m-%d"
     error_handler.setFormatter(formatter)
     error_handler.setLevel(logging.ERROR)
     

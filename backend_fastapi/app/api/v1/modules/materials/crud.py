@@ -30,7 +30,7 @@ class MaterialCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询原料失败: {e}")
+            logger.error(f"querymaterialfailed: {e}")
             raise
     
     @staticmethod
@@ -101,7 +101,7 @@ class MaterialCRUD:
             return list(materials), total
             
         except Exception as e:
-            logger.error(f"分页查询原料失败: {e}")
+            logger.error(f"分页querymaterialfailed: {e}")
             raise
     
     @staticmethod
@@ -134,7 +134,7 @@ class MaterialCRUD:
             return material
             
         except Exception as e:
-            logger.error(f"创建原料失败: {e}")
+            logger.error(f"creatematerialfailed: {e}")
             raise
     
     @staticmethod
@@ -160,7 +160,7 @@ class MaterialCRUD:
             return True
             
         except Exception as e:
-            logger.error(f"更新原料失败: {e}")
+            logger.error(f"updatematerialfailed: {e}")
             return False
     
     @staticmethod
@@ -174,7 +174,7 @@ class MaterialCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"删除原料失败: {e}")
+            logger.error(f"deletedmaterialfailed: {e}")
             return False
     
     @staticmethod
@@ -188,7 +188,7 @@ class MaterialCRUD:
             result = await db.execute(stmt)
             return result.rowcount
         except Exception as e:
-            logger.error(f"批量删除原料失败: {e}")
+            logger.error(f"batchdeletedmaterialfailed: {e}")
             raise
 
 
@@ -203,7 +203,7 @@ class MaterialCategoryCRUD:
             result = await db.execute(stmt)
             return list(result.scalars().all())
         except Exception as e:
-            logger.error(f"查询原料类别失败: {e}")
+            logger.error(f"querymaterial类别failed: {e}")
             raise
     
     @staticmethod
@@ -220,6 +220,6 @@ class MaterialCategoryCRUD:
             result = await db.execute(stmt)
             return [row[0] for row in result.all()]
         except Exception as e:
-            logger.error(f"查询供应商列表失败: {e}")
+            logger.error(f"query供应商列表failed: {e}")
             raise
 

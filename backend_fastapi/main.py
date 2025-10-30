@@ -25,16 +25,16 @@ async def lifespan(app: FastAPI):
     logger.info("=" * 80)
     logger.info(settings.BANNER)
     logger.info("=" * 80)
-    logger.info(f"🚀 应用启动中... 环境: {settings.ENVIRONMENT}")
-    logger.info(f"📖 API文档: http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.DOCS_URL}")
-    logger.info(f"📖 ReDoc文档: http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.REDOC_URL}")
+    logger.info(f"🚀 Application starting... Environment: {settings.ENVIRONMENT}")
+    logger.info(f"📖 API documentation: http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.DOCS_URL}")
+    logger.info(f"📖 ReDoc documentation: http://{settings.SERVER_HOST}:{settings.SERVER_PORT}{settings.REDOC_URL}")
     
     yield
     
     # 关闭时清理
-    logger.info("👋 应用正在关闭...")
+    logger.info("👋 Application shutting down...")
     await async_engine.dispose()
-    logger.info("✅ 数据库连接已关闭")
+    logger.info("Database connection closed")
 
 
 def create_app() -> FastAPI:
@@ -88,14 +88,23 @@ def run(
     from app.config.settings import settings
     
     # 启动uvicorn服务
-    uvicorn.run(
-        app="main:create_app",
-        host=settings.SERVER_HOST,
-        port=settings.SERVER_PORT,
-        reload=settings.RELOAD,
-        factory=True,
-        log_level="info"
-    )
+    # 注意：reload 和 workers > 1 不能同时使用
+    uvicorn_config = {
+        "app": "main:create_app",
+        "host": settings.SERVER_HOST,
+        "port": settings.SERVER_PORT,
+        "factory": True,
+        "log_level": "info"
+    }
+    
+    # 开发环境：启用热重载
+    if settings.RELOAD:
+        uvicorn_config["reload"] = True
+    # 生产环境：启用多进程
+    elif settings.WORKERS > 1:
+        uvicorn_config["workers"] = settings.WORKERS
+    
+    uvicorn.run(**uvicorn_config)
 
 
 if __name__ == '__main__':

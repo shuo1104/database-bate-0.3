@@ -34,7 +34,7 @@ class TestResultCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询喷墨测试结果失败: {e}")
+            logger.error(f"query喷墨testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -54,7 +54,7 @@ class TestResultCRUD:
             await db.refresh(result)
             return result
         except Exception as e:
-            logger.error(f"创建喷墨测试结果失败: {e}")
+            logger.error(f"create喷墨testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -76,7 +76,7 @@ class TestResultCRUD:
             await db.flush()
             return True
         except Exception as e:
-            logger.error(f"更新喷墨测试结果失败: {e}")
+            logger.error(f"update喷墨testresultfailed: {e}")
             raise
     
     # ==================== 涂层 ====================
@@ -94,7 +94,7 @@ class TestResultCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询涂层测试结果失败: {e}")
+            logger.error(f"query涂层testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -114,7 +114,7 @@ class TestResultCRUD:
             await db.refresh(result)
             return result
         except Exception as e:
-            logger.error(f"创建涂层测试结果失败: {e}")
+            logger.error(f"create涂层testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -136,7 +136,7 @@ class TestResultCRUD:
             await db.flush()
             return True
         except Exception as e:
-            logger.error(f"更新涂层测试结果失败: {e}")
+            logger.error(f"update涂层testresultfailed: {e}")
             raise
     
     # ==================== 3D打印 ====================
@@ -154,7 +154,7 @@ class TestResultCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询3D打印测试结果失败: {e}")
+            logger.error(f"query3D打印testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -174,7 +174,7 @@ class TestResultCRUD:
             await db.refresh(result)
             return result
         except Exception as e:
-            logger.error(f"创建3D打印测试结果失败: {e}")
+            logger.error(f"create3D打印testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -196,7 +196,7 @@ class TestResultCRUD:
             await db.flush()
             return True
         except Exception as e:
-            logger.error(f"更新3D打印测试结果失败: {e}")
+            logger.error(f"update3D打印testresultfailed: {e}")
             raise
     
     # ==================== 复合材料 ====================
@@ -214,7 +214,7 @@ class TestResultCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询复合材料测试结果失败: {e}")
+            logger.error(f"query复合材料testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -234,7 +234,7 @@ class TestResultCRUD:
             await db.refresh(result)
             return result
         except Exception as e:
-            logger.error(f"创建复合材料测试结果失败: {e}")
+            logger.error(f"create复合材料testresultfailed: {e}")
             raise
     
     @staticmethod
@@ -256,7 +256,7 @@ class TestResultCRUD:
             await db.flush()
             return True
         except Exception as e:
-            logger.error(f"更新复合材料测试结果失败: {e}")
+            logger.error(f"update复合材料testresultfailed: {e}")
             raise
     
     # ==================== 通用方法 ====================

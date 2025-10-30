@@ -36,7 +36,7 @@ class UserCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询用户失败: {e}")
+            logger.error(f"queryuserfailed: {e}")
             raise
     
     @staticmethod
@@ -59,7 +59,7 @@ class UserCRUD:
             result = await db.execute(stmt)
             return result.scalar_one_or_none()
         except Exception as e:
-            logger.error(f"查询用户失败: {e}")
+            logger.error(f"queryuserfailed: {e}")
             raise
     
     @staticmethod
@@ -102,7 +102,7 @@ class UserCRUD:
             await db.refresh(user)
             return user
         except Exception as e:
-            logger.error(f"创建用户失败: {e}")
+            logger.error(f"createuserfailed: {e}")
             raise
     
     @staticmethod
@@ -131,7 +131,7 @@ class UserCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"更新密码失败: {e}")
+            logger.error(f"update密码failed: {e}")
             return False
     
     @staticmethod
@@ -158,7 +158,7 @@ class UserCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"更新登录时间失败: {e}")
+            logger.error(f"update登录时间failed: {e}")
             return False
     
     @staticmethod
@@ -200,7 +200,7 @@ class UserCRUD:
                 await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"更新个人信息失败: {e}")
+            logger.error(f"update个人信息failed: {e}")
             return False
     
     @staticmethod
@@ -260,7 +260,7 @@ class UserCRUD:
             
             return list(users), total
         except Exception as e:
-            logger.error(f"分页查询用户失败: {e}")
+            logger.error(f"分页queryuserfailed: {e}")
             raise
     
     @staticmethod
@@ -310,7 +310,7 @@ class UserCRUD:
                 await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"更新用户信息失败: {e}")
+            logger.error(f"updateuser信息failed: {e}")
             return False
     
     @staticmethod
@@ -333,6 +333,6 @@ class UserCRUD:
             await db.execute(stmt)
             return True
         except Exception as e:
-            logger.error(f"删除用户失败: {e}")
+            logger.error(f"deleteduserfailed: {e}")
             return False
 

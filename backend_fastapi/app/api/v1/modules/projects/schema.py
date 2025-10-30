@@ -88,35 +88,81 @@ class ProjectDetailResponse(ProjectBasicResponse):
 class CompositionCreateRequest(BaseModel):
     """创建配方成分请求"""
     project_id: int = Field(..., gt=0, description="项目ID")
-    material_id: Optional[int] = Field(None, description="原料ID")
-    filler_id: Optional[int] = Field(None, description="填料ID")
-    weight_percentage: Decimal = Field(..., ge=0, le=100.5, description="重量百分比(%)")
-    addition_method: Optional[str] = Field(None, description="掺入方法")
-    remarks: Optional[str] = Field(None, description="备注")
-    
-    @field_validator("material_id", "filler_id")
-    @classmethod
-    def validate_component(cls, v, info):
-        """验证至少有一个成分ID"""
-        # 这个验证会在model_validator中完成
-        return v
+    material_id: Optional[int] = Field(None, gt=0, description="原料ID（必须大于0）")
+    filler_id: Optional[int] = Field(None, gt=0, description="填料ID（必须大于0）")
+    weight_percentage: Decimal = Field(
+        ..., 
+        ge=0, 
+        le=100, 
+        decimal_places=4,
+        description="重量百分比(%)，范围: 0-100"
+    )
+    addition_method: Optional[str] = Field(None, max_length=500, description="掺入方法")
+    remarks: Optional[str] = Field(None, max_length=1000, description="备注")
     
     @field_validator("weight_percentage")
     @classmethod
     def validate_percentage(cls, v: Decimal) -> Decimal:
-        """验证百分比"""
-        if v < 0 or v > 100.5:
-            raise ValueError("Weight percentage must be between 0 and 100.5")
+        """
+        验证重量百分比
+        - 必须在 0-100 之间
+        - 最多4位小数
+        """
+        if v < 0:
+            raise ValueError("重量百分比不能为负数")
+        if v > 100:
+            raise ValueError("重量百分比不能超过100%")
+        
+        # 检查小数位数
+        if v.as_tuple().exponent < -4:
+            raise ValueError("重量百分比最多支持4位小数")
+        
+        return v
+    
+    @field_validator("material_id")
+    @classmethod
+    def validate_material_id(cls, v: Optional[int]) -> Optional[int]:
+        """验证原料ID"""
+        if v is not None and v <= 0:
+            raise ValueError("原料ID必须大于0")
+        return v
+    
+    @field_validator("filler_id")
+    @classmethod
+    def validate_filler_id(cls, v: Optional[int]) -> Optional[int]:
+        """验证填料ID"""
+        if v is not None and v <= 0:
+            raise ValueError("填料ID必须大于0")
         return v
 
 
 class CompositionUpdateRequest(BaseModel):
     """更新配方成分请求"""
-    material_id: Optional[int] = Field(None, description="原料ID")
-    filler_id: Optional[int] = Field(None, description="填料ID")
-    weight_percentage: Optional[Decimal] = Field(None, ge=0, le=100.5, description="重量百分比(%)")
-    addition_method: Optional[str] = Field(None, description="掺入方法")
-    remarks: Optional[str] = Field(None, description="备注")
+    material_id: Optional[int] = Field(None, gt=0, description="原料ID（必须大于0）")
+    filler_id: Optional[int] = Field(None, gt=0, description="填料ID（必须大于0）")
+    weight_percentage: Optional[Decimal] = Field(
+        None, 
+        ge=0, 
+        le=100,
+        decimal_places=4,
+        description="重量百分比(%)，范围: 0-100"
+    )
+    addition_method: Optional[str] = Field(None, max_length=500, description="掺入方法")
+    remarks: Optional[str] = Field(None, max_length=1000, description="备注")
+    
+    @field_validator("weight_percentage")
+    @classmethod
+    def validate_percentage(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """验证重量百分比"""
+        if v is None:
+            return v
+        if v < 0:
+            raise ValueError("重量百分比不能为负数")
+        if v > 100:
+            raise ValueError("重量百分比不能超过100%")
+        if v.as_tuple().exponent < -4:
+            raise ValueError("重量百分比最多支持4位小数")
+        return v
 
 
 class CompositionResponse(BaseSchema):

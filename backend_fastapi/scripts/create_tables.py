@@ -436,15 +436,17 @@ def main():
         cursor.execute('SELECT COUNT(*) FROM "tbl_Users" WHERE "Username" = %s', ('admin',))
         if cursor.fetchone()[0] == 0:
             try:
-                # Use password hashing consistent with backend: prefer argon2, support bcrypt
+                # 安全说明：使用哈希密码存储（Bcrypt/Argon2）
+                # 系统强制要求密码必须哈希存储，不支持明文密码
                 from passlib.context import CryptContext
                 
-                # Try multiple configurations to find available encryption method
-                for schemes in [["argon2", "bcrypt"], ["argon2"], ["bcrypt"]]:
+                # 尝试多种加密方式（优先 Argon2，兼容 Bcrypt）
+                for schemes in [["bcrypt", "argon2"], ["bcrypt"], ["argon2"]]:
                     try:
                         pwd_context = CryptContext(schemes=schemes, deprecated="auto")
                         hashed_password = pwd_context.hash("admin123")
-                        print(f"  Using password hash: {schemes[0]}")
+                        print(f"  Using password hash algorithm: {schemes[0]}")
+                        print(f"  Password hash: {hashed_password[:50]}...")
                         break
                     except Exception:
                         continue

@@ -144,6 +144,13 @@ import { UserFilled } from '@element-plus/icons-vue'
 import { getCurrentUserInfoApi, updateProfileApi, changePasswordApi } from '@/api/auth'
 import { formatDateTime } from '@/utils/common'
 import { useUserStore } from '@/store'
+import {
+  realNameRules,
+  positionRules,
+  emailRules,
+  passwordRules as passwordValidationRules,
+  createRequiredValidator,
+} from '@/utils/validators'
 
 const userStore = useUserStore()
 
@@ -184,33 +191,28 @@ const roleText = computed(() => {
   return roleMap[userInfo.value.role] || 'Unknown'
 })
 
-const validateConfirmPassword = (rule: any, value: any, callback: any) => {
-  if (value === '') {
-    callback(new Error('Please enter password again'))
-  } else if (value !== passwordForm.new_password) {
-    callback(new Error('Passwords do not match'))
-  } else {
-    callback()
-  }
-}
-
 const profileRules: FormRules = {
-  email: [
-    { type: 'email', message: 'Please enter a valid email address', trigger: 'blur' }
-  ]
+  real_name: realNameRules,
+  position: positionRules,
+  email: emailRules,
 }
 
 const passwordRules: FormRules = {
-  old_password: [
-    { required: true, message: 'Please enter current password', trigger: 'blur' }
-  ],
-  new_password: [
-    { required: true, message: 'Please enter new password', trigger: 'blur' },
-    { min: 6, message: 'Password must be at least 6 characters', trigger: 'blur' }
-  ],
+  old_password: [createRequiredValidator('current password')],
+  new_password: passwordValidationRules,
   confirm_password: [
-    { required: true, validator: validateConfirmPassword, trigger: 'blur' }
-  ]
+    createRequiredValidator('password confirmation'),
+    {
+      validator: (_rule: any, value: string, callback: any) => {
+        if (value !== passwordForm.new_password) {
+          callback(new Error('The two passwords do not match'))
+        } else {
+          callback()
+        }
+      },
+      trigger: 'blur',
+    },
+  ],
 }
 
 // Load user information

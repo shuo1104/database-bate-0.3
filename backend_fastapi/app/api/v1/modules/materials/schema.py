@@ -24,31 +24,86 @@ class MaterialCategoryResponse(BaseSchema):
 # ==================== 原料请求Schema ====================
 class MaterialCreateRequest(BaseModel):
     """创建原料请求"""
-    trade_name: str = Field(..., max_length=255, description="商品名称")
-    category_fk: Optional[int] = Field(None, description="类别ID")
-    supplier: Optional[str] = Field(None, max_length=255, description="供应商")
-    cas_number: Optional[str] = Field(None, max_length=255, description="CAS号")
-    density: Optional[Decimal] = Field(None, ge=0, description="密度")
-    viscosity: Optional[Decimal] = Field(None, ge=0, description="粘度")
-    function_description: Optional[str] = Field(None, description="功能说明")
+    trade_name: str = Field(..., min_length=1, max_length=255, description="商品名称")
+    category_fk: Optional[int] = Field(None, gt=0, description="类别ID（必须大于0）")
+    supplier: Optional[str] = Field(None, min_length=1, max_length=255, description="供应商")
+    cas_number: Optional[str] = Field(None, min_length=1, max_length=255, description="CAS号")
+    density: Optional[Decimal] = Field(
+        None, 
+        ge=0, 
+        le=50,
+        decimal_places=4,
+        description="密度 (g/cm³)，范围: 0-50"
+    )
+    viscosity: Optional[Decimal] = Field(
+        None, 
+        ge=0,
+        le=1000000,
+        decimal_places=2,
+        description="粘度 (mPa·s)，范围: 0-1000000"
+    )
+    function_description: Optional[str] = Field(None, max_length=2000, description="功能说明")
     
     @field_validator("trade_name")
     @classmethod
     def validate_trade_name(cls, v: str) -> str:
+        """验证商品名称不为空"""
         if not v or not v.strip():
-            raise ValueError("Trade name cannot be empty")
+            raise ValueError("商品名称不能为空")
         return v.strip()
+    
+    @field_validator("density")
+    @classmethod
+    def validate_density(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """验证密度值合理性"""
+        if v is not None:
+            if v < 0:
+                raise ValueError("密度不能为负数")
+            if v > 50:
+                raise ValueError("密度值过大，请检查输入（通常材料密度在0-50 g/cm³之间）")
+        return v
+    
+    @field_validator("viscosity")
+    @classmethod
+    def validate_viscosity(cls, v: Optional[Decimal]) -> Optional[Decimal]:
+        """验证粘度值合理性"""
+        if v is not None:
+            if v < 0:
+                raise ValueError("粘度不能为负数")
+            if v > 1000000:
+                raise ValueError("粘度值过大，请检查输入单位")
+        return v
 
 
 class MaterialUpdateRequest(BaseModel):
     """更新原料请求"""
-    trade_name: Optional[str] = Field(None, max_length=255, description="商品名称")
-    category_fk: Optional[int] = Field(None, description="类别ID")
-    supplier: Optional[str] = Field(None, max_length=255, description="供应商")
-    cas_number: Optional[str] = Field(None, max_length=255, description="CAS号")
-    density: Optional[Decimal] = Field(None, ge=0, description="密度")
-    viscosity: Optional[Decimal] = Field(None, ge=0, description="粘度")
-    function_description: Optional[str] = Field(None, description="功能说明")
+    trade_name: Optional[str] = Field(None, min_length=1, max_length=255, description="商品名称")
+    category_fk: Optional[int] = Field(None, gt=0, description="类别ID（必须大于0）")
+    supplier: Optional[str] = Field(None, min_length=1, max_length=255, description="供应商")
+    cas_number: Optional[str] = Field(None, min_length=1, max_length=255, description="CAS号")
+    density: Optional[Decimal] = Field(
+        None, 
+        ge=0, 
+        le=50,
+        decimal_places=4,
+        description="密度 (g/cm³)，范围: 0-50"
+    )
+    viscosity: Optional[Decimal] = Field(
+        None, 
+        ge=0,
+        le=1000000,
+        decimal_places=2,
+        description="粘度 (mPa·s)，范围: 0-1000000"
+    )
+    function_description: Optional[str] = Field(None, max_length=2000, description="功能说明")
+    
+    @field_validator("density", "viscosity")
+    @classmethod
+    def validate_numeric_fields(cls, v: Optional[Decimal], info) -> Optional[Decimal]:
+        """验证数值字段"""
+        if v is not None and v < 0:
+            raise ValueError(f"{info.field_name} 不能为负数")
+        return v
 
 
 class MaterialQueryParams(BaseModel):
