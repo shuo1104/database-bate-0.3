@@ -99,7 +99,7 @@
           <template #default="{ row }">
             <el-button type="info" size="small" @click="handleViewDetail(row)">Detail</el-button>
             <el-button type="primary" size="small" @click="crud.handleEdit(row)">Edit</el-button>
-            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'ProjectID')">Delete</el-button>
+            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'ProjectID' as any)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -175,8 +175,8 @@ import {
   deleteProjectApi, 
   getProjectTypesApi,
   getFormulatorsApi,
-  type ProjectInfo,
-  type ProjectType
+  type ProjectInfo
+  // type ProjectType
 } from '@/api/projects'
 import Pagination from '@/components/Pagination.vue'
 import ExportDropdown from '@/components/ExportDropdown/index.vue'
@@ -189,11 +189,7 @@ const router = useRouter()
 
 // ==================== 表格管理 ====================
 const table = useTable(getProjectListApi, { 
-  defaultPageSize: 20,
-  dataTransform: (res: any) => ({
-    list: res.list || res.items || [],
-    total: res.total || 0
-  })
+  defaultPageSize: 20
 })
 
 // 扩展查询参数
@@ -207,8 +203,8 @@ const hasSelection = computed(() => table.selectedRows.value.length > 0)
 // ==================== CRUD 管理 ====================
 const crud = useCRUD({
   createApi: createProjectApi,
-  updateApi: updateProjectApi,
-  deleteApi: deleteProjectApi,
+  updateApi: updateProjectApi as any,
+  deleteApi: deleteProjectApi as any,
   idKey: 'ProjectID',
   resourceName: 'Project',
   onSuccess: () => table.fetchData(),
@@ -237,7 +233,7 @@ const formRules = {
 
 // ==================== 导出管理 ====================
 const exportHelper = useExport({
-  exportApi: async (format: string, params: any) => {
+  exportApi: async (format: string, _params: any) => {
     const queryString = new URLSearchParams({
       format,
       ...(table.queryParams.project_type && { project_type: table.queryParams.project_type }),
@@ -278,7 +274,7 @@ function handleExportSelected(format: string) {
 }
 
 // ==================== 业务逻辑 ====================
-const projectTypes = ref<ProjectType[]>([])
+const projectTypes = ref<any[]>([])
 const formulators = ref<string[]>([])
 
 async function getProjectTypes() {

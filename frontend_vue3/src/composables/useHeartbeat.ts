@@ -3,7 +3,6 @@
  * 自动定期更新用户在线状态和使用时长
  */
 
-import { onMounted, onUnmounted } from 'vue'
 import { useUserStore } from '@/store'
 import { updateHeartbeatApi, userLogoutApi } from '@/api/logs'
 

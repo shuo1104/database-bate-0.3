@@ -84,7 +84,7 @@
         <el-table-column label="Actions" width="180" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="crud.handleEdit(row)">Edit</el-button>
-            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'FillerID')">Delete</el-button>
+            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'FillerID' as any)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -162,7 +162,7 @@ import {
   updateFillerApi, 
   deleteFillerApi,
   getFillerTypesApi,
-  type FillerInfo,
+  // type FillerInfo,
   type FillerType
 } from '@/api/fillers'
 import Pagination from '@/components/Pagination.vue'
@@ -178,11 +178,7 @@ import {
 
 // ==================== 表格管理 ====================
 const table = useTable(getFillerListApi, { 
-  defaultPageSize: 20,
-  dataTransform: (res: any) => ({
-    list: res.list || res.items || [],
-    total: res.total || 0
-  })
+  defaultPageSize: 20
 })
 
 // 扩展查询参数
@@ -195,8 +191,8 @@ const hasSelection = computed(() => table.selectedRows.value.length > 0)
 // ==================== CRUD 管理 ====================
 const crud = useCRUD({
   createApi: createFillerApi,
-  updateApi: updateFillerApi,
-  deleteApi: deleteFillerApi,
+  updateApi: updateFillerApi as any,
+  deleteApi: deleteFillerApi as any,
   idKey: 'FillerID',
   resourceName: 'Filler',
   onSuccess: () => table.fetchData(),
@@ -233,7 +229,7 @@ const formRules = {
 
 // ==================== 导出管理 ====================
 const exportHelper = useExport({
-  exportApi: async (format: string, params: any) => {
+  exportApi: async (format: string, _params: any) => {
     const queryString = new URLSearchParams({
       format,
       ...(table.queryParams.supplier && { supplier: table.queryParams.supplier }),
@@ -270,7 +266,7 @@ const fillerTypes = ref<FillerType[]>([])
 async function getFillerTypes() {
   try {
     const res = await getFillerTypesApi()
-    fillerTypes.value = Array.isArray(res) ? res : (res.data || [])
+    fillerTypes.value = Array.isArray(res) ? res : ((res as any).data || [])
   } catch (error) {
     console.error('Failed to get filler types:', error)
   }

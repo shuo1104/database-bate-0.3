@@ -57,14 +57,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
     ],
     build: {
       chunkSizeWarningLimit: 2000,
-      rollupOptions: {
-        output: {
-          manualChunks: {
-            'element-plus': ['element-plus'],
-            'vue-vendor': ['vue', 'vue-router', 'pinia'],
-          },
-        },
-      },
+      // 移除手动chunk配置，让Vite自动优化
+      // 这样可以避免循环依赖问题
     },
   }
 })

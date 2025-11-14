@@ -199,7 +199,6 @@ const handleRefresh = () => {
 
 // Close other tags
 const handleCloseOthers = () => {
-  const currentTag = tags.value.find(t => t.path === route.path)
   tags.value = tags.value.filter(t => t.fixed || t.path === route.path)
   ElMessage.success('Other tags closed')
 }

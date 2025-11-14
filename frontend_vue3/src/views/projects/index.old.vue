@@ -213,8 +213,8 @@ async function getList() {
   try {
     const res = await getProjectListApi(queryParams)
     // Backend returns 'list' instead of 'items'
-    tableData.value = res.list || res.items || []
-    total.value = res.total || 0
+      tableData.value = res.items || []
+      total.value = res.total || 0
   } catch (error) {
     console.error('Get list error:', error)
     ElMessage.error('Failed to get list')

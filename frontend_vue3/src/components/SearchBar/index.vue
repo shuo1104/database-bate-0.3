@@ -147,7 +147,7 @@ interface Props {
   loading?: boolean
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   inline: true,
   showActions: true,
   queryText: '查询',

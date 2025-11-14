@@ -20,6 +20,8 @@
 ```bash
 cd frontend_vue3
 pnpm install
+npm install -g pnpm
+
 ```
 
 ### 启动开发服务器

@@ -2,7 +2,7 @@
  * 系统日志API
  */
 
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 // ========== 接口类型定义 ==========
 
@@ -92,41 +92,62 @@ export interface ListResponse<T> {
  * 获取系统统计信息
  */
 export function getSystemStatisticsApi() {
-  return request.get<SystemStatistics>('/api/v1/logs/statistics')
+  return request<SystemStatistics>({
+    url: '/api/v1/logs/statistics',
+    method: 'get'
+  })
 }
 
 /**
  * 获取登录日志列表
  */
 export function getLoginLogsApi(params: LoginLogListQuery) {
-  return request.get<ListResponse<LoginLog>>('/api/v1/logs/login', { params })
+  return request<ListResponse<LoginLog>>({
+    url: '/api/v1/logs/login',
+    method: 'get',
+    params
+  })
 }
 
 /**
  * 获取注册日志列表
  */
 export function getRegistrationLogsApi(params: RegistrationLogListQuery) {
-  return request.get<ListResponse<RegistrationLog>>('/api/v1/logs/registration', { params })
+  return request<ListResponse<RegistrationLog>>({
+    url: '/api/v1/logs/registration',
+    method: 'get',
+    params
+  })
 }
 
 /**
  * 获取每日使用统计
  */
 export function getDailyUsageStatisticsApi(params: DailyUsageListQuery) {
-  return request.get<{ items: DailyUsageStatistics[] }>('/api/v1/logs/daily-usage', { params })
+  return request<{ items: DailyUsageStatistics[] }>({
+    url: '/api/v1/logs/daily-usage',
+    method: 'get',
+    params
+  })
 }
 
 /**
  * 更新心跳（保持在线状态）
  */
 export function updateHeartbeatApi(logId: number) {
-  return request.post(`/api/v1/logs/heartbeat/${logId}`)
+  return request({
+    url: `/api/v1/logs/heartbeat/${logId}`,
+    method: 'post'
+  })
 }
 
 /**
  * 用户登出
  */
 export function userLogoutApi(logId: number) {
-  return request.post(`/api/v1/logs/logout/${logId}`)
+  return request({
+    url: `/api/v1/logs/logout/${logId}`,
+    method: 'post'
+  })
 }
 

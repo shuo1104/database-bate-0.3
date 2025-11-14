@@ -1,7 +1,7 @@
 /**
  * 认证相关API
  */
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 /**
  * 用户信息
@@ -78,7 +78,7 @@ export function loginApi(data: LoginData) {
  * 用户注册
  */
 export function registerApi(data: RegisterData) {
-  return request({
+  return request<any>({
     url: '/api/v1/auth/register',
     method: 'post',
     data,
@@ -105,7 +105,7 @@ export interface UpdateProfileData {
 }
 
 export function updateProfileApi(data: UpdateProfileData) {
-  return request({
+  return request<UserInfo>({
     url: '/api/v1/auth/current/profile',
     method: 'put',
     data,
@@ -116,7 +116,7 @@ export function updateProfileApi(data: UpdateProfileData) {
  * 修改密码
  */
 export function changePasswordApi(data: ChangePasswordData) {
-  return request({
+  return request<any>({
     url: '/api/v1/auth/current/password',
     method: 'put',
     data,

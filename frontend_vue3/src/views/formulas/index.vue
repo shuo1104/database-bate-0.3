@@ -139,8 +139,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Weight Percentage" prop="WeightPercentage">
-          <el-input v-model.number="formData.WeightPercentage" placeholder="Enter weight percentage" type="number" step="0.01">
+        <el-form-item label="Weight Percentage" prop="WeightPercent">
+          <el-input v-model.number="formData.WeightPercent" placeholder="Enter weight percentage" type="number" step="0.01">
             <template #append>%</template>
           </el-input>
         </el-form-item>
@@ -149,7 +149,7 @@
         </el-form-item>
         <el-form-item label="Remarks">
           <el-input
-            v-model="formData.Remarks"
+            v-model="formData.Remark"
             type="textarea"
             :rows="3"
             placeholder="Enter remarks"
@@ -198,7 +198,7 @@ const fillers = ref<FillerInfo[]>([])
 
 // Calculate total weight percentage
 const totalWeightPercentage = computed(() => {
-  return tableData.value.reduce((sum, item) => sum + (Number(item.WeightPercentage) || 0), 0)
+  return tableData.value.reduce((sum, item) => sum + (Number(item.WeightPercent) || 0), 0)
 })
 
 // Dialog
@@ -212,26 +212,26 @@ interface FormData {
   componentType: 'material' | 'filler'
   MaterialID_FK?: number
   FillerID_FK?: number
-  WeightPercentage?: number
+  WeightPercent?: number
   AdditionMethod?: string
-  Remarks?: string
+  Remark?: string
 }
 
 const formData = reactive<FormData>({
   componentType: 'material',
-  WeightPercentage: undefined,
+  WeightPercent: undefined,
   AdditionMethod: '',
-  Remarks: '',
+  Remark: '',
 })
 
 const formRules = {
   componentType: [{ required: true, message: 'Please select component type', trigger: 'change' }],
   MaterialID_FK: [{ required: true, message: 'Please select material', trigger: 'change' }],
   FillerID_FK: [{ required: true, message: 'Please select filler', trigger: 'change' }],
-  WeightPercentage: [
+  WeightPercent: [
     { required: true, message: 'Please enter weight percentage', trigger: 'blur' },
     { type: 'number', min: 0, max: 100, message: 'Weight percentage should be between 0-100', trigger: 'blur' }
-  ],
+  ] as any,
 }
 
 // Search projects by keyword (remote search)
@@ -249,7 +249,7 @@ async function searchProjects(query: string) {
       page_size: 50,
       keyword: query  // Search by keyword (project name or formula code)
     })
-    projects.value = res.list || res.items || []
+    projects.value = res.items || []
   } catch (error) {
     console.error('Failed to search projects:', error)
     ElMessage.error('Failed to search projects')
@@ -266,7 +266,7 @@ async function loadDefaultProjects() {
       page: 1, 
       page_size: 50
     })
-    projects.value = res.list || res.items || []
+    projects.value = res.items || []
   } catch (error) {
     console.error('Failed to get project list:', error)
   } finally {
@@ -281,8 +281,8 @@ async function getMaterialsAndFillers() {
       getMaterialListApi({ page: 1, page_size: 100 }),
       getFillerListApi({ page: 1, page_size: 100 })
     ])
-    materials.value = materialsRes.list || materialsRes.items || []
-    fillers.value = fillersRes.list || fillersRes.items || []
+    materials.value = materialsRes.items || []
+    fillers.value = fillersRes.items || []
   } catch (error) {
     console.error('Failed to get materials/fillers list:', error)
   }
@@ -354,9 +354,9 @@ function handleEdit(row: FormulaComposition) {
     componentType: row.MaterialID_FK ? 'material' : 'filler',
     MaterialID_FK: row.MaterialID_FK,
     FillerID_FK: row.FillerID_FK,
-    WeightPercentage: row.WeightPercentage,
+    WeightPercent: row.WeightPercent,
     AdditionMethod: row.AdditionMethod,
-    Remarks: row.Remarks,
+    Remark: row.Remark,
   })
   dialogVisible.value = true
 }
@@ -409,9 +409,9 @@ async function handleSubmit() {
       try {
         const data: any = {
           project_id: queryParams.project_id,
-          weight_percentage: formData.WeightPercentage,
+          weight_percentage: formData.WeightPercent,
           addition_method: formData.AdditionMethod,
-          remarks: formData.Remarks,
+          remarks: formData.Remark,
         }
 
         if (formData.componentType === 'material') {
@@ -443,9 +443,9 @@ function handleDialogClose() {
   formRef.value?.resetFields()
   Object.assign(formData, {
     componentType: 'material',
-    WeightPercentage: undefined,
+    WeightPercent: undefined,
     AdditionMethod: '',
-    Remarks: '',
+    Remark: '',
   })
 }
 

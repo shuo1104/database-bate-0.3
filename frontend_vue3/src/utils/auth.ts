@@ -34,7 +34,7 @@ export function isLoggedIn(): boolean {
 /**
  * 检查是否有权限
  */
-export function hasPermission(permission: string): boolean {
+export function hasPermission(_permission: string): boolean {
   const userInfo = storage.getUserInfo()
   if (!userInfo) return false
   

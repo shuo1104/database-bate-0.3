@@ -206,7 +206,7 @@ async function getList() {
   loading.value = true
   try {
     const res = await getFillerListApi(queryParams)
-    tableData.value = res.list || res.items || []
+      tableData.value = res.items || []
     total.value = res.total || 0
   } catch (error) {
     console.error('Get list error:', error)

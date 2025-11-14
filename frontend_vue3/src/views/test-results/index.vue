@@ -178,7 +178,7 @@ async function searchProjects(query: string) {
       page_size: 50,
       keyword: query
     })
-    projects.value = res.list || res.items || []
+    projects.value = res.items || []
   } catch (error) {
     console.error('Failed to search projects:', error)
     ElMessage.error('Failed to search projects')
@@ -195,7 +195,7 @@ async function loadDefaultProjects() {
       page: 1, 
       page_size: 50
     })
-    projects.value = res.list || res.items || []
+    projects.value = res.items || []
   } catch (error) {
     console.error('Failed to get project list:', error)
   } finally {

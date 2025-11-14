@@ -1,4 +1,4 @@
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 // ==================== 测试结果接口类型定义 ====================
 

@@ -1,7 +1,7 @@
 /**
  * 原料管理相关API
  */
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 /**
  * 原料信息

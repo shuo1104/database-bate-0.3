@@ -559,6 +559,7 @@ sudo systemctl reload nginx
 - [后端 README](./README.md)
 - [前端 README](../frontend_vue3/README.md)
 - [数据生成说明](./scripts/DATA_GENERATION_README.md)
+- [端口配置指南](../PORT_CONFIGURATION_GUIDE.md)
 
 ---
 

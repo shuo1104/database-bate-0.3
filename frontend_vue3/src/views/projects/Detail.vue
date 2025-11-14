@@ -56,9 +56,9 @@
             {{ row.MaterialName || row.FillerName || '-' }}
           </template>
         </el-table-column>
-        <el-table-column prop="WeightPercentage" label="Weight (%)" width="120" />
+        <el-table-column prop="WeightPercent" label="Weight (%)" width="120" />
         <el-table-column prop="AdditionMethod" label="Addition Method" min-width="150" show-overflow-tooltip />
-        <el-table-column prop="Remarks" label="Remarks" min-width="150" show-overflow-tooltip />
+        <el-table-column prop="Remark" label="Remarks" min-width="150" show-overflow-tooltip />
         <el-table-column label="Actions" width="150" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="handleEditComposition(row)">Edit</el-button>
@@ -148,8 +148,8 @@
             />
           </el-select>
         </el-form-item>
-        <el-form-item label="Weight Percentage" prop="WeightPercentage">
-          <el-input v-model.number="compositionFormData.WeightPercentage" placeholder="Enter weight percentage" type="number" step="0.01">
+        <el-form-item label="Weight Percentage" prop="WeightPercent">
+          <el-input v-model.number="compositionFormData.WeightPercent" placeholder="Enter weight percentage" type="number" step="0.01">
             <template #append>%</template>
           </el-input>
         </el-form-item>
@@ -158,7 +158,7 @@
         </el-form-item>
         <el-form-item label="Remarks">
           <el-input
-            v-model="compositionFormData.Remarks"
+            v-model="compositionFormData.Remark"
             type="textarea"
             :rows="3"
             placeholder="Enter remarks"
@@ -241,7 +241,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted, h } from 'vue'
+import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
 import { ArrowLeft, Picture } from '@element-plus/icons-vue'
@@ -263,7 +263,7 @@ import {
 import { getMaterialListApi, type MaterialInfo } from '@/api/materials'
 import { getFillerListApi, type FillerInfo } from '@/api/fillers'
 import { getTestResultApi } from '@/api/test-results'
-import { formatDateTime } from '@/utils/common'
+// import { formatDateTime } from '@/utils/common'
 import TestResultForm from './components/TestResultForm.vue'
 import {
   projectNameRules,
@@ -289,7 +289,7 @@ const fillersLoading = ref(false)
 // 计算总重量百分比
 const totalWeightPercentage = computed(() => {
   return compositions.value.reduce((sum, item) => {
-    const weight = Number(item.WeightPercentage) || 0
+    const weight = Number(item.WeightPercent) || 0
     return sum + weight
   }, 0)
 })
@@ -305,23 +305,23 @@ interface CompositionFormData {
   componentType: 'material' | 'filler'
   MaterialID_FK?: number
   FillerID_FK?: number
-  WeightPercentage?: number
+  WeightPercent?: number
   AdditionMethod?: string
-  Remarks?: string
+  Remark?: string
 }
 
 const compositionFormData = reactive<CompositionFormData>({
   componentType: 'material',
-  WeightPercentage: undefined,
+  WeightPercent: undefined,
   AdditionMethod: '',
-  Remarks: '',
+  Remark: '',
 })
 
 const compositionFormRules = {
   componentType: [createSelectRequiredRule('component type')],
   MaterialID_FK: [createSelectRequiredRule('material')],
   FillerID_FK: [createSelectRequiredRule('filler')],
-  WeightPercentage: weightPercentageRules,
+  WeightPercent: weightPercentageRules,
 }
 
 // 测试结果相关
@@ -384,8 +384,8 @@ async function getMaterialsAndFillers() {
     ])
     console.log('Materials response:', materialsRes)
     console.log('Fillers response:', fillersRes)
-    materials.value = materialsRes.list || materialsRes.items || []
-    fillers.value = fillersRes.list || fillersRes.items || []
+    materials.value = materialsRes.items || []
+    fillers.value = fillersRes.items || []
     console.log('Materials count:', materials.value.length)
     console.log('Fillers count:', fillers.value.length)
   } catch (error) {
@@ -400,7 +400,7 @@ async function searchMaterials(query: string) {
     materialsLoading.value = true
     try {
       const res = await getMaterialListApi({ page: 1, page_size: 100 })
-      materials.value = res.list || res.items || []
+      materials.value = res.items || []
     } catch (error) {
       console.error('Failed to load materials:', error)
     } finally {
@@ -416,7 +416,7 @@ async function searchMaterials(query: string) {
       page_size: 50,
       keyword: query 
     })
-    materials.value = res.list || res.items || []
+    materials.value = res.items || []
   } catch (error) {
     console.error('Failed to search materials:', error)
   } finally {
@@ -431,7 +431,7 @@ async function searchFillers(query: string) {
     fillersLoading.value = true
     try {
       const res = await getFillerListApi({ page: 1, page_size: 100 })
-      fillers.value = res.list || res.items || []
+      fillers.value = res.items || []
     } catch (error) {
       console.error('Failed to load fillers:', error)
     } finally {
@@ -447,7 +447,7 @@ async function searchFillers(query: string) {
       page_size: 50,
       keyword: query 
     })
-    fillers.value = res.list || res.items || []
+    fillers.value = res.items || []
   } catch (error) {
     console.error('Failed to search fillers:', error)
   } finally {
@@ -503,9 +503,9 @@ function handleEditComposition(row: FormulaComposition) {
     componentType: row.MaterialID_FK ? 'material' : 'filler',
     MaterialID_FK: row.MaterialID_FK,
     FillerID_FK: row.FillerID_FK,
-    WeightPercentage: row.WeightPercentage ? Number(row.WeightPercentage) : undefined,
+    WeightPercent: row.WeightPercent ? Number(row.WeightPercent) : undefined,
     AdditionMethod: row.AdditionMethod,
-    Remarks: row.Remarks,
+    Remark: row.Remark,
   })
   compositionDialogVisible.value = true
 }
@@ -537,9 +537,9 @@ async function handleSubmitComposition() {
       try {
         const data: any = {
           project_id: projectId.value,
-          weight_percentage: compositionFormData.WeightPercentage,
+          weight_percentage: compositionFormData.WeightPercent,
           addition_method: compositionFormData.AdditionMethod,
-          remarks: compositionFormData.Remarks,
+          remarks: compositionFormData.Remark,
         }
 
         if (compositionFormData.componentType === 'material') {
@@ -571,9 +571,9 @@ function handleCompositionDialogClose() {
   compositionFormRef.value?.resetFields()
   Object.assign(compositionFormData, {
     componentType: 'material',
-    WeightPercentage: undefined,
+    WeightPercent: undefined,
     AdditionMethod: '',
-    Remarks: '',
+    Remark: '',
   })
 }
 
@@ -650,11 +650,11 @@ async function loadTestResults() {
 }
 
 // Get test result component (based on project type)
-function getTestResultComponent() {
-  // Can return different test result display components based on project type
-  // Temporarily returns a simple display
-  return () => h('div', { class: 'simple-test-result' }, 'Test result component under development...')
-}
+// function getTestResultComponent() {
+//   // Can return different test result display components based on project type
+//   // Temporarily returns a simple display
+//   return () => h('div', { class: 'simple-test-result' }, 'Test result component under development...')
+// }
 
 // Get project types list
 async function getProjectTypes() {
@@ -674,7 +674,7 @@ async function handleSubmitProject() {
     if (valid) {
       projectSubmitLoading.value = true
       try {
-        await updateProjectApi(projectId.value, projectFormData)
+        await updateProjectApi(projectId.value, projectFormData as any)
         ElMessage.success('Project updated successfully')
         projectDialogVisible.value = false
         // Reload project details

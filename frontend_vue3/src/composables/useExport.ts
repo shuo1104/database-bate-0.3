@@ -100,14 +100,14 @@ export function useExport(options: ExportOptions = {}) {
           
           // 使用自定义格式化器
           if (formatters && formatters[col.key]) {
-            value = formatters[col.key]!(value)
+            value = formatters[col.key]!(value) as any
           }
           
           // 处理特殊字符
           if (typeof value === 'string' && format === 'csv') {
             // CSV中包含逗号或换行符的字段需要用引号包裹
             if (value.includes(',') || value.includes('\n') || value.includes('"')) {
-              value = `"${value.replace(/"/g, '""')}"`
+              value = `"${value.replace(/"/g, '""')}"` as any
             }
           }
           

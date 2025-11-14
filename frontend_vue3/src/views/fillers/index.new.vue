@@ -227,7 +227,7 @@ const formRules = {
 
 // ==================== 导出管理 ====================
 const exportHelper = useExport({
-  exportApi: async (format: string, params: any) => {
+  exportApi: async (format: string, _params: any) => {
     const queryString = new URLSearchParams({
       format,
       ...(table.queryParams.supplier && { supplier: table.queryParams.supplier }),

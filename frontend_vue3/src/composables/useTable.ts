@@ -3,7 +3,6 @@
  * 封装分页、加载状态、查询、重置等通用逻辑
  */
 import { ref, reactive, computed } from 'vue'
-import { ElMessage } from 'element-plus'
 import { showErrorMessage } from '@/utils/errorHandler'
 
 export interface TableQueryParams {
@@ -51,10 +50,10 @@ export function useTable<T = any>(
     loading.value = true
     try {
       const res = await fetchApi(queryParams)
-      tableData.value = res.list || res.items || []
+      tableData.value = (res.list || res.items || []) as T[]
       total.value = res.total || 0
       
-      onSuccess?.(tableData.value)
+      onSuccess?.(tableData.value as T[])
     } catch (error: any) {
       // 错误已经在 request.ts 中处理，这里不再重复显示
       // 只在没有 response 时才显示（避免重复）

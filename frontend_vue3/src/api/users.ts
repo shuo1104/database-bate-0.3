@@ -1,7 +1,7 @@
 /**
  * 用户管理 API
  */
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 // 用户信息接口
 export interface UserInfo {

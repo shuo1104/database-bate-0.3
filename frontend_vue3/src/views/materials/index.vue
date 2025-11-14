@@ -101,7 +101,7 @@
         <el-table-column label="Actions" width="180" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" size="small" @click="crud.handleEdit(row)">Edit</el-button>
-            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'MaterialID')">Delete</el-button>
+            <el-button type="danger" size="small" @click="crud.handleDelete(row, 'MaterialID' as any)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -172,7 +172,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { 
   getMaterialListApi, 
@@ -180,7 +180,7 @@ import {
   updateMaterialApi, 
   deleteMaterialApi, 
   getMaterialCategoriesApi,
-  type MaterialInfo,
+  // type MaterialInfo,
   type MaterialCategory
 } from '@/api/materials'
 import Pagination from '@/components/Pagination.vue'
@@ -195,11 +195,7 @@ import {
 
 // ==================== 表格管理 ====================
 const table = useTable(getMaterialListApi, { 
-  defaultPageSize: 20,
-  dataTransform: (res: any) => ({
-    list: res.list || res.items || [],
-    total: res.total || 0
-  })
+  defaultPageSize: 20
 })
 
 // 扩展查询参数
@@ -208,13 +204,13 @@ Object.assign(table.queryParams, {
   supplier: ''
 })
 
-const hasSelection = computed(() => table.selectedRows.value.length > 0)
+// const hasSelection = computed(() => table.selectedRows.value.length > 0)
 
 // ==================== CRUD 管理 ====================
 const crud = useCRUD({
   createApi: createMaterialApi,
-  updateApi: updateMaterialApi,
-  deleteApi: deleteMaterialApi,
+  updateApi: updateMaterialApi as any,
+  deleteApi: deleteMaterialApi as any,
   idKey: 'MaterialID',
   resourceName: 'Material',
   onSuccess: () => table.fetchData(),
@@ -251,7 +247,7 @@ const formRules = {
 
 // ==================== 导出管理 ====================
 const exportHelper = useExport({
-  exportApi: async (format: string, params: any) => {
+  exportApi: async (format: string, _params: any) => {
     const queryString = new URLSearchParams({
       format,
       ...(table.queryParams.category && { category: table.queryParams.category }),
@@ -288,7 +284,7 @@ const categories = ref<MaterialCategory[]>([])
 async function getCategories() {
   try {
     const res = await getMaterialCategoriesApi()
-    categories.value = Array.isArray(res) ? res : (res.data || [])
+    categories.value = Array.isArray(res) ? res : ((res as any).data || [])
   } catch (error) {
     console.error('Failed to get categories list:', error)
   }

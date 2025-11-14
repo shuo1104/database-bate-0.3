@@ -1,7 +1,7 @@
 /**
  * 项目管理相关API
  */
-import request from '@/utils/request'
+import { request } from '@/utils/request'
 
 /**
  * 项目信息
@@ -39,6 +39,7 @@ export interface FormulaComposition {
   MaterialID_FK?: number
   FillerID_FK?: number
   WeightPercent: number
+  AdditionMethod?: string
   Remark?: string
   CreatedAt?: string
   UpdatedAt?: string

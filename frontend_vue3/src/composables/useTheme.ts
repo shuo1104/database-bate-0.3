@@ -2,7 +2,7 @@
  * 主题管理 Composable
  * 用于管理应用的暗黑/白天主题切换
  */
-import { ref, watch, onMounted } from 'vue'
+import { ref } from 'vue'
 
 // 主题类型
 export type ThemeMode = 'light' | 'dark'

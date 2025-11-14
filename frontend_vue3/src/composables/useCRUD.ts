@@ -4,7 +4,7 @@
  */
 import { ref, reactive } from 'vue'
 import { ElMessage, ElMessageBox, type FormInstance } from 'element-plus'
-import { showErrorMessage, handleBusinessError } from '@/utils/errorHandler'
+import { showErrorMessage } from '@/utils/errorHandler'
 
 export interface CRUDOptions<T = any> {
   createApi: (data: any) => Promise<any>
@@ -77,7 +77,7 @@ export function useCRUD<T extends Record<string, any>>(
   /**
    * 提交表单
    */
-  async function handleSubmit(formRules?: any) {
+  async function handleSubmit() {
     if (!formRef.value) return
     
     try {
@@ -87,12 +87,13 @@ export function useCRUD<T extends Record<string, any>>(
         submitLoading.value = true
         try {
           // 转换请求数据
+          const plainFormData = { ...formData } as Partial<T>
           const requestData = transformRequestData 
-            ? transformRequestData(formData)
-            : formData
+            ? transformRequestData(plainFormData)
+            : plainFormData
 
           // 使用 idKey 获取 ID
-          const recordId = formData[idKey as keyof T]
+          const recordId = (formData as any)[idKey]
           if (isEditMode.value && recordId) {
             await updateApi(recordId as any, requestData)
             ElMessage.success(`${resourceName} updated successfully`)
@@ -205,7 +206,7 @@ export function useCRUD<T extends Record<string, any>>(
     formRef.value?.clearValidate()
     // 清空表单数据，并重新初始化为 defaultFormData
     Object.keys(formData).forEach(key => {
-      delete formData[key]
+      delete (formData as any)[key]
     })
     if (defaultFormData) {
       Object.assign(formData, defaultFormData)

@@ -2,7 +2,7 @@
  * Axios Request Wrapper
  * 企业级请求拦截器 - 包含完整的错误处理、请求重试、日志记录
  */
-import axios, { type AxiosInstance, type AxiosRequestConfig, type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from 'axios'
+import axios, { type AxiosInstance, type AxiosResponse, type AxiosError, type InternalAxiosRequestConfig } from 'axios'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { getToken, removeToken } from './auth'
 import storage from './storage'
@@ -11,13 +11,6 @@ import { logRequest, logResponse, logRequestError, logRetry } from './logger'
 // ==================== 全局状态管理 ====================
 // 全局401锁，防止并发请求时重复弹窗
 let is401DialogShowing = false
-
-// 请求队列（用于401时暂存待重试的请求）
-let requestQueue: Array<{
-  resolve: (value: any) => void
-  reject: (reason: any) => void
-  config: InternalAxiosRequestConfig
-}> = []
 
 // ==================== 配置常量 ====================
 // 登录接口路径（用于判断是否为登录请求）
@@ -303,6 +296,11 @@ service.interceptors.response.use(
   }
 )
 
-// Export axios instance
+// Export axios instance with type override
 export default service
+
+// Type-safe request wrapper
+export function request<T = any>(config: any): Promise<T> {
+  return service(config)
+}
 

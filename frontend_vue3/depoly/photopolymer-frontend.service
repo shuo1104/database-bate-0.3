@@ -1,0 +1,25 @@
+[Unit]
+Description=PhotoPolymer Frontend Static Server (Local Production)
+After=network.target photopolymer-api.service
+
+[Service]
+Type=simple
+# ⚠️ 改为你的实际用户名
+User=xgs
+Group=xgs
+# ⚠️ 改为你的实际路径（dist 目录）
+WorkingDirectory=/home/xgs/workspace/database/data_base/frontend_vue3/dist
+# 使用 Python 的简单 HTTP 服务器托管静态文件
+ExecStart=/usr/bin/python3 -m http.server 3000
+
+# 重启策略
+Restart=always
+RestartSec=10
+
+# 日志输出
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

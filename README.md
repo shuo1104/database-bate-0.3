@@ -301,6 +301,10 @@ python scripts/generate_materials_fillers.py
 1. 确保后端 CORS 配置包含前端地址
 2. 检查前端 API 基础地址配置
 
+### 端口修改
+
+详细的端口配置说明请参考：[端口配置指南](./PORT_CONFIGURATION_GUIDE.md)
+
 ## 🔒 安全建议
 
 - ✅ 生产环境修改默认管理员密码
