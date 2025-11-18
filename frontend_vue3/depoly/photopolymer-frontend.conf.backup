@@ -1,8 +1,8 @@
 server {
     # 使用8080端口（80端口需要root权限）
     listen 8080;
-    # 允许所有IP地址访问（包括公网访问）
-    server_name _;
+    # 允许localhost和IP地址访问
+    server_name localhost _;
 
     # 前端静态文件目录
     root /home/xgs/workspace/database/data_base/frontend_vue3/dist;

@@ -1,4 +1,5 @@
-@import './variables.scss';
+@use './variables.scss' as *;
+@use './dark.scss';
 
 // 全局样式
 html {
@@ -204,6 +205,4 @@ footer,
   }
 }
 
-// 引入暗黑模式样式
-@import './dark.scss';
 

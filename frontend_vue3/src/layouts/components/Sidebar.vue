@@ -2,9 +2,7 @@
   <div class="modern-sidebar">
     <!-- Logo 区域 -->
     <div class="sidebar-logo">
-      <div class="logo-icon">
-        <el-icon :size="28"><Grid /></el-icon>
-      </div>
+      <img src="@/assets/images/logo.png" alt="Logo" class="logo-image" />
       <div class="logo-text">
         <div class="logo-title">Advanced</div>
         <div class="logo-subtitle">PhotoPolymer DB</div>
@@ -99,10 +97,10 @@
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUserStore } from '@/store'
-import { 
+import {
   DataBoard,
   Operation,
-  Box, 
+  Box,
   List,
   DataAnalysis,
   Setting,
@@ -152,29 +150,29 @@ const toggleSystem = () => {
     align-items: center;
     gap: 12px;
     border-bottom: none;
-    
-    .logo-icon {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #fff;
+
+    .logo-image {
+      width: 75px;
+      height: 75px;
+      object-fit: contain;
       flex-shrink: 0;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: scale(1.1);
+      }
     }
-    
+
     .logo-text {
       flex: 1;
-      
+
       .logo-title {
         font-size: 16px;
         font-weight: 600;
         color: #111827;
         line-height: 1.2;
       }
-      
+
       .logo-subtitle {
         font-size: 11px;
         color: #9ca3af;

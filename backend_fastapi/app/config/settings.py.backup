@@ -56,8 +56,6 @@ class Settings(BaseSettings):
         "http://localhost:5180",    # 其他前端服务
         "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
-        "http://192.168.112.44:8080",  # 公网访问 - 请替换 YOUR_PUBLIC_IP 为实际公网IP
-        "http://192.168.112.44",       # 公网访问（80端口）
     ]
     ALLOW_METHODS: List[str] = ["*"]
     ALLOW_HEADERS: List[str] = ["*"]

@@ -12,9 +12,7 @@
       <!-- Logo and Title -->
       <div class="login-header">
         <div class="logo-wrapper">
-          <div class="logo-icon">
-            <el-icon :size="48"><Grid /></el-icon>
-          </div>
+          <img src="@/assets/images/logo.png" alt="Logo" class="logo-image" />
         </div>
         <h1 class="system-title">
           <span class="company-name">Advanced</span>
@@ -97,7 +95,7 @@ const loginFormRef = ref<FormInstance>()
 const loading = ref(false)
 
 const loginForm = reactive({
-  username: 'admin',
+  username: '',
   password: '',
 })
 
@@ -228,21 +226,16 @@ async function handleLogin() {
     justify-content: center;
     margin-bottom: 20px;
 
-    .logo-icon {
-      width: 80px;
-      height: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
-      color: #fff;
+    .logo-image {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
       transition: all 0.3s ease;
+      filter: drop-shadow(0 10px 30px rgba(102, 126, 234, 0.3));
 
       &:hover {
         transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.5);
+        filter: drop-shadow(0 15px 40px rgba(102, 126, 234, 0.4));
       }
     }
   }

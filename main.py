@@ -1,5 +1,5 @@
 def main():
-    print("Hello from data-base!")
+    print("Hello from Photopolymer_DB!")
 
 
 if __name__ == "__main__":
