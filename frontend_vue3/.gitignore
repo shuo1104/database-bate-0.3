@@ -1,5 +1,5 @@
-# Logs
-logs
+# Logs (只忽略根目录的 logs，不忽略 src/views/system/logs/)
+/logs
 *.log
 npm-debug.log*
 yarn-debug.log*
