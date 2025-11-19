@@ -1,0 +1,2 @@
+[2025-11-19 13:26:45] ERROR [fastapi_app:180] - JWT decode failed: Signature has expired.
+[2025-11-19 13:29:45] ERROR [fastapi_app:180] - JWT decode failed: Signature has expired.

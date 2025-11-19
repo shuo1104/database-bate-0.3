@@ -1,0 +1,559 @@
+[2025-11-19 11:25:47] INFO [fastapi_app:48] - 🔧 Registering exception handlers...
+[2025-11-19 11:25:47] INFO [fastapi_app:306] - ✅ Exception handlers registered successfully
+[2025-11-19 11:25:47] INFO [fastapi_app:50] - ✅ Exception handlers registered
+[2025-11-19 11:25:47] INFO [fastapi_app:27] - 🔧 Registering middlewares...
+[2025-11-19 11:25:47] INFO [fastapi_app:31] - ✅ CORS middleware registered
+[2025-11-19 11:25:47] INFO [fastapi_app:68] - ✅ Request logging middleware registered
+[2025-11-19 11:25:47] INFO [fastapi_app:38] - ✅ All middlewares registered
+[2025-11-19 11:25:47] INFO [fastapi_app:60] - 🔧 Registering routes...
+[2025-11-19 11:25:48] INFO [fastapi_app:80] - ✅ All routes registered
+[2025-11-19 11:25:48] INFO [fastapi_app:90] - 🔧 Registering static files...
+[2025-11-19 11:25:48] INFO [fastapi_app:99] - ✅ Static file service registered
+[2025-11-19 11:25:48] INFO [fastapi_app:48] - 🔧 Registering exception handlers...
+[2025-11-19 11:25:48] INFO [fastapi_app:306] - ✅ Exception handlers registered successfully
+[2025-11-19 11:25:48] INFO [fastapi_app:50] - ✅ Exception handlers registered
+[2025-11-19 11:25:48] INFO [fastapi_app:27] - 🔧 Registering middlewares...
+[2025-11-19 11:25:48] INFO [fastapi_app:31] - ✅ CORS middleware registered
+[2025-11-19 11:25:48] INFO [fastapi_app:68] - ✅ Request logging middleware registered
+[2025-11-19 11:25:48] INFO [fastapi_app:38] - ✅ All middlewares registered
+[2025-11-19 11:25:48] INFO [fastapi_app:60] - 🔧 Registering routes...
+[2025-11-19 11:25:48] INFO [fastapi_app:80] - ✅ All routes registered
+[2025-11-19 11:25:48] INFO [fastapi_app:90] - 🔧 Registering static files...
+[2025-11-19 11:25:48] INFO [fastapi_app:99] - ✅ Static file service registered
+[2025-11-19 11:25:48] INFO [fastapi_app:48] - 🔧 Registering exception handlers...
+[2025-11-19 11:25:48] INFO [fastapi_app:306] - ✅ Exception handlers registered successfully
+[2025-11-19 11:25:48] INFO [fastapi_app:50] - ✅ Exception handlers registered
+[2025-11-19 11:25:48] INFO [fastapi_app:27] - 🔧 Registering middlewares...
+[2025-11-19 11:25:48] INFO [fastapi_app:31] - ✅ CORS middleware registered
+[2025-11-19 11:25:48] INFO [fastapi_app:68] - ✅ Request logging middleware registered
+[2025-11-19 11:25:48] INFO [fastapi_app:38] - ✅ All middlewares registered
+[2025-11-19 11:25:48] INFO [fastapi_app:60] - 🔧 Registering routes...
+[2025-11-19 11:25:48] INFO [fastapi_app:80] - ✅ All routes registered
+[2025-11-19 11:25:48] INFO [fastapi_app:90] - 🔧 Registering static files...
+[2025-11-19 11:25:48] INFO [fastapi_app:99] - ✅ Static file service registered
+[2025-11-19 11:25:48] INFO [fastapi_app:25] - ================================================================================
+[2025-11-19 11:25:48] INFO [fastapi_app:26] - 
+    ╔═══════════════════════════════════════════════════════════╗
+    ║   Advanced - PhotoPolymer Formulation Management DB       ║                                         ║
+    ╚═══════════════════════════════════════════════════════════╝
+    
+[2025-11-19 11:25:48] INFO [fastapi_app:27] - ================================================================================
+[2025-11-19 11:25:48] INFO [fastapi_app:28] - 🚀 Application starting... Environment: prod
+[2025-11-19 11:25:48] INFO [fastapi_app:29] - 📖 API documentation: http://0.0.0.0:8000/docs
+[2025-11-19 11:25:48] INFO [fastapi_app:30] - 📖 ReDoc documentation: http://0.0.0.0:8000/redoc
+[2025-11-19 11:26:10] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/statistics from 192.168.112.44
+[2025-11-19 11:26:10] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/login from 192.168.112.44
+[2025-11-19 11:26:10] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/4 from 192.168.112.44
+[2025-11-19 11:26:10] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/4 [200] 0.098s
+[2025-11-19 11:26:10] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/login [200] 0.104s
+[2025-11-19 11:26:10] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/statistics [200] 0.115s
+[2025-11-19 11:26:13] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:26:13] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:26:13] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 11:26:13] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 11:26:13] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:26:13] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total0items
+[2025-11-19 11:26:13] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.008s
+[2025-11-19 11:26:13] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.009s
+[2025-11-19 11:26:13] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.011s
+[2025-11-19 11:26:16] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from 192.168.112.44
+[2025-11-19 11:26:16] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 11:26:16] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.005s
+[2025-11-19 11:26:16] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 11:26:16] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.005s
+[2025-11-19 11:26:16] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:26:16] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 11:26:16] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:26:16] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.005s
+[2025-11-19 11:26:16] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.007s
+[2025-11-19 11:26:18] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:26:18] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:26:18] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 11:26:18] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:26:18] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:26:18] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:26:18] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total0items
+[2025-11-19 11:26:18] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 11:26:18] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 11:26:18] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.007s
+[2025-11-19 11:26:18] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.006s
+[2025-11-19 11:26:19] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:26:19] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:26:19] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:26:19] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total0items
+[2025-11-19 11:26:19] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.003s
+[2025-11-19 11:26:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:26:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:26:56] INFO [fastapi_app:48] - 📥 GET /api/v1/auth/users from 192.168.112.44
+[2025-11-19 11:26:56] INFO [fastapi_app:61] - 📤 GET /api/v1/auth/users [200] 0.004s
+[2025-11-19 11:26:57] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/statistics from 192.168.112.44
+[2025-11-19 11:26:57] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/login from 192.168.112.44
+[2025-11-19 11:26:57] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/login [200] 0.003s
+[2025-11-19 11:26:57] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/statistics [200] 0.008s
+[2025-11-19 11:27:00] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/4 from 192.168.112.44
+[2025-11-19 11:27:00] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/4 [200] 0.002s
+[2025-11-19 11:27:01] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:27:01] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 11:27:01] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:27:01] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.003s
+[2025-11-19 11:27:01] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 11:27:03] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:03] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:03] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 11:27:03] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:27:03] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:27:03] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:27:03] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total0items
+[2025-11-19 11:27:03] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 11:27:03] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 11:27:03] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 11:27:03] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.007s
+[2025-11-19 11:27:05] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:05] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:05] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:27:05] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total0items
+[2025-11-19 11:27:05] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.003s
+[2025-11-19 11:27:07] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:07] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:07] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 11:27:07] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 11:27:07] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:27:07] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total0items
+[2025-11-19 11:27:07] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.007s
+[2025-11-19 11:27:07] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.007s
+[2025-11-19 11:27:07] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.006s
+[2025-11-19 11:27:08] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:27:08] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 11:27:08] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.002s
+[2025-11-19 11:27:08] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:27:08] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.004s
+[2025-11-19 11:27:08] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 11:27:08] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:08] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:08] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 11:27:08] INFO [fastapi_app:230] - queryresult: total=0, returned=0, projectIDs=[]
+[2025-11-19 11:27:08] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total0items
+[2025-11-19 11:27:08] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.005s
+[2025-11-19 11:27:08] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.004s
+[2025-11-19 11:27:08] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.005s
+[2025-11-19 11:27:20] INFO [fastapi_app:48] - 📥 POST /api/v1/projects/create from 192.168.112.44
+[2025-11-19 11:27:20] INFO [fastapi_app:155] - projectcreatesuccessful: test (MI-19112025-3DP-01)
+[2025-11-19 11:27:20] INFO [fastapi_app:61] - 📤 POST /api/v1/projects/create [200] 0.020s
+[2025-11-19 11:27:20] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:20] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:20] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 11:27:20] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 11:27:20] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.006s
+[2025-11-19 11:27:22] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 11:27:22] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from 192.168.112.44
+[2025-11-19 11:27:22] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 11:27:22] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.004s
+[2025-11-19 11:27:22] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.003s
+[2025-11-19 11:27:24] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 11:27:24] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 11:27:24] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 11:27:24] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 11:27:24] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 11:27:24] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 11:27:24] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 11:27:24] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 11:27:24] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.006s
+[2025-11-19 11:27:24] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.007s
+[2025-11-19 11:27:24] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 11:27:26] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/1 from 192.168.112.44
+[2025-11-19 11:27:26] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/1 [200] 0.005s
+[2025-11-19 11:27:26] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/1/compositions from 192.168.112.44
+[2025-11-19 11:27:26] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/1/compositions [200] 0.007s
+[2025-11-19 11:29:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:29:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:30:00] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/4 from 192.168.112.44
+[2025-11-19 11:30:00] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/4 [200] 0.002s
+[2025-11-19 11:32:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:32:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:35:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:35:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:38:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:38:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:41:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:41:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:44:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:44:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:47:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:47:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.003s
+[2025-11-19 11:50:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:50:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:53:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:53:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 11:56:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:56:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.031s
+[2025-11-19 11:59:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 11:59:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.031s
+[2025-11-19 12:02:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:02:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.031s
+[2025-11-19 12:05:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:05:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:08:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:08:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:11:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:11:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:14:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:14:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:17:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:17:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:20:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:20:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:23:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:23:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:26:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:26:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:29:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:29:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:31:27] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/4 from 192.168.112.44
+[2025-11-19 12:31:27] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/4 [200] 0.031s
+[2025-11-19 12:31:42] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/logout/4 from 192.168.112.44
+[2025-11-19 12:31:42] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/logout/4 [403] 0.001s
+[2025-11-19 12:31:42] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:31:42] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:31:42] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:31:42] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:31:42] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/4 from 192.168.112.44
+[2025-11-19 12:31:42] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:31:42] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:31:42] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.054s
+[2025-11-19 12:31:42] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.052s
+[2025-11-19 12:31:42] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/4 [200] 0.055s
+[2025-11-19 12:31:42] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:31:42] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 12:31:42] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.061s
+[2025-11-19 12:31:43] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:31:43] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:31:43] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 12:31:43] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 12:31:43] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.005s
+[2025-11-19 12:31:43] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.005s
+[2025-11-19 12:31:43] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:31:43] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 12:31:43] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/1 from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/1/compositions from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:31:45] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/1 [200] 0.011s
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.010s
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.008s
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/1/compositions [200] 0.012s
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:48] - 📥 GET /api/v1/test-results/project/1 from 192.168.112.44
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.004s
+[2025-11-19 12:31:45] INFO [fastapi_app:61] - 📤 GET /api/v1/test-results/project/1 [200] 0.006s
+[2025-11-19 12:32:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:32:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.031s
+[2025-11-19 12:35:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:35:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:36:56] INFO [fastapi_app:48] - 📥 POST /api/v1/auth/login from None
+[2025-11-19 12:36:56] INFO [fastapi_app:105] - user登录successful: admin
+[2025-11-19 12:36:56] INFO [fastapi_app:61] - 📤 POST /api/v1/auth/login [200] 0.242s
+[2025-11-19 12:36:56] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 12:36:56] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:36:56] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from None
+[2025-11-19 12:36:56] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:36:56] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 12:36:56] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from None
+[2025-11-19 12:36:56] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from None
+[2025-11-19 12:36:56] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.009s
+[2025-11-19 12:36:56] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.004s
+[2025-11-19 12:36:56] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.005s
+[2025-11-19 12:36:56] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.010s
+[2025-11-19 12:38:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:38:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:40:23] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:40:23] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:40:23] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 12:40:23] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 12:40:23] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:40:23] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:40:23] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 12:40:23] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.006s
+[2025-11-19 12:40:23] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.007s
+[2025-11-19 12:40:23] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.009s
+[2025-11-19 12:40:23] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.008s
+[2025-11-19 12:40:25] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:40:25] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from 192.168.112.44
+[2025-11-19 12:40:25] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.003s
+[2025-11-19 12:40:25] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:40:25] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.005s
+[2025-11-19 12:40:27] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:40:27] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 12:40:27] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.003s
+[2025-11-19 12:40:27] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:40:27] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 12:40:29] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:40:29] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:40:29] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:40:29] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:40:29] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:40:29] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:40:29] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 12:40:29] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.006s
+[2025-11-19 12:40:29] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:40:29] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 12:40:29] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.006s
+[2025-11-19 12:40:30] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:40:30] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:40:30] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:40:30] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 12:40:30] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.005s
+[2025-11-19 12:40:40] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:40:40] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 12:41:28] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:41:28] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.006s
+[2025-11-19 12:41:31] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:41:31] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:41:31] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 12:41:31] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 12:41:31] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.004s
+[2025-11-19 12:41:31] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.004s
+[2025-11-19 12:41:31] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:41:31] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 12:41:31] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.007s
+[2025-11-19 12:41:32] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:41:32] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from 192.168.112.44
+[2025-11-19 12:41:32] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:41:32] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.003s
+[2025-11-19 12:41:32] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.004s
+[2025-11-19 12:41:32] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:41:32] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 12:41:32] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:41:32] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 12:41:32] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.003s
+[2025-11-19 12:41:33] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 12:41:33] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 12:41:33] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 12:41:33] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 12:41:33] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 12:41:33] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 12:41:33] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 12:41:33] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 12:41:33] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.006s
+[2025-11-19 12:41:33] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.006s
+[2025-11-19 12:41:33] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 12:41:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:41:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:44:28] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:44:28] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.006s
+[2025-11-19 12:44:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:44:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:47:28] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:47:28] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 12:47:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:47:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:49:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:49:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 12:50:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:50:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:52:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:52:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 12:53:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:53:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:55:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:55:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 12:56:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:56:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 12:58:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 12:58:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.007s
+[2025-11-19 12:59:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 12:59:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:01:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:01:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 13:02:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:02:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.032s
+[2025-11-19 13:04:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:04:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.063s
+[2025-11-19 13:05:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:05:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.031s
+[2025-11-19 13:07:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:07:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.006s
+[2025-11-19 13:08:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:08:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:10:18] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:10:18] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 13:11:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:11:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:12:55] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:12:55] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.005s
+[2025-11-19 13:12:56] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/logout/1 from 192.168.112.44
+[2025-11-19 13:12:56] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/logout/1 [403] 0.001s
+[2025-11-19 13:12:57] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:12:57] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 13:12:57] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:12:57] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 13:12:57] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 13:12:57] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:12:57] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.008s
+[2025-11-19 13:12:57] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:12:57] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:12:57] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 13:12:57] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.012s
+[2025-11-19 13:12:57] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.012s
+[2025-11-19 13:12:57] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.008s
+[2025-11-19 13:12:58] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from 192.168.112.44
+[2025-11-19 13:12:58] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from 192.168.112.44
+[2025-11-19 13:12:58] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 13:12:58] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:12:58] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:12:58] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 13:12:58] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.006s
+[2025-11-19 13:12:58] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.006s
+[2025-11-19 13:12:58] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.005s
+[2025-11-19 13:12:59] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 13:12:59] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from 192.168.112.44
+[2025-11-19 13:12:59] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.003s
+[2025-11-19 13:12:59] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:12:59] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.005s
+[2025-11-19 13:12:59] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 13:12:59] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from 192.168.112.44
+[2025-11-19 13:12:59] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 13:12:59] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.004s
+[2025-11-19 13:12:59] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 13:13:00] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 13:13:00] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:13:00] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:13:00] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:13:00] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.005s
+[2025-11-19 13:13:11] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:13:11] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.006s
+[2025-11-19 13:14:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:14:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:17:21] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:17:21] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.006s
+[2025-11-19 13:17:23] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/logout/1 from 192.168.112.44
+[2025-11-19 13:17:23] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/logout/1 [403] 0.001s
+[2025-11-19 13:17:23] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:17:23] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 13:17:23] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:17:23] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:17:23] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:17:23] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.007s
+[2025-11-19 13:17:23] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.007s
+[2025-11-19 13:17:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:17:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:20:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:20:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:22:52] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from 192.168.112.44
+[2025-11-19 13:22:52] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from 192.168.112.44
+[2025-11-19 13:22:52] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:22:52] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/1 from 192.168.112.44
+[2025-11-19 13:22:52] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from 192.168.112.44
+[2025-11-19 13:22:52] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:22:52] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:22:52] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:22:52] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.008s
+[2025-11-19 13:22:52] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 13:22:52] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 13:22:52] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.007s
+[2025-11-19 13:22:52] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/1 [200] 0.009s
+[2025-11-19 13:23:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:23:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [200] 0.002s
+[2025-11-19 13:26:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:26:45] ERROR [fastapi_app:180] - JWT decode failed: Signature has expired.
+[2025-11-19 13:26:45] WARNING [fastapi_app:81] - ⚠️ Client Error [401]: Invalid token
+[2025-11-19 13:26:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [401] 0.001s
+[2025-11-19 13:29:45] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/15 from None
+[2025-11-19 13:29:45] ERROR [fastapi_app:180] - JWT decode failed: Signature has expired.
+[2025-11-19 13:29:45] WARNING [fastapi_app:81] - ⚠️ Client Error [401]: Invalid token
+[2025-11-19 13:29:45] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/15 [401] 0.001s
+[2025-11-19 13:31:36] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/logout/15 from None
+[2025-11-19 13:31:36] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/logout/15 [403] 0.001s
+[2025-11-19 13:31:43] INFO [fastapi_app:48] - 📥 POST /api/v1/auth/login from None
+[2025-11-19 13:31:44] INFO [fastapi_app:105] - user登录successful: admin
+[2025-11-19 13:31:44] INFO [fastapi_app:61] - 📤 POST /api/v1/auth/login [200] 0.224s
+[2025-11-19 13:31:44] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:31:44] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:31:44] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/2 from None
+[2025-11-19 13:31:44] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from None
+[2025-11-19 13:31:44] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from None
+[2025-11-19 13:31:44] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.007s
+[2025-11-19 13:31:44] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:31:44] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 13:31:44] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.007s
+[2025-11-19 13:31:44] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.012s
+[2025-11-19 13:31:44] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/2 [200] 0.011s
+[2025-11-19 13:31:53] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from None
+[2025-11-19 13:31:53] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from None
+[2025-11-19 13:31:53] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:31:53] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.004s
+[2025-11-19 13:31:53] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.006s
+[2025-11-19 13:31:54] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/config/types from None
+[2025-11-19 13:31:54] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from None
+[2025-11-19 13:31:54] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 13:31:54] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.005s
+[2025-11-19 13:31:54] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/config/types [200] 0.006s
+[2025-11-19 13:31:56] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from None
+[2025-11-19 13:31:56] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:31:56] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:31:56] INFO [fastapi_app:48] - 📥 GET /api/v1/fillers/list from None
+[2025-11-19 13:31:56] INFO [fastapi_app:54] - queryfiller列表successful: page1, total0items
+[2025-11-19 13:31:56] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:31:56] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:31:56] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:31:56] INFO [fastapi_app:61] - 📤 GET /api/v1/fillers/list [200] 0.009s
+[2025-11-19 13:31:56] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.010s
+[2025-11-19 13:31:56] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.011s
+[2025-11-19 13:32:34] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:32:34] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:32:34] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from None
+[2025-11-19 13:32:34] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from None
+[2025-11-19 13:32:34] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:32:34] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 13:32:34] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.007s
+[2025-11-19 13:32:34] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.007s
+[2025-11-19 13:32:34] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.009s
+[2025-11-19 13:32:35] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/list from None
+[2025-11-19 13:32:35] INFO [fastapi_app:48] - 📥 GET /api/v1/materials/config/categories from None
+[2025-11-19 13:32:35] INFO [fastapi_app:54] - querymaterial列表successful: page1, total0items
+[2025-11-19 13:32:35] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/list [200] 0.007s
+[2025-11-19 13:32:35] INFO [fastapi_app:61] - 📤 GET /api/v1/materials/config/categories [200] 0.006s
+[2025-11-19 13:32:38] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:32:38] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:32:38] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:32:38] INFO [fastapi_app:84] - queryproject列表successful: page1, per page50items, total1items
+[2025-11-19 13:32:38] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.005s
+[2025-11-19 13:32:38] INFO [fastapi_app:48] - 📥 GET /api/v1/auth/users from None
+[2025-11-19 13:32:38] INFO [fastapi_app:61] - 📤 GET /api/v1/auth/users [200] 0.003s
+[2025-11-19 13:32:39] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/statistics from None
+[2025-11-19 13:32:39] INFO [fastapi_app:48] - 📥 GET /api/v1/logs/login from None
+[2025-11-19 13:32:39] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/login [200] 0.005s
+[2025-11-19 13:32:39] INFO [fastapi_app:61] - 📤 GET /api/v1/logs/statistics [200] 0.010s
+[2025-11-19 13:32:46] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:32:46] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:32:46] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from None
+[2025-11-19 13:32:46] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from None
+[2025-11-19 13:32:46] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:32:46] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 13:32:46] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.006s
+[2025-11-19 13:32:46] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.006s
+[2025-11-19 13:32:46] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.008s
+[2025-11-19 13:32:54] INFO [fastapi_app:48] - 📥 POST /api/v1/auth/login from None
+[2025-11-19 13:32:55] INFO [fastapi_app:105] - user登录successful: admin
+[2025-11-19 13:32:55] INFO [fastapi_app:61] - 📤 POST /api/v1/auth/login [200] 0.254s
+[2025-11-19 13:32:55] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/list from None
+[2025-11-19 13:32:55] INFO [fastapi_app:94] - projectquery参数: keyword=None, has_compositions=None, has_test_results=None
+[2025-11-19 13:32:55] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/types from None
+[2025-11-19 13:32:55] INFO [fastapi_app:48] - 📥 GET /api/v1/projects/config/formulators from None
+[2025-11-19 13:32:55] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/3 from None
+[2025-11-19 13:32:55] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/types [200] 0.008s
+[2025-11-19 13:32:55] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/config/formulators [200] 0.009s
+[2025-11-19 13:32:55] INFO [fastapi_app:230] - queryresult: total=1, returned=1, projectIDs=[1]
+[2025-11-19 13:32:55] INFO [fastapi_app:84] - queryproject列表successful: page1, per page20items, total1items
+[2025-11-19 13:32:55] INFO [fastapi_app:61] - 📤 GET /api/v1/projects/list [200] 0.015s
+[2025-11-19 13:32:55] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/3 [200] 0.011s
+[2025-11-19 13:35:56] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/3 from None
+[2025-11-19 13:35:56] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/3 [200] 0.037s
+[2025-11-19 13:38:56] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/3 from None
+[2025-11-19 13:38:56] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/3 [200] 0.064s
+[2025-11-19 13:41:56] INFO [fastapi_app:48] - 📥 POST /api/v1/logs/heartbeat/3 from None
+[2025-11-19 13:41:56] INFO [fastapi_app:61] - 📤 POST /api/v1/logs/heartbeat/3 [200] 0.006s
+[2025-11-19 13:44:46] INFO [fastapi_app:35] - 👋 Application shutting down...
+[2025-11-19 13:44:46] INFO [fastapi_app:37] - Database connection closed
