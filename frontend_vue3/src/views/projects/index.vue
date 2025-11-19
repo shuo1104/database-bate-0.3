@@ -168,13 +168,14 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { Plus } from '@element-plus/icons-vue'
-import { 
-  getProjectListApi, 
-  createProjectApi, 
-  updateProjectApi, 
-  deleteProjectApi, 
+import {
+  getProjectListApi,
+  createProjectApi,
+  updateProjectApi,
+  deleteProjectApi,
   getProjectTypesApi,
   getFormulatorsApi,
+  exportProjectImageApi,
   type ProjectInfo
   // type ProjectType
 } from '@/api/projects'
@@ -246,19 +247,22 @@ const exportHelper = useExport({
       ...(table.queryParams.formulator && { formulator: table.queryParams.formulator }),
       ...(table.queryParams.keyword && { keyword: table.queryParams.keyword })
     }).toString()
-    
+
     return await request.get(`/api/v1/projects/export?${queryString}`, {
       responseType: 'blob'
     })
+  },
+  exportImageApi: async (projectId: number) => {
+    return await exportProjectImageApi(projectId)
   },
   resourceName: 'Projects'
 })
 
 function handleExportSelected(format: string) {
   if (format === 'image') {
-    exportHelper.handleBatchExportImages(
-      table.selectedRows.value as any
-    )
+    // 提取项目ID数组
+    const projectIds = table.selectedRows.value.map((row: any) => row.ProjectID)
+    exportHelper.handleBatchExportImages(projectIds)
   } else {
     exportHelper.handleExportSelected(
       format,

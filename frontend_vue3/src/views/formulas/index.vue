@@ -12,11 +12,9 @@
         <el-form-item label="Project">
           <el-select
             v-model="queryParams.project_id"
-            placeholder="Type to search project name or code"
+            placeholder="Select or search project"
             clearable
             filterable
-            remote
-            :remote-method="searchProjects"
             :loading="projectsLoading"
             style="width: 400px"
             @change="handleProjectChange"
@@ -241,15 +239,15 @@ async function searchProjects(query: string) {
     await loadDefaultProjects()
     return
   }
-  
+
   projectsLoading.value = true
   try {
-    const res = await getProjectListApi({ 
-      page: 1, 
+    const res = await getProjectListApi({
+      page: 1,
       page_size: 50,
       keyword: query  // Search by keyword (project name or formula code)
     })
-    projects.value = res.items || []
+    projects.value = res.list || res.items || []
   } catch (error) {
     console.error('Failed to search projects:', error)
     ElMessage.error('Failed to search projects')
@@ -262,11 +260,11 @@ async function searchProjects(query: string) {
 async function loadDefaultProjects() {
   projectsLoading.value = true
   try {
-    const res = await getProjectListApi({ 
-      page: 1, 
+    const res = await getProjectListApi({
+      page: 1,
       page_size: 50
     })
-    projects.value = res.items || []
+    projects.value = res.list || res.items || []
   } catch (error) {
     console.error('Failed to get project list:', error)
   } finally {
@@ -281,8 +279,8 @@ async function getMaterialsAndFillers() {
       getMaterialListApi({ page: 1, page_size: 100 }),
       getFillerListApi({ page: 1, page_size: 100 })
     ])
-    materials.value = materialsRes.items || []
-    fillers.value = fillersRes.items || []
+    materials.value = materialsRes.list || materialsRes.items || []
+    fillers.value = fillersRes.list || fillersRes.items || []
   } catch (error) {
     console.error('Failed to get materials/fillers list:', error)
   }

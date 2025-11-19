@@ -16,13 +16,13 @@ YELLOW='\033[1;33m'
 RED='\033[0;31m'
 NC='\033[0m' # No Color
 
-BASE_DIR="/home/xgs/workspace/database/data_base"
+# 获取脚本所在目录作为项目根目录
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BASE_DIR="$SCRIPT_DIR"
 
-# 检查是否在正确的目录
-if [ "$(pwd)" != "$BASE_DIR" ]; then
-    echo -e "${YELLOW}切换到项目目录...${NC}"
-    cd "$BASE_DIR"
-fi
+# 切换到项目目录
+echo -e "${YELLOW}项目目录: $BASE_DIR${NC}"
+cd "$BASE_DIR"
 
 # 1. 部署后端API
 echo -e "${GREEN}[1/5] 部署后端API服务...${NC}"

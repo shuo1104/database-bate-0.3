@@ -113,13 +113,11 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item v-if="compositionFormData.componentType === 'material'" label="Select Material" prop="MaterialID_FK">
-          <el-select 
-            v-model="compositionFormData.MaterialID_FK" 
-            placeholder="Type to search material" 
-            style="width: 100%" 
+          <el-select
+            v-model="compositionFormData.MaterialID_FK"
+            placeholder="Select or search material"
+            style="width: 100%"
             filterable
-            remote
-            :remote-method="searchMaterials"
             :loading="materialsLoading"
           >
             <el-option
@@ -131,13 +129,11 @@
           </el-select>
         </el-form-item>
         <el-form-item v-if="compositionFormData.componentType === 'filler'" label="Select Filler" prop="FillerID_FK">
-          <el-select 
-            v-model="compositionFormData.FillerID_FK" 
-            placeholder="Type to search filler" 
-            style="width: 100%" 
+          <el-select
+            v-model="compositionFormData.FillerID_FK"
+            placeholder="Select or search filler"
+            style="width: 100%"
             filterable
-            remote
-            :remote-method="searchFillers"
             :loading="fillersLoading"
           >
             <el-option
@@ -377,17 +373,12 @@ async function getCompositions() {
 // Get materials and fillers list (initial load)
 async function getMaterialsAndFillers() {
   try {
-    console.log('Loading initial materials and fillers...')
     const [materialsRes, fillersRes] = await Promise.all([
       getMaterialListApi({ page: 1, page_size: 100 }),
       getFillerListApi({ page: 1, page_size: 100 })
     ])
-    console.log('Materials response:', materialsRes)
-    console.log('Fillers response:', fillersRes)
-    materials.value = materialsRes.items || []
-    fillers.value = fillersRes.items || []
-    console.log('Materials count:', materials.value.length)
-    console.log('Fillers count:', fillers.value.length)
+    materials.value = materialsRes.list || materialsRes.items || []
+    fillers.value = fillersRes.list || fillersRes.items || []
   } catch (error) {
     console.error('Failed to get materials/fillers list:', error)
   }
@@ -400,7 +391,7 @@ async function searchMaterials(query: string) {
     materialsLoading.value = true
     try {
       const res = await getMaterialListApi({ page: 1, page_size: 100 })
-      materials.value = res.items || []
+      materials.value = res.list || res.items || []
     } catch (error) {
       console.error('Failed to load materials:', error)
     } finally {
@@ -408,15 +399,15 @@ async function searchMaterials(query: string) {
     }
     return
   }
-  
+
   materialsLoading.value = true
   try {
-    const res = await getMaterialListApi({ 
-      page: 1, 
+    const res = await getMaterialListApi({
+      page: 1,
       page_size: 50,
-      keyword: query 
+      keyword: query
     })
-    materials.value = res.items || []
+    materials.value = res.list || res.items || []
   } catch (error) {
     console.error('Failed to search materials:', error)
   } finally {
@@ -431,7 +422,7 @@ async function searchFillers(query: string) {
     fillersLoading.value = true
     try {
       const res = await getFillerListApi({ page: 1, page_size: 100 })
-      fillers.value = res.items || []
+      fillers.value = res.list || res.items || []
     } catch (error) {
       console.error('Failed to load fillers:', error)
     } finally {
@@ -439,15 +430,15 @@ async function searchFillers(query: string) {
     }
     return
   }
-  
+
   fillersLoading.value = true
   try {
-    const res = await getFillerListApi({ 
-      page: 1, 
+    const res = await getFillerListApi({
+      page: 1,
       page_size: 50,
-      keyword: query 
+      keyword: query
     })
-    fillers.value = res.items || []
+    fillers.value = res.list || res.items || []
   } catch (error) {
     console.error('Failed to search fillers:', error)
   } finally {
