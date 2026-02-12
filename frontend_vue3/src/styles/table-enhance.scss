@@ -1,0 +1,136 @@
+/**
+ * Table visual polish (style only)
+ */
+
+.table-container {
+  background: var(--app-surface);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  padding: 20px;
+  box-shadow: var(--app-shadow-xs);
+}
+
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  .toolbar-left,
+  .toolbar-right {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+}
+
+.search-form {
+  .el-form-item {
+    margin-bottom: 15px;
+  }
+}
+
+.el-table {
+  .el-table__header {
+    th {
+      background-color: var(--app-surface-soft);
+      color: var(--app-text-secondary);
+      font-weight: 600;
+    }
+  }
+
+  .el-table__row {
+    transition: background-color var(--app-transition);
+
+    &:hover {
+      background-color: #f2f8fc;
+    }
+  }
+
+  .table-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+
+    .el-button {
+      margin: 0;
+    }
+  }
+}
+
+.pagination-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 18px;
+  border-top: 1px solid var(--app-border);
+}
+
+.stats-card {
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcfe 100%);
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  padding: 20px;
+  box-shadow: var(--app-shadow-xs);
+  transition: transform var(--app-transition), box-shadow var(--app-transition), border-color var(--app-transition);
+
+  &:hover {
+    box-shadow: var(--app-shadow-sm);
+    transform: translateY(-2px);
+    border-color: #b9d9ec;
+  }
+
+  .stats-title {
+    font-size: 14px;
+    color: var(--app-text-soft);
+    margin-bottom: 10px;
+  }
+
+  .stats-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--app-text-primary);
+    margin-bottom: 8px;
+  }
+
+  .stats-trend {
+    font-size: 12px;
+
+    &.up {
+      color: #22a06b;
+    }
+
+    &.down {
+      color: #d64545;
+    }
+  }
+}
+
+.status-tag {
+  &.status-success {
+    color: #1f8f5f;
+    background-color: #eaf8f1;
+    border-color: #bfead5;
+  }
+
+  &.status-warning {
+    color: #b57412;
+    background-color: #fff6e7;
+    border-color: #f8ddb1;
+  }
+
+  &.status-danger {
+    color: #bf3e3e;
+    background-color: #fdeeee;
+    border-color: #f7c7c7;
+  }
+
+  &.status-info {
+    color: #51657b;
+    background-color: #edf3f8;
+    border-color: #d4e0ea;
+  }
+}

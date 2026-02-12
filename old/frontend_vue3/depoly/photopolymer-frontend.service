@@ -1,0 +1,25 @@
+[Unit]
+Description=PhotoPolymer Frontend Static Server (Local Production)
+After=network.target photopolymer-api.service
+
+[Service]
+Type=simple
+# 使用当前用户
+User=%u
+Group=%u
+# 使用相对于用户主目录的路径（dist 目录）
+WorkingDirectory=%h/workspace/data_base/database-bate-0.3/frontend_vue3/dist
+# 使用 Python 的简单 HTTP 服务器托管静态文件
+ExecStart=/usr/bin/python3 -m http.server 3000
+
+# 重启策略
+Restart=always
+RestartSec=10
+
+# 日志输出
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
+

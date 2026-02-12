@@ -1,0 +1,42 @@
+# FastAPI 核心
+fastapi==0.115.2
+uvicorn[standard]==0.30.6
+pydantic==2.10.5
+pydantic-settings==2.7.1
+pydantic[email]
+# 数据库
+SQLAlchemy==2.0.36
+asyncpg==0.29.0  # PostgreSQL异步驱动
+psycopg2-binary==2.9.9  # PostgreSQL同步驱动（Alembic用）
+alembic==1.15.1  # 数据库迁移
+greenlet>=3.0.0  # SQLAlchemy异步支持（必需）
+psycopg2
+# 安全认证
+python-jose[cryptography]==3.3.0  # JWT
+passlib[bcrypt]==1.7.4  # 密码加密（支持 Bcrypt 和 Argon2）
+bcrypt==4.0.1  # Bcrypt密码哈希（与passlib 1.7.4兼容）
+argon2-cffi>=21.3.0  # Argon2 密码哈希（passlib 所需）
+python-multipart==0.0.9  # 表单数据解析
+
+# 工具类
+python-dotenv==1.0.1  # 环境变量
+typer==0.9.0  # CLI工具
+click==8.1.7  # CLI依赖
+
+# 日志和监控
+rich==13.9.4  # 终端美化
+
+# HTTP客户端（测试用）
+requests>=2.31.0  # API测试
+bcrypt>=4.0.0,<5.0.0
+# 图表生成
+matplotlib==3.9.0
+Pillow==10.4.0  # 图像处理
+numpy==1.26.4  # matplotlib依赖
+
+# 可选依赖
+# redis==5.2.1  # Redis支持
+# aiofiles==24.1.0  # 异步文件操作
+# openpyxl==3.1.5  # Excel支持
+# pandas==2.2.2  # 数据处理
+

@@ -1,0 +1,28 @@
+[Unit]
+Description=PhotoPolymer Formulation Management API (Local Production)
+After=network.target postgresql.service
+
+[Service]
+Type=simple
+User=xgs
+Group=xgs
+# 使用绝对路径：虚拟环境路径
+WorkingDirectory=/home/xgs/workspace/database-bate-0.3/backend_fastapi
+Environment="PATH=/home/xgs/venv/database/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="PYTHONPATH=/home/xgs/workspace/database-bate-0.3/backend_fastapi"
+# 启动命令：python main.py --env=prod （不是 run --env=prod）
+ExecStart=/home/xgs/venv/database/bin/python /home/xgs/workspace/database-bate-0.3/backend_fastapi/main.py --env=prod
+
+# 重启策略（进程崩溃后10秒自动重启）
+Restart=always
+RestartSec=10
+
+# 性能优化
+LimitNOFILE=65535
+
+# 日志输出到 journalctl
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
