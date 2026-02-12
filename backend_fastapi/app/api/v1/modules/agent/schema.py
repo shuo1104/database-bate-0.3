@@ -130,6 +130,15 @@ class AgentReviewUpdateResponse(BaseModel):
     )
 
 
+class AgentReviewDeleteResponse(BaseModel):
+    record_id: int = Field(..., description="Deleted record ID")
+    task_id: int | None = Field(default=None, description="Related task ID")
+    review_status: AgentReviewStatus = Field(
+        ..., description="Review status before delete"
+    )
+    deleted_at: datetime = Field(..., description="Delete timestamp")
+
+
 class AgentChatIntent(str, Enum):
     ingest = "ingest"
     query = "query"

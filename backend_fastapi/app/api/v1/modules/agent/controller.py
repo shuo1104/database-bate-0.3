@@ -3,10 +3,13 @@
 
 from __future__ import annotations
 
+import asyncio
 import json
 from datetime import datetime
+from typing import Any
 
 from fastapi import APIRouter, BackgroundTasks, Depends, File, Form, Query, UploadFile
+from fastapi.responses import StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.v1.modules.agent.schema import (
@@ -16,6 +19,7 @@ from app.api.v1.modules.agent.schema import (
     AgentChangePlanExecutionResponse,
     AgentChangePlanListResponse,
     AgentPlanApprovalStatus,
+    AgentReviewDeleteResponse,
     AgentReviewStatus,
     AgentReviewUpdateRequest,
     AgentTaskStatus,
@@ -25,9 +29,25 @@ from app.api.v1.modules.agent.service import AgentChatService, AgentIngestServic
 from app.common.response import ResponseModel, SuccessResponse
 from app.core.database import get_db
 from app.core.custom_exceptions import ValidationException
+from app.core.logger import logger
 from app.core.security import get_current_user_info
 
 router = APIRouter()
+
+
+def _encode_ndjson_event(payload: dict[str, Any]) -> bytes:
+    return (json.dumps(payload, ensure_ascii=False) + "\n").encode("utf-8")
+
+
+def _iter_text_chunks(text: str, *, chunk_size: int = 12) -> list[str]:
+    normalized = (text or "").strip()
+    if not normalized:
+        return []
+
+    return [
+        normalized[start : start + chunk_size]
+        for start in range(0, len(normalized), chunk_size)
+    ]
 
 
 def _parse_project_scope(scope_text: str | None) -> list[int] | None:
@@ -104,13 +124,13 @@ async def get_task_status(
     "/review",
     response_model=None,
     summary="Get ingestion records for review",
-    description="Paginated query of ingestion records (default: pending_review)",
+    description="Paginated query of ingestion records (default: all statuses)",
 )
 async def get_review_records(
     page: int = Query(1, ge=1, description="Page number"),
     page_size: int = Query(20, ge=1, le=100, description="Items per page"),
     review_status: AgentReviewStatus | None = Query(
-        AgentReviewStatus.pending_review,
+        None,
         description="Review status",
     ),
     task_id: int | None = Query(None, ge=1, description="Filter by task ID"),
@@ -156,6 +176,26 @@ async def review_ingest_record(
         reviewer_role=str(current_user.get("role") or "user"),
     )
     return SuccessResponse(data=result.model_dump(mode="json"), msg="Review completed")
+
+
+@router.delete(
+    "/review/{record_id}",
+    response_model=ResponseModel[AgentReviewDeleteResponse],
+    summary="Delete ingestion review record",
+    description="Delete one ingestion review record by record ID",
+)
+async def delete_review_record(
+    record_id: int,
+    current_user: dict = Depends(get_current_user_info),
+    db: AsyncSession = Depends(get_db),
+):
+    result = await AgentIngestService.delete_review_record(
+        db=db,
+        record_id=record_id,
+        reviewer_user_id=int(current_user["user_id"]),
+        reviewer_role=str(current_user.get("role") or "user"),
+    )
+    return SuccessResponse(data=result.model_dump(mode="json"), msg="Record deleted")
 
 
 @router.get(
@@ -265,4 +305,78 @@ async def chat_with_agent(
     )
     return SuccessResponse(
         data=result.model_dump(mode="json"), msg="Processed successfully"
+    )
+
+
+@router.post(
+    "/chat/stream",
+    response_model=None,
+    summary="Agent chat streaming entry",
+    description=(
+        "Submit a text question (optional file) and stream response chunks as NDJSON"
+    ),
+)
+async def chat_with_agent_stream(
+    background_tasks: BackgroundTasks,
+    message: str = Form(..., description="User question"),
+    top_k: int = Form(100, ge=1, le=1000, description="Maximum number of query rows"),
+    project_scope: str | None = Form(
+        None,
+        description="Project permission scope, JSON array or comma-separated integers",
+    ),
+    file: UploadFile | None = File(
+        None, description="Optional file (used for ingestion)"
+    ),
+    current_user: dict = Depends(get_current_user_info),
+    db: AsyncSession = Depends(get_db),
+):
+    request = AgentChatRequest(
+        message=message,
+        project_scope=_parse_project_scope(project_scope),
+        top_k=top_k,
+    )
+
+    async def stream_events():
+        yield _encode_ndjson_event({"type": "start"})
+
+        try:
+            result = await AgentChatService.handle_chat(
+                db=db,
+                background_tasks=background_tasks,
+                request=request,
+                current_user=current_user,
+                file=file,
+            )
+
+            for chunk in _iter_text_chunks(result.reply):
+                yield _encode_ndjson_event({"type": "delta", "content": chunk})
+                await asyncio.sleep(0.02)
+
+            yield _encode_ndjson_event(
+                {
+                    "type": "done",
+                    "response": result.model_dump(mode="json"),
+                }
+            )
+        except Exception as exc:  # noqa: BLE001
+            logger.error(
+                "Agent chat stream failed: %s: %s",
+                type(exc).__name__,
+                exc,
+                exc_info=True,
+            )
+            yield _encode_ndjson_event(
+                {
+                    "type": "error",
+                    "message": "Agent chat stream failed",
+                }
+            )
+
+    return StreamingResponse(
+        stream_events(),
+        media_type="application/x-ndjson",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",
+        },
     )

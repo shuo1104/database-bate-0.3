@@ -42,6 +42,7 @@ from app.api.v1.modules.agent.schema import (
     AgentChatRequest,
     AgentChatResponse,
     AgentReviewListResponse,
+    AgentReviewDeleteResponse,
     AgentReviewRecordResponse,
     AgentReviewStatus,
     AgentReviewUpdateRequest,
@@ -326,6 +327,48 @@ class AgentIngestService:
             reviewed_at=updated_record.ReviewedAt or reviewed_at,
             task_id=updated_record.TaskID_FK,
             persist_result=persist_result,
+        )
+
+    @staticmethod
+    async def delete_review_record(
+        db: AsyncSession,
+        *,
+        record_id: int,
+        reviewer_user_id: int,
+        reviewer_role: str,
+    ) -> AgentReviewDeleteResponse:
+        AgentIngestService._ensure_review_role(reviewer_role)
+
+        record = await AgentCRUD.get_ingest_record_by_id(db, record_id)
+        if not record:
+            raise RecordNotFoundException("AgentIngestRecord", record_id)
+
+        task_id = record.TaskID_FK
+        original_status = AgentReviewStatus(record.ReviewStatus)
+        deleted_at = datetime.now()
+
+        await AgentCRUD.delete_ingest_record(db, record)
+
+        await AgentCRUD.append_audit_log(
+            db,
+            user_id=reviewer_user_id,
+            task_id=task_id,
+            action_type="ingest_record_deleted",
+            user_input={"record_id": record_id},
+            tool_trace={
+                "record_id": record_id,
+                "task_id": task_id,
+                "previous_review_status": original_status.value,
+            },
+        )
+
+        await db.commit()
+
+        return AgentReviewDeleteResponse(
+            record_id=record_id,
+            task_id=task_id,
+            review_status=original_status,
+            deleted_at=deleted_at,
         )
 
     @staticmethod
@@ -2941,12 +2984,30 @@ class AgentChatService:
                     return await AgentChatService._run_direct_sql_fallback(request)
                 return await AgentChatService._run_direct_llm_fallback(request, intent)
 
+            if query_result and query_result.get("ok") is False:
+                safe_reply = (
+                    "Query execution failed, so I cannot provide record-level results. "
+                    "Please retry or verify table/schema availability."
+                )
+                return AgentChatResponse(
+                    mode=AgentChatMode.follow_up,
+                    intent=intent,
+                    reply=safe_reply,
+                    follow_up_question=(
+                        "Please retry the query or provide a narrower request."
+                    ),
+                    query_result=query_result,
+                    tool_traces=tool_traces,
+                    degraded=True,
+                    retryable=True,
+                )
+
             if query_result and query_result.get("ok") is True:
                 formatted_text = str(query_result.get("formatted_text") or "").strip()
                 if formatted_text:
                     reply = formatted_text
 
-            if not reply and query_result:
+            if not reply and query_result and query_result.get("ok") is True:
                 reply = query_result.get("formatted_text") or "Query completed."
 
             if not reply:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import unittest
 from datetime import datetime
 from unittest.mock import AsyncMock, patch
@@ -15,6 +16,7 @@ from app.api.v1.modules.agent.schema import (
     AgentChatMode,
     AgentChatResponse,
     AgentPlanApprovalStatus,
+    AgentReviewDeleteResponse,
     AgentReviewListResponse,
     AgentReviewStatus,
     AgentReviewUpdateResponse,
@@ -111,7 +113,7 @@ class Phase1AgentControllerTests(unittest.TestCase):
             agent_controller.AgentIngestService,
             "list_review_records",
             new=AsyncMock(return_value=mock_response),
-        ):
+        ) as mock_list:
             response = self.client.get(
                 "/api/v1/agent/review",
                 headers={"Authorization": f"Bearer {self.admin_token}"},
@@ -120,6 +122,8 @@ class Phase1AgentControllerTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.json()
         self.assertEqual(body["data"]["total"], 0)
+        mock_list.assert_awaited_once()
+        self.assertIsNone(mock_list.await_args.kwargs.get("review_status"))
 
     def test_review_update_endpoint_for_admin(self) -> None:
         mock_response = AgentReviewUpdateResponse(
@@ -144,6 +148,28 @@ class Phase1AgentControllerTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         body = response.json()
         self.assertEqual(body["data"]["review_status"], "approved")
+
+    def test_review_delete_endpoint_for_admin(self) -> None:
+        mock_response = AgentReviewDeleteResponse(
+            record_id=9,
+            task_id=101,
+            review_status=AgentReviewStatus.pending_review,
+            deleted_at=datetime.now(),
+        )
+
+        with patch.object(
+            agent_controller.AgentIngestService,
+            "delete_review_record",
+            new=AsyncMock(return_value=mock_response),
+        ):
+            response = self.client.delete(
+                "/api/v1/agent/review/9",
+                headers={"Authorization": f"Bearer {self.admin_token}"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+        body = response.json()
+        self.assertEqual(body["data"]["record_id"], 9)
 
     def test_chat_endpoint_sync_response(self) -> None:
         mock_response = AgentChatResponse(
@@ -197,6 +223,35 @@ class Phase1AgentControllerTests(unittest.TestCase):
         body = response.json()
         self.assertEqual(body["data"]["mode"], "async_task")
         self.assertEqual(body["data"]["task_id"], 201)
+
+    def test_chat_stream_endpoint(self) -> None:
+        mock_response = AgentChatResponse(
+            mode=AgentChatMode.sync,
+            intent=AgentChatIntent.query,
+            reply="streamed response text",
+            query_result={"ok": True},
+        )
+
+        with patch.object(
+            agent_controller.AgentChatService,
+            "handle_chat",
+            new=AsyncMock(return_value=mock_response),
+        ):
+            response = self.client.post(
+                "/api/v1/agent/chat/stream",
+                data={"message": "stream this reply", "top_k": "50"},
+                headers={"Authorization": f"Bearer {self.user_token}"},
+            )
+
+        self.assertEqual(response.status_code, 200)
+
+        lines = [line for line in response.text.splitlines() if line.strip()]
+        payloads = [json.loads(line) for line in lines]
+
+        self.assertGreaterEqual(len(payloads), 2)
+        self.assertEqual(payloads[0]["type"], "start")
+        self.assertEqual(payloads[-1]["type"], "done")
+        self.assertEqual(payloads[-1]["response"]["reply"], "streamed response text")
 
     def test_change_plan_list_endpoint(self) -> None:
         mock_response = {

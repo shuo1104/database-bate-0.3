@@ -214,6 +214,14 @@ class AgentCRUD:
         return record
 
     @staticmethod
+    async def delete_ingest_record(
+        db: AsyncSession,
+        record: AgentIngestRecordModel,
+    ) -> None:
+        await db.delete(record)
+        await db.flush()
+
+    @staticmethod
     async def append_audit_log(
         db: AsyncSession,
         *,

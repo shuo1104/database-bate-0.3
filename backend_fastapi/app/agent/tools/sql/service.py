@@ -202,21 +202,51 @@ class TextToSqlService:
     @staticmethod
     def _format_result_table(columns: list[str], rows: list[dict[str, Any]]) -> str:
         if not columns:
-            return "(no columns)"
-        if not rows:
-            return "(no rows)"
-
-        visible_rows = rows[:20]
-        header = " | ".join(columns)
-        separator = " | ".join(["---"] * len(columns))
-
-        body_lines = []
-        for row in visible_rows:
-            body_lines.append(
-                " | ".join(str(row.get(column, "")) for column in columns)
+            return (
+                "| result |\n"
+                "| --- |\n"
+                "| (no columns) |\n\n"
+                "No structured columns were returned by the query."
             )
 
+        visible_rows = rows[:20]
+        escaped_columns = [
+            TextToSqlService._escape_markdown_cell(item) for item in columns
+        ]
+        header = "| " + " | ".join(escaped_columns) + " |"
+        separator = "| " + " | ".join(["---"] * len(columns)) + " |"
+
+        body_lines: list[str] = []
+        for row in visible_rows:
+            cells = [
+                TextToSqlService._escape_markdown_cell(row.get(column))
+                for column in columns
+            ]
+            body_lines.append("| " + " | ".join(cells) + " |")
+
+        if not body_lines:
+            empty_cells = ["(no rows)"] + [""] * (len(columns) - 1)
+            body_lines.append("| " + " | ".join(empty_cells) + " |")
+
         table_text = "\n".join([header, separator, *body_lines])
-        if len(rows) > len(visible_rows):
-            table_text += f"\n... ({len(rows) - len(visible_rows)} more rows omitted)"
-        return table_text
+
+        total_rows = len(rows)
+        if total_rows == 0:
+            summary = "No rows matched the query."
+        elif total_rows > len(visible_rows):
+            summary = (
+                f"Returned {total_rows} rows; showing first {len(visible_rows)} rows."
+            )
+        else:
+            summary = f"Returned {total_rows} row(s)."
+
+        return f"{table_text}\n\n{summary}"
+
+    @staticmethod
+    def _escape_markdown_cell(value: Any) -> str:
+        if value is None:
+            text = "NULL"
+        else:
+            text = str(value)
+        text = text.replace("\r\n", " ").replace("\n", " ").replace("\r", " ")
+        return text.replace("|", "\\|")

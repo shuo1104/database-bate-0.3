@@ -5,6 +5,8 @@ from __future__ import annotations
 import io
 import unittest
 from datetime import datetime
+from types import SimpleNamespace
+from typing import Any, cast
 from unittest.mock import AsyncMock, patch
 
 from fastapi import BackgroundTasks, UploadFile
@@ -13,6 +15,7 @@ from app.api.v1.modules.agent.schema import (
     AgentChatIntent,
     AgentChatMode,
     AgentChatRequest,
+    AgentToolTrace,
     AgentTaskStatus,
     AgentTaskSubmitResponse,
 )
@@ -39,7 +42,7 @@ class _AuditObject:
 
 class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
     async def test_follow_up_when_scope_missing(self) -> None:
-        db = _FakeDbSession()
+        db = cast(Any, _FakeDbSession())
         request = AgentChatRequest(
             message="query project statistics", project_scope=None, top_k=20
         )
@@ -62,7 +65,7 @@ class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.audit_id, 101)
 
     async def test_ingest_chat_submits_task(self) -> None:
-        db = _FakeDbSession()
+        db = cast(Any, _FakeDbSession())
         request = AgentChatRequest(
             message="please ingest this file", project_scope=None, top_k=20
         )
@@ -102,7 +105,7 @@ class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.tool_traces[0].tool_name, "agent_document_ingest")
 
     async def test_external_service_error_returns_degraded(self) -> None:
-        db = _FakeDbSession()
+        db = cast(Any, _FakeDbSession())
         request = AgentChatRequest(message="hello", project_scope=None, top_k=20)
         current_user = {"user_id": 1, "username": "admin", "role": "admin"}
 
@@ -130,7 +133,7 @@ class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.audit_id, 303)
 
     async def test_mutation_chat_creates_plan_task(self) -> None:
-        db = _FakeDbSession()
+        db = cast(Any, _FakeDbSession())
         request = AgentChatRequest(
             message="create a material record", project_scope=None, top_k=20
         )
@@ -177,7 +180,7 @@ class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(result.tool_traces[0].tool_name, "agent_db_change_planner")
 
     async def test_execute_plan_command_runs_db_admin_executor(self) -> None:
-        db = _FakeDbSession()
+        db = cast(Any, _FakeDbSession())
         request = AgentChatRequest(
             message="execute plan 88", project_scope=None, top_k=20
         )
@@ -207,6 +210,67 @@ class Phase4ChatServiceTests(unittest.IsolatedAsyncioTestCase):
         query_result = result.query_result or {}
         self.assertEqual(query_result.get("plan_task_id"), 88)
         self.assertEqual(result.tool_traces[0].tool_name, "agent_db_change_executor")
+
+    async def test_run_react_chat_uses_error_safe_reply_when_sql_tool_fails(
+        self,
+    ) -> None:
+        request = AgentChatRequest(
+            message="Output all project information in the database",
+            project_scope=None,
+            top_k=20,
+        )
+
+        class _FakeExecutor:
+            async def ainvoke(
+                self, *_args: object, **_kwargs: object
+            ) -> dict[str, object]:
+                return {
+                    "messages": [
+                        SimpleNamespace(
+                            content=(
+                                "Based on attempted queries, I found two records: "
+                                "ada and STRAP."
+                            )
+                        )
+                    ]
+                }
+
+        with (
+            patch(
+                "app.api.v1.modules.agent.service.build_react_agent",
+                return_value=_FakeExecutor(),
+            ),
+            patch(
+                "app.api.v1.modules.agent.service.AgentChatService._build_tool_traces",
+                return_value=[
+                    AgentToolTrace(
+                        tool_name="agent_text_to_sql",
+                        status="ok",
+                        tool_output={
+                            "ok": False,
+                            "error": "DatabaseException: relation tbl_ProjectInfo does not exist",
+                        },
+                    )
+                ],
+            ),
+        ):
+            result = await AgentChatService._run_react_chat(
+                request=request,
+                intent=AgentChatIntent.query,
+                user_role="admin",
+                user_id=1,
+            )
+
+        self.assertEqual(result.mode, AgentChatMode.follow_up)
+        self.assertTrue(result.degraded)
+        self.assertTrue(result.retryable)
+        self.assertIn("cannot provide record-level results", result.reply)
+        self.assertNotIn("ada", result.reply.lower())
+        self.assertNotIn("strap", result.reply.lower())
+        self.assertIsNotNone(result.query_result)
+        query_result = result.query_result or {}
+        self.assertEqual(query_result.get("ok"), False)
+        self.assertIn("tbl_ProjectInfo", str(query_result.get("error")))
 
 
 if __name__ == "__main__":
