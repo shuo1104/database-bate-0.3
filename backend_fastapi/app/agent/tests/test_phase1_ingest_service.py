@@ -11,7 +11,11 @@ from unittest.mock import AsyncMock, patch
 from app.agent.config import DeepseekConfig, MinerUConfig
 from app.api.v1.modules.agent.schema import AgentReviewUpdateRequest
 from app.api.v1.modules.agent.service import AgentIngestService
-from app.core.custom_exceptions import ExternalServiceException, ValidationException
+from app.core.custom_exceptions import (
+    ExternalServiceException,
+    RecordNotFoundException,
+    ValidationException,
+)
 
 
 class _FakeResponse:
@@ -461,6 +465,63 @@ class Phase1IngestServiceTests(unittest.IsolatedAsyncioTestCase):
                     db=AsyncMock(),
                     record_id=record.RecordID,
                     review_data=AgentReviewUpdateRequest(action="approved"),
+                    reviewer_user_id=1,
+                    reviewer_role="admin",
+                )
+
+    async def test_delete_review_record_success(self) -> None:
+        db = AsyncMock()
+        record = SimpleNamespace(
+            RecordID=91,
+            TaskID_FK=30,
+            ReviewStatus="pending_review",
+        )
+
+        with (
+            patch(
+                "app.api.v1.modules.agent.service.AgentIngestService._ensure_review_role"
+            ),
+            patch(
+                "app.api.v1.modules.agent.service.AgentCRUD.get_ingest_record_by_id",
+                new=AsyncMock(return_value=record),
+            ),
+            patch(
+                "app.api.v1.modules.agent.service.AgentCRUD.delete_ingest_record",
+                new=AsyncMock(return_value=None),
+            ) as mock_delete,
+            patch(
+                "app.api.v1.modules.agent.service.AgentCRUD.append_audit_log",
+                new=AsyncMock(return_value=SimpleNamespace(AuditID=1)),
+            ) as mock_audit,
+        ):
+            result = await AgentIngestService.delete_review_record(
+                db=db,
+                record_id=91,
+                reviewer_user_id=1,
+                reviewer_role="admin",
+            )
+
+        mock_delete.assert_awaited_once()
+        mock_audit.assert_awaited_once()
+        db.commit.assert_awaited_once()
+        self.assertEqual(result.record_id, 91)
+        self.assertEqual(result.task_id, 30)
+        self.assertEqual(result.review_status.value, "pending_review")
+
+    async def test_delete_review_record_not_found(self) -> None:
+        with (
+            patch(
+                "app.api.v1.modules.agent.service.AgentIngestService._ensure_review_role"
+            ),
+            patch(
+                "app.api.v1.modules.agent.service.AgentCRUD.get_ingest_record_by_id",
+                new=AsyncMock(return_value=None),
+            ),
+        ):
+            with self.assertRaises(RecordNotFoundException):
+                await AgentIngestService.delete_review_record(
+                    db=AsyncMock(),
+                    record_id=999,
                     reviewer_user_id=1,
                     reviewer_role="admin",
                 )
