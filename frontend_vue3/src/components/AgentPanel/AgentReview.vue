@@ -79,9 +79,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="extracted_data" label="Extracted Data" min-width="210" show-overflow-tooltip>
+      <el-table-column prop="extracted_data" label="Extracted Data" min-width="260">
         <template #default="{ row }">
-          {{ formatDataPreview(row.extracted_data) }}
+          <el-popover
+            placement="top-start"
+            trigger="hover"
+            :width="560"
+            popper-class="extracted-data-popover"
+          >
+            <template #reference>
+              <span class="extracted-data-preview">{{ formatDataPreview(row.extracted_data) }}</span>
+            </template>
+            <pre class="extracted-data-detail">{{ formatDataDetail(row.extracted_data) }}</pre>
+          </el-popover>
         </template>
       </el-table-column>
 
@@ -91,11 +101,12 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="Actions" width="250" fixed="right">
+      <el-table-column label="Actions" width="320" fixed="right">
         <template #default="{ row }">
           <el-button link class="action-btn" type="success" :disabled="isManuallyReviewed(row)" @click="handleApprove(row)">Approve</el-button>
           <el-button link class="action-btn" type="danger" :disabled="isManuallyReviewed(row)" @click="handleReject(row)">Reject</el-button>
           <el-button link class="action-btn" type="primary" :disabled="isManuallyReviewed(row)" @click="openModifyDialog(row)">Modify</el-button>
+          <el-button link class="action-btn" type="danger" @click="handleDelete(row)">Delete</el-button>
           <el-tag v-if="isManuallyReviewed(row)" size="small" type="info">Manually Reviewed</el-tag>
         </template>
       </el-table-column>
@@ -151,6 +162,7 @@
 import { computed, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import {
+  deleteReviewRecordApi,
   getReviewListApi,
   reviewRecordApi,
   type AgentReviewListParams,
@@ -185,7 +197,7 @@ const table = useTable<AgentReviewRecord>(fetchReviewList as any, {
 })
 
 Object.assign(table.queryParams, {
-  review_status: 'pending_review' as AgentReviewStatus,
+  review_status: '',
   task_id: '',
 })
 
@@ -246,8 +258,21 @@ function formatDateTime(value: string) {
   return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
 }
 
-function formatDataPreview(data: Record<string, any>) {
-  const plain = JSON.stringify(data)
+function stringifyExtractedData(data: unknown, pretty = false) {
+  if (!data || typeof data !== 'object') {
+    return '-'
+  }
+
+  try {
+    const plain = JSON.stringify(data, null, pretty ? 2 : 0)
+    return plain || '-'
+  } catch {
+    return '-'
+  }
+}
+
+function formatDataPreview(data: unknown) {
+  const plain = stringifyExtractedData(data)
   if (!plain) {
     return '-'
   }
@@ -255,12 +280,16 @@ function formatDataPreview(data: Record<string, any>) {
   return plain.length > 120 ? `${plain.slice(0, 120)}...` : plain
 }
 
+function formatDataDetail(data: unknown) {
+  return stringifyExtractedData(data, true)
+}
+
 function isManuallyReviewed(record: Pick<AgentReviewRecord, 'reviewed_by_user_id'>) {
   return typeof record.reviewed_by_user_id === 'number' && record.reviewed_by_user_id > 0
 }
 
 function handleReset() {
-  table.queryParams.review_status = 'pending_review'
+  table.queryParams.review_status = ''
   table.queryParams.task_id = ''
   table.handleQuery()
 }
@@ -293,6 +322,28 @@ function handleReject(record: AgentReviewRecord) {
     type: 'warning',
   }).then(async () => {
     await submitReviewAction(record, 'rejected')
+  }).catch(() => {})
+}
+
+function handleDelete(record: AgentReviewRecord) {
+  ElMessageBox.confirm(
+    `Confirm deleting review record #${record.record_id}?`,
+    'Delete Confirmation',
+    {
+      type: 'warning',
+      confirmButtonText: 'Delete',
+    }
+  ).then(async () => {
+    submitLoading.value = true
+    try {
+      await deleteReviewRecordApi(record.record_id)
+      ElMessage.success('Record deleted')
+      await table.fetchData()
+    } catch (error) {
+      console.error('Failed to delete review record:', error)
+    } finally {
+      submitLoading.value = false
+    }
   }).catch(() => {})
 }
 
@@ -399,6 +450,31 @@ table.fetchData()
 
 .action-btn {
   margin-right: 2px;
+}
+
+.extracted-data-preview {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+  color: #35556a;
+}
+
+.extracted-data-detail {
+  margin: 0;
+  max-height: 320px;
+  overflow: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 12px;
+  line-height: 1.45;
+  color: #223643;
+}
+
+:deep(.extracted-data-popover) {
+  max-width: min(90vw, 640px);
 }
 
 @media (max-width: 768px) {

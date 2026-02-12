@@ -105,7 +105,7 @@
 import { computed, nextTick, ref, watch } from 'vue'
 import { ChatDotRound, Paperclip, Promotion } from '@element-plus/icons-vue'
 import { ElMessage } from 'element-plus'
-import { sendChatMessageApi } from '@/api/agent'
+import { sendChatMessageStreamApi } from '@/api/agent'
 import { useAgentTasks } from '@/composables/useAgentTasks'
 import { useAgentStore } from '@/store'
 
@@ -209,17 +209,93 @@ async function handleSend() {
   inputMessage.value = ''
   clearSelectedFile()
   agentStore.setChatLoading(true)
+  let streamedMessageId = ''
+  let streamedContent = ''
+  let streamBuffer = ''
+  let printerTimer: ReturnType<typeof setInterval> | null = null
+
+  const flushPrinterBuffer = () => {
+    if (!streamBuffer || !streamedMessageId) {
+      return
+    }
+
+    streamedContent += streamBuffer
+    streamBuffer = ''
+    agentStore.updateChatMessage(streamedMessageId, {
+      content: streamedContent,
+    })
+    scrollToBottom()
+  }
+
+  const stopPrinter = () => {
+    if (!printerTimer) {
+      return
+    }
+
+    clearInterval(printerTimer)
+    printerTimer = null
+  }
+
+  const ensurePrinter = () => {
+    if (printerTimer) {
+      return
+    }
+
+    printerTimer = setInterval(() => {
+      if (!streamedMessageId || !streamBuffer) {
+        return
+      }
+
+      const step = streamBuffer.length > 140 ? 8 : streamBuffer.length > 48 ? 4 : 2
+      streamedContent += streamBuffer.slice(0, step)
+      streamBuffer = streamBuffer.slice(step)
+      agentStore.updateChatMessage(streamedMessageId, {
+        content: streamedContent,
+      })
+      scrollToBottom()
+    }, 26)
+  }
 
   try {
-    const response = await sendChatMessageApi({
-      message: requestMessage,
-      file: file || undefined,
-    })
+    const response = await sendChatMessageStreamApi(
+      {
+        message: requestMessage,
+        file: file || undefined,
+      },
+      {
+        onStart: () => {
+          streamedMessageId = agentStore.addChatMessage({
+            role: 'agent',
+            content: '',
+          }).id
+        },
+        onDelta: (chunk) => {
+          if (!streamedMessageId) {
+            streamedMessageId = agentStore.addChatMessage({
+              role: 'agent',
+              content: '',
+            }).id
+          }
 
-    agentStore.addChatMessage({
-      role: 'agent',
-      content: response.reply || 'Request received.',
-    })
+          streamBuffer += chunk
+          ensurePrinter()
+        },
+      }
+    )
+
+    flushPrinterBuffer()
+    stopPrinter()
+
+    if (streamedMessageId) {
+      agentStore.updateChatMessage(streamedMessageId, {
+        content: response.reply || streamedContent || 'Request received.',
+      })
+    } else {
+      agentStore.addChatMessage({
+        role: 'agent',
+        content: response.reply || 'Request received.',
+      })
+    }
 
     if (response.follow_up_question) {
       agentStore.addChatMessage({
@@ -250,12 +326,23 @@ async function handleSend() {
     }
   } catch (error) {
     console.error('Agent chat failed:', error)
-    agentStore.addChatMessage({
-      role: 'system',
-      content: NOT_READY_MESSAGE,
-      failed: true,
-    })
+    flushPrinterBuffer()
+    stopPrinter()
+
+    if (streamedMessageId) {
+      agentStore.updateChatMessage(streamedMessageId, {
+        content: streamedContent || NOT_READY_MESSAGE,
+        failed: true,
+      })
+    } else {
+      agentStore.addChatMessage({
+        role: 'system',
+        content: NOT_READY_MESSAGE,
+        failed: true,
+      })
+    }
   } finally {
+    stopPrinter()
     agentStore.setChatLoading(false)
     scrollToBottom()
   }

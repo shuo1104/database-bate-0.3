@@ -6,6 +6,7 @@
       </div>
       <div class="header-tags">
         <el-tag type="success" effect="plain">Agent Online</el-tag>
+        <el-tag type="warning" effect="plain">Preview</el-tag>
         <el-tag type="info" effect="plain">{{ activeTabLabel }}</el-tag>
       </div>
     </header>

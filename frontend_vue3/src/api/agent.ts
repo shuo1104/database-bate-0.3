@@ -2,6 +2,7 @@
  * Agent API
  */
 import { request } from '@/utils/request'
+import { getToken } from '@/utils/auth'
 
 export type AgentTaskStatus = 'pending' | 'running' | 'succeeded' | 'failed'
 
@@ -87,6 +88,13 @@ export interface AgentReviewUpdateResponse {
   task_id?: number | null
 }
 
+export interface AgentReviewDeleteResponse {
+  record_id: number
+  task_id?: number | null
+  review_status: AgentReviewStatus
+  deleted_at: string
+}
+
 export interface AgentToolTrace {
   tool_name: string
   status: 'ok' | 'failed' | 'skipped'
@@ -114,6 +122,88 @@ export interface AgentChatResponse {
   degraded: boolean
   retryable: boolean
   audit_id?: number | null
+}
+
+export interface AgentChatStreamCallbacks {
+  onStart?: () => void
+  onDelta?: (chunk: string) => void
+  onDone?: (response: AgentChatResponse) => void
+  onError?: (message: string) => void
+}
+
+type AgentChatStreamEvent =
+  | { type: 'start' }
+  | { type: 'delta'; content?: string }
+  | { type: 'done'; response?: AgentChatResponse }
+  | { type: 'error'; message?: string }
+
+function createChatFormData(data: AgentChatRequest) {
+  const formData = new FormData()
+  formData.append('message', data.message)
+  formData.append('top_k', String(data.top_k ?? 100))
+
+  if (data.project_scope?.length) {
+    formData.append('project_scope', JSON.stringify(data.project_scope))
+  }
+
+  if (data.file) {
+    formData.append('file', data.file)
+  }
+
+  return formData
+}
+
+function parseStreamLines(buffer: string) {
+  const lines = buffer.split('\n')
+  const remain = lines.pop() || ''
+  const parsedEvents: AgentChatStreamEvent[] = []
+
+  for (const line of lines) {
+    const trimmed = line.trim()
+    if (!trimmed) {
+      continue
+    }
+
+    try {
+      parsedEvents.push(JSON.parse(trimmed) as AgentChatStreamEvent)
+    } catch {
+      // Ignore malformed stream chunks and continue consuming
+    }
+  }
+
+  return {
+    remain,
+    parsedEvents,
+  }
+}
+
+async function processStreamEvent(
+  event: AgentChatStreamEvent,
+  callbacks?: AgentChatStreamCallbacks
+) {
+  if (event.type === 'start') {
+    callbacks?.onStart?.()
+    return null
+  }
+
+  if (event.type === 'delta') {
+    callbacks?.onDelta?.(event.content || '')
+    return null
+  }
+
+  if (event.type === 'error') {
+    const message = event.message || 'Agent chat stream failed'
+    callbacks?.onError?.(message)
+    throw new Error(message)
+  }
+
+  const response = event.response
+  if (!response) {
+    throw new Error('Missing final response in stream event')
+  }
+
+  callbacks?.onDone?.(response)
+  return response
 }
 
 /**
@@ -164,20 +254,20 @@ export function reviewRecordApi(recordId: number, data: AgentReviewUpdateRequest
 }
 
 /**
+ * Delete review record
+ */
+export function deleteReviewRecordApi(recordId: number) {
+  return request<AgentReviewDeleteResponse>({
+    url: `/api/v1/agent/review/${recordId}`,
+    method: 'delete',
+  })
+}
+
+/**
  * Agent chat
  */
 export function sendChatMessageApi(data: AgentChatRequest) {
-  const formData = new FormData()
-  formData.append('message', data.message)
-  formData.append('top_k', String(data.top_k ?? 100))
-
-  if (data.project_scope?.length) {
-    formData.append('project_scope', JSON.stringify(data.project_scope))
-  }
-
-  if (data.file) {
-    formData.append('file', data.file)
-  }
+  const formData = createChatFormData(data)
 
   return request<AgentChatResponse>({
     url: '/api/v1/agent/chat',
@@ -185,4 +275,76 @@ export function sendChatMessageApi(data: AgentChatRequest) {
     data: formData,
     timeout: 120000, // Agent chat involves multiple LLM calls, needs longer timeout
   })
+}
+
+/**
+ * Agent chat stream (NDJSON)
+ */
+export async function sendChatMessageStreamApi(
+  data: AgentChatRequest,
+  callbacks?: AgentChatStreamCallbacks
+) {
+  const formData = createChatFormData(data)
+  const headers: Record<string, string> = {
+    Accept: 'application/x-ndjson',
+  }
+
+  const token = getToken()
+  if (token) {
+    headers.Authorization = `Bearer ${token}`
+  }
+
+  const response = await fetch('/api/v1/agent/chat/stream', {
+    method: 'POST',
+    headers,
+    body: formData,
+  })
+
+  if (!response.ok) {
+    throw new Error(`Stream request failed with status ${response.status}`)
+  }
+
+  if (!response.body) {
+    throw new Error('Empty stream body')
+  }
+
+  const reader = response.body.getReader()
+  const decoder = new TextDecoder('utf-8')
+  let buffer = ''
+  let finalResponse: AgentChatResponse | null = null
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) {
+      break
+    }
+
+    buffer += decoder.decode(value, { stream: true })
+    const { remain, parsedEvents } = parseStreamLines(buffer)
+    buffer = remain
+
+    for (const event of parsedEvents) {
+      const maybeResponse = await processStreamEvent(event, callbacks)
+      if (maybeResponse) {
+        finalResponse = maybeResponse
+      }
+    }
+  }
+
+  buffer += decoder.decode()
+  if (buffer.trim()) {
+    const { parsedEvents } = parseStreamLines(`${buffer}\n`)
+    for (const event of parsedEvents) {
+      const maybeResponse = await processStreamEvent(event, callbacks)
+      if (maybeResponse) {
+        finalResponse = maybeResponse
+      }
+    }
+  }
+
+  if (!finalResponse) {
+    throw new Error('Stream ended without final response')
+  }
+
+  return finalResponse
 }
