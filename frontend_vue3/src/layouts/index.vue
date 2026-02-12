@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="layout-shell">
     <div class="sidebar-container">
       <Sidebar />
     </div>
@@ -38,11 +38,13 @@ onUnmounted(() => {
 </script>
 
 <style scoped lang="scss">
-.app-container {
+.layout-shell {
   display: flex;
   width: 100%;
   height: 100%;
   background: transparent;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .sidebar-container {
@@ -59,6 +61,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   height: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -73,6 +76,7 @@ onUnmounted(() => {
 
 .content-container {
   flex: 1;
+  min-width: 0;
   padding: 20px;
   background-color: transparent;
   overflow-y: auto;

@@ -18,6 +18,20 @@
           <el-icon :size="20"><component :is="section.icon" /></el-icon>
         </button>
       </div>
+
+      <div class="primary-footer">
+        <el-dropdown placement="right-start" trigger="click" @command="handleUserCommand">
+          <button type="button" class="primary-user-item" title="Profile">
+            <el-icon :size="18"><User /></el-icon>
+          </button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="profile">Profile</el-dropdown-item>
+              <el-dropdown-item divided command="logout">Logout</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+      </div>
     </div>
 
     <div class="secondary-rail">
@@ -46,6 +60,7 @@
 import { computed } from 'vue'
 import { useRoute, useRouter, type RouteLocationRaw } from 'vue-router'
 import { useUserStore } from '@/store'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import {
   Box,
   Cpu,
@@ -59,6 +74,7 @@ import {
   Operation,
   Setting,
   Stamp,
+  User,
   UploadFilled,
 } from '@element-plus/icons-vue'
 
@@ -93,7 +109,7 @@ const sectionConfig = computed<PrimarySection[]>(() => {
     {
       key: 'project',
       label: 'Project Information',
-      description: '项目配方与结果数据',
+      description: 'Project formulas and result data',
       icon: DataBoard,
       items: [
         { key: 'projects', label: 'Project Information', icon: Operation, path: '/projects' },
@@ -104,7 +120,7 @@ const sectionConfig = computed<PrimarySection[]>(() => {
     {
       key: 'master',
       label: 'Master',
-      description: '基础主数据维护',
+      description: 'Core master data maintenance',
       icon: Grid,
       items: [
         { key: 'materials', label: 'Ingredient Master', icon: Box, path: '/materials' },
@@ -114,7 +130,7 @@ const sectionConfig = computed<PrimarySection[]>(() => {
     {
       key: 'ai',
       label: 'AI Workspace',
-      description: '',
+      description: 'Preview stage',
       icon: Cpu,
       items: [
         {
@@ -144,7 +160,7 @@ const sectionConfig = computed<PrimarySection[]>(() => {
     {
       key: 'system',
       label: 'System Management',
-      description: '角色与系统日志管理',
+      description: 'Role and system log management',
       icon: Setting,
       requiresAdmin: true,
       items: [
@@ -222,6 +238,25 @@ function handlePrimaryClick(sectionKey: PrimaryKey) {
 
   router.push(buildItemRoute(firstItem))
 }
+
+function handleUserCommand(command: string) {
+  if (command === 'logout') {
+    ElMessageBox.confirm('Are you sure you want to logout?', 'Confirm', {
+      confirmButtonText: 'Confirm',
+      cancelButtonText: 'Cancel',
+      type: 'warning',
+    }).then(() => {
+      userStore.logout()
+      router.push('/login')
+      ElMessage.success('Logged out successfully')
+    })
+    return
+  }
+
+  if (command === 'profile') {
+    router.push('/profile')
+  }
+}
 </script>
 
 <style scoped lang="scss">
@@ -262,6 +297,34 @@ function handlePrimaryClick(sectionKey: PrimaryKey) {
   flex-direction: column;
   align-items: center;
   gap: 10px;
+}
+
+.primary-footer {
+  margin-top: auto;
+  padding: 10px 6px 12px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary-user-item {
+  width: 44px;
+  height: 44px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  color: #678095;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #d2e4f1;
+    background: #edf6fc;
+    color: #34556c;
+  }
 }
 
 .primary-item {
@@ -326,6 +389,9 @@ function handlePrimaryClick(sectionKey: PrimaryKey) {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .secondary-item {

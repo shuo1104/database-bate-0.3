@@ -3,20 +3,6 @@
     <div class="navbar-left">
       <span class="page-title">{{ pageTitle }}</span>
     </div>
-    <div class="navbar-right">
-      <el-dropdown @command="handleCommand">
-        <div class="user-info">
-          <el-icon><User /></el-icon>
-          <span class="username">{{ userStore.userInfo?.username || 'User' }}</span>
-        </div>
-        <template #dropdown>
-          <el-dropdown-menu>
-            <el-dropdown-item command="profile">Profile</el-dropdown-item>
-            <el-dropdown-item divided command="logout">Logout</el-dropdown-item>
-          </el-dropdown-menu>
-        </template>
-      </el-dropdown>
-    </div>
 
     <!-- Tags Bar - Embedded in Navbar -->
     <div class="tags-bar" v-if="showTagsBar">
@@ -91,14 +77,12 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '@/store'
 import { useTheme } from '@/composables/useTheme'
-import { ElMessage, ElMessageBox } from 'element-plus'
-import { User, Refresh, Close, CircleClose, Sunny, Moon } from '@element-plus/icons-vue'
+import { ElMessage } from 'element-plus'
+import { Refresh, Close, CircleClose, Sunny, Moon } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
-const userStore = useUserStore()
 
 const pageTitle = computed(() => route.meta.title || '')
 const currentPath = computed(() => route.path)
@@ -111,24 +95,6 @@ onMounted(() => {
   initTheme()
   syncThemeAcrossTabs()
 })
-
-
-// User dropdown menu
-const handleCommand = (command: string) => {
-  if (command === 'logout') {
-    ElMessageBox.confirm('Are you sure you want to logout?', 'Confirm', {
-      confirmButtonText: 'Confirm',
-      cancelButtonText: 'Cancel',
-      type: 'warning',
-    }).then(() => {
-      userStore.logout()
-      router.push('/login')
-      ElMessage.success('Logged out successfully')
-    })
-  } else if (command === 'profile') {
-    router.push('/profile')
-  }
-}
 
 // ===== Tags Bar Functionality =====
 const showTagsBar = ref(true)
@@ -253,33 +219,6 @@ onUnmounted(() => {
     font-weight: 600;
     letter-spacing: 0.2px;
     color: var(--app-text-primary);
-  }
-}
-
-.navbar-right {
-  display: flex;
-  align-items: center;
-
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    cursor: pointer;
-    padding: 7px 12px;
-    border-radius: 999px;
-    border: 1px solid transparent;
-    transition: all 0.25s ease;
-
-    &:hover {
-      background-color: #eef6fb;
-      border-color: #d7e7f2;
-    }
-
-    .username {
-      font-size: 14px;
-      color: var(--app-text-secondary);
-      font-weight: 500;
-    }
   }
 }
 
