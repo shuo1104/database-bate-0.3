@@ -57,18 +57,20 @@
 
       <!-- Toolbar -->
       <div class="toolbar">
-        <el-button type="success" :icon="Plus" @click="crud.handleAdd()">Create</el-button>
+        <el-button class="toolbar-btn-create" type="primary" :icon="Plus" @click="crud.handleAdd()">Create</el-button>
         
         <!-- Export Buttons -->
         <ExportDropdown
           label="Export All"
-          type="warning"
+          type="primary"
+          button-class="toolbar-btn-export-all"
           :loading="exportHelper.exportLoading.value"
           @export="exportHelper.handleExport"
         />
         <ExportDropdown
           label="Export Selected"
-          type="info"
+          type="primary"
+          button-class="toolbar-btn-export-selected"
           :disabled="!hasSelection"
           @export="handleExportSelected"
         >

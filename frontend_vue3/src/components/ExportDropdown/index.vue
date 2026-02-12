@@ -1,6 +1,6 @@
 <template>
   <el-dropdown @command="handleCommand" :disabled="disabled" :loading="loading">
-    <el-button :type="type" :icon="icon" :loading="loading">
+    <el-button :type="type" :icon="icon" :loading="loading" :class="buttonClass">
       {{ label }}
       <el-icon class="el-icon--right">
         <arrow-down />
@@ -41,6 +41,7 @@ interface Props {
   disabled?: boolean
   options?: ExportOption[]
   showImage?: boolean
+  buttonClass?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -49,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   loading: false,
   disabled: false,
   showImage: true,
+  buttonClass: '',
   options: () => []
 })
 

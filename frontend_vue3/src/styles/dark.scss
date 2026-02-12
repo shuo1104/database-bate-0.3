@@ -72,6 +72,45 @@ html.dark {
     background-color: #141414 !important;
   }
 
+  .toolbar-btn-create {
+    --el-button-bg-color: #0f82c5;
+    --el-button-border-color: #0f82c5;
+    --el-button-text-color: #ffffff;
+    --el-button-hover-bg-color: #2798da;
+    --el-button-hover-border-color: #2798da;
+    --el-button-active-bg-color: #0d6ca2;
+    --el-button-active-border-color: #0d6ca2;
+    --el-button-disabled-bg-color: #4f7893;
+    --el-button-disabled-border-color: #4f7893;
+  }
+
+  .toolbar-btn-export-all {
+    --el-button-bg-color: #345f7b;
+    --el-button-border-color: #345f7b;
+    --el-button-text-color: #e9f2f8;
+    --el-button-hover-bg-color: #427897;
+    --el-button-hover-border-color: #427897;
+    --el-button-active-bg-color: #2c5168;
+    --el-button-active-border-color: #2c5168;
+    --el-button-disabled-bg-color: #435763;
+    --el-button-disabled-border-color: #435763;
+  }
+
+  .toolbar-btn-export-selected {
+    --el-button-bg-color: #253442;
+    --el-button-border-color: #3b5569;
+    --el-button-text-color: #bfd3e2;
+    --el-button-hover-bg-color: #2d3f4f;
+    --el-button-hover-border-color: #52748c;
+    --el-button-hover-text-color: #d7e7f2;
+    --el-button-active-bg-color: #22313d;
+    --el-button-active-border-color: #4f728a;
+    --el-button-active-text-color: #d2e4f0;
+    --el-button-disabled-bg-color: #232d35;
+    --el-button-disabled-border-color: #36454f;
+    --el-button-disabled-text-color: #758796;
+  }
+
   // 侧边栏样式 (新版 modern-sidebar)
   .modern-sidebar {
     background: #1d1d1d !important;
@@ -593,6 +632,16 @@ html.dark {
         background: #1f3445 !important;
         color: #58a9df !important;
         box-shadow: inset 0 0 0 1px rgba(88, 169, 223, 0.16) !important;
+      }
+    }
+
+    .primary-user-item {
+      color: #8fa5b8 !important;
+
+      &:hover {
+        border-color: #3a4a58 !important;
+        background: #222d38 !important;
+        color: #d3dde8 !important;
       }
     }
 
